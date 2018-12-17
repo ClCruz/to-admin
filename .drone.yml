@@ -1,0 +1,23 @@
+kind: 
+name: default
+
+steps:
+- name: install
+  image: blcoccaro/linuxphpsql:v4
+  volumes:
+  - name: wl
+    path: /tmp/host
+  commands:
+  - rsync -vrR --exclude='.git' * /tmp/host/teste
+  - chmod -R 777 /tmp/host/teste
+  
+volumes:
+- name: wl
+  host:
+    path: /var/www/unique
+
+trigger:
+  branch:
+  - master
+  event:
+  - tag
