@@ -17,9 +17,5 @@ gulp.task('sass', function () {
 });
 
 gulp.task('watch', function () {
-  livereload.listen();
-  gulp.watch('./src/scss/**/*.scss', ['sass']);
-  gulp.watch(['./src/**/*.css'], function (files) {
-    livereload.changed(files)
-  });
+
 });

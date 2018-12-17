@@ -10,9 +10,10 @@
   },
   "dependencies": {
     "bootstrap-vue": "^2.0.0-rc.11",
-    "gulp": "^4.0.0",
+    "gulp": "^3.9.1",
     "gulp-autoprefixer": "^6.0.0",
-    "gulp-livereload": "^4.0.1",
+    "gulp-livereload": "^3.8.0",
+    "gulp-sass": "^2.3.2",
     "gulp-sourcemaps": "^2.6.4",
     "localStorage-info": "^1.0.0",
     "register-service-worker": "^1.5.2",
