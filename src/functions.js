@@ -21,6 +21,12 @@ export const func = {
         }
     },
     methods: {
+        goHome() {
+            this.$router.push("/");
+        },
+        goLogin() {
+            this.$router.push("/login");
+        },
         youshallnotpass() {
             if (config.environment != 'dev')
             {
@@ -124,25 +130,40 @@ export const func = {
         getLoggedId() {
             return this.ls_get("id");
         },
+        getLoggedEmail() {
+            return this.ls_get("email");
+        },
+        codes(after) {
+            if (this.getLoggedId() == '' || this.getLoggedId() == null || this.getLoggedId() == undefined)
+                return;
+
+            authService.codes(this.getLoggedId()).then(response => {
+                this.hideWaitAboveAll();
+                this.ls_add("codes", JSON.stringify(response));
+                if (after != null && after != undefined)
+                {
+                    after();
+                }
+                    
+
+            }, error => { });            
+        },
         tryLogin(callback) {
             if (this.ls_get('token') == null) return;
             this.showWaitAboveAll();
-            auth.token(this.ls_get('token')).then(response => {
+            authService.loginbytoken(this.ls_get('token')).then(response => {
                 this.hideWaitAboveAll();
                 if (response.logged) {
                     this.$store.dispatch('login', response);
+                    this.codes();
                 } else {
                     localStorage.clear();
+                    this.goLogin();
                 }
 
                 if (callback!=null && callback != undefined)
                     callback();
-            }, error => {
-                //console.log(JSON.stringify(response));
-                //this.processing=false;
-                //this.$wait.end("inprocess");
-                //this.toastError("Falha na execução.");
-            });
+            }, error => { });
         },
         toastSuccess(message, timer = 4000, showbutton = false) {
             this.$swal({

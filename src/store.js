@@ -28,8 +28,9 @@ export default new Vuex.Store({
     login ({commit, dispatch}, auth) {
         const now = new Date()
         const expirationDate = new Date(auth.tokenValidUntil);
-        
         func.methods.ls_add('token', auth.token);
+        func.methods.ls_add('name', auth.name);
+        func.methods.ls_add('email', auth.email);
         func.methods.ls_add('id', auth.id);
         func.methods.ls_add('expirationDate', expirationDate);
         commit('storeUser', {
@@ -40,6 +41,9 @@ export default new Vuex.Store({
     },
     logout ({commit}) {
       commit('clearAuthData');
+      func.methods.ls_remove("codes");
+      func.methods.ls_remove("name");
+      func.methods.ls_remove("email");
       func.methods.ls_remove("base");
       func.methods.ls_remove("expirationDate");
       func.methods.ls_remove("token");

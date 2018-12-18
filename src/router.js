@@ -1,8 +1,9 @@
-import Vue from 'vue'
-import Router from 'vue-router'
-import Home from './views/Home.vue'
+import Vue from 'vue';
+import Router from 'vue-router';
+import Home from './views/Home.vue';
+import store from './store';
 
-Vue.use(Router)
+Vue.use(Router);
 
 const adminLogin = resolve => {
   require.ensure(['./views/Login.vue'], () => {
@@ -25,5 +26,17 @@ export default new Router({
       name: 'login',
       component: adminLogin //import( /* webpackChunkName: "about" */ './views/login.vue')
     },
-  ]
+    {
+      path: '/logout',
+      name: 'logout',
+      beforeEnter: (to, from, next) => {
+        store.dispatch('logout');
+        //this.$router.push("/");
+      }
+    },
+    {path: '*', redirect: '/'}
+  ],
+  scrollBehavior (to, from, savedPosition) {
+    return { x: 0, y: 0 }
+  }
 })

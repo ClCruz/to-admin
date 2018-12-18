@@ -1,20 +1,13 @@
 <template>
-  <div>
-<b-input-group prepend="Username">
-  <b-form-input></b-form-input>
-  <b-dropdown text="Dropdown" variant="success" slot="append">
-    <b-dropdown-item>Action A</b-dropdown-item>
-    <b-dropdown-item>Action B</b-dropdown-item>
-  </b-dropdown>
-</b-input-group>
+  <div v-if="!isAuth">
     <b-form>
-      <b-input-group prepend="Usuário">
+      <b-input-group prepend="Login">
         <b-form-input v-model="login" @keyup.enter.native="doLogin" maxlength="100"></b-form-input>
       </b-input-group>
 
-        <b-input-group prepend="Usuário">
-            <b-form-input @keyup.enter.native="doLogin" v-model="password" :type="passwordType"  maxlength="50"></b-form-input>
-        </b-input-group>
+      <b-input-group prepend="Senha">
+          <b-form-input @keyup.enter.native="doLogin" v-model="password" :type="passwordType"  maxlength="50"></b-form-input>
+      </b-input-group>
 
       <b-btn variant="success" @click="doLogin">
           <v-wait for="inprocess">
@@ -34,9 +27,6 @@ import VueResource from "vue-resource";
 import config from "@/config";
 import { func } from "@/functions";
 import { authService } from "../components/common/services/auth";
-import BootstrapVue from 'bootstrap-vue';
-
-Vue.use(BootstrapVue);
 
 export default {
   mixins: [func],
@@ -55,6 +45,14 @@ export default {
       } else {
         return "password";
       }
+    },
+    isAuth() {
+      return this.$store.getters.isAuthenticated;
+    }
+  },
+  created () {
+    if (this.isAuth) {
+      this.goHome();
     }
   },
   methods: {
@@ -74,9 +72,9 @@ export default {
             if (response.logged) {
               this.toastSuccess("Login efetuado com sucesso.");
               this.$store.dispatch("login", response);
+              this.codes(this.$parent.setMenu);
               this.login = "";
               this.password = "";
-              this.$parent.logged();
               this.$router.push("/");
             } else {
               this.toastError(response.msg);

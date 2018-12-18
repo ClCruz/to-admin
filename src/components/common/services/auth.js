@@ -7,31 +7,36 @@ Vue.use(VueResource);
 config.setapikey();
 
 export const authService = {
-  check,
   login,
-  contact,
-  keepalive,
+  loginbytoken,
+  codes,
 }
 
-function check(login) {
-  let url = config.api + `/v1/auth/legacy/logincheck?login=${login}`;
+function codes(id) {
+  let url = config.api + `/v1/admin/authorization/code`;
+
+  let obj = {
+      id,
+  };
+
   var ret = new Promise(
-    function (resolve, reject) {
-      Vue.http.get(url).then(res => {
-        resolve(res.body);
-      }, err => {
-        reject({
-          error: true,
-          msg: err
-        });
-      });
-    }
+      function (resolve, reject) {
+          Vue.http.post(url, obj, { emulateJSON: true }).then(res => {
+              resolve(res.body);
+          }, err => {
+              reject({
+                  error: true,
+                  msg: err
+              });
+          });    
+      }
   );
   return ret;
 }
 
+
 function login(login, pass) {
-  let url = config.api + `/v1/auth/legacy/login?login=${login}`;
+  let url = config.api + `/v1/auth/admin/login?login=${login}`;
 
   let obj = {
       pass,
@@ -51,29 +56,12 @@ function login(login, pass) {
   );
   return ret;
 }
-function contact(obj) {
-  let url = config.api + `/v1/help/send`;
 
-
-  var ret = new Promise(
-      function (resolve, reject) {
-          Vue.http.post(url, obj, { emulateJSON: true }).then(res => {
-              resolve(res.body);
-          }, err => {
-              reject({
-                  error: true,
-                  msg: err
-              });
-          });    
-      }
-  );
-  return ret;
-}
-function keepalive(token) {
+function loginbytoken(token) {
   if (token == "" || token == undefined || token == null)
     return;
 
-  let url = config.api + `/v1/auth/legacy/keepalive?token=${token}`;
+  let url = config.api + `/v1/auth/admin/token?token=${token}`;
   var ret = new Promise(
     function (resolve, reject) {
       Vue.http.get(url).then(res => {
