@@ -7,11 +7,13 @@
 
 <script>
 import Vue from "vue";
+import VueHead from 'vue-head';
 import VueSidebarMenu from 'vue-sidebar-menu'
 import config from "@/config";
 import { func } from "@/functions";
 
 Vue.use(VueSidebarMenu);
+Vue.use(VueHead);
 
 export default {
   mixins: [func],
@@ -25,9 +27,15 @@ export default {
     this.setMenu();
   },
   computed: {
-    isAuth() {
-      return this.$store.getters.isAuthenticated;
-    }
+  },
+  head: {
+    title: function () {
+      return { 
+        inner: `TicketOffice`,
+        separator: " | ",
+        complement: "Administrativo",
+      }
+    },
   },
   methods: {
     setMenu() {
@@ -43,13 +51,13 @@ export default {
           code: 'all',
           child: [
             {
-              href: '/my/account',
+              href: '/my/info',
               title: 'Informações',
               icon: 'fas fa-info',
               code: 'all',
             },
             {
-              href: '/my/changepass',
+              href: '/my/pass',
               title: 'Mudar senha',
               icon: 'fas fa-key',
               code: 'all',
@@ -63,19 +71,39 @@ export default {
           ]
         },
         {
-          title: 'Cadastro',
+          title: 'Usuários',
+          icon: 'fas fa-users',
+          code: 'all',
+          //code: 'usr-viewer',
+          child: [
+            {
+              href: '/user/add',
+              title: 'Adicionar',
+              icon: 'fas fa-plus',
+              code: 'usr-add'
+            },
+            {
+              href: '/user/list',
+              title: 'Listar',
+              icon: 'fas fa-th-list',
+              code: 'all',//'usr-viewer'
+            },
+          ]
+        },
+        {
+          title: 'Eventos - Cadastro',
           icon: 'fas fa-puzzle-piece',
           code: 'all',
           child: [
             {
               href: '/event/add',
-              title: 'Adicionar evento',
+              title: 'Adicionar',
               icon: 'fas fa-plus',
               code: 'ev-viewer'
             },
             {
               href: '/event/list',
-              title: 'Listar eventos',
+              title: 'Listar',
               icon: 'fas fa-th-list',
               code: 'ev-viewer'
             },

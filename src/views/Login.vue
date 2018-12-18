@@ -46,9 +46,6 @@ export default {
         return "password";
       }
     },
-    isAuth() {
-      return this.$store.getters.isAuthenticated;
-    }
   },
   created () {
     if (this.isAuth) {

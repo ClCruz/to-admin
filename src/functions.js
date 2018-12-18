@@ -18,6 +18,9 @@ export const func = {
     computed: {
         isNewTemplate() {
             return config.info.newTemplate;
+        },
+        isAuth() {
+            return this.$store.getters.isAuthenticated;
         }
     },
     methods: {
