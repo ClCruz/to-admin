@@ -6,7 +6,7 @@ Vue.use(VueResource);
 
 config.setapikey();
 
-export const accessUserService = {
+export const userService = {
   get,
   list,
   save,
@@ -17,7 +17,7 @@ export const accessUserService = {
 }
 
 function baseList(id) {
-    let url = config.api + `/v1/admin/access/base/list?id=${id}`;
+    let url = config.api + `/v1/admin/user/base/list?id=${id}`;
 
     var ret = new Promise(
     function (resolve, reject) {
@@ -34,7 +34,7 @@ function baseList(id) {
   return ret;
 }
 function baseSave(loggedId, id, id_base) {
-    let url = config.api + `/v1/admin/access/base/save`;
+    let url = config.api + `/v1/admin/user/base/save`;
 
     let obj = {
         loggedId,
@@ -58,7 +58,7 @@ function baseSave(loggedId, id, id_base) {
 }
 
 function authList(id) {
-    let url = config.api + `/v1/admin/access/authorization/list?id=${id}`;
+    let url = config.api + `/v1/admin/user/authorization/list?id=${id}`;
 
     var ret = new Promise(
     function (resolve, reject) {
@@ -75,7 +75,7 @@ function authList(id) {
   return ret;
 }
 function authSave(loggedId, id, id_auth) {
-    let url = config.api + `/v1/admin/access/authorization/save`;
+    let url = config.api + `/v1/admin/user/authorization/save`;
 
     let obj = {
         loggedId,
@@ -99,7 +99,7 @@ function authSave(loggedId, id, id_auth) {
 }
 
 function list(search, currentPage, perPage) {
-    let url = config.api + `/v1/admin/access/list?search=${search}`;
+    let url = config.api + `/v1/admin/user/list?search=${search}`;
     url = config.system.applyPagination(url, currentPage, perPage);
 
     var ret = new Promise(
@@ -117,7 +117,7 @@ function list(search, currentPage, perPage) {
   return ret;
 }
 function get(id) {
-    let url = config.api + `/v1/admin/access/get?id=${id}`;
+    let url = config.api + `/v1/admin/user/get?id=${id}`;
     
     var ret = new Promise(
     function (resolve, reject) {
@@ -134,7 +134,7 @@ function get(id) {
   return ret;
 }
 function save(id, name, login, email, document, active) {
-    let url = config.api + `/v1/admin/access/save`;
+    let url = config.api + `/v1/admin/user/save`;
 
     let obj = {
         id: id != undefined && id != null ? id : '',

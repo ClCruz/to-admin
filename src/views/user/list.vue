@@ -99,8 +99,8 @@
                   :fields="grids.users.fields">
 
               <template slot="actions" slot-scope="data">
-                  <span v-if="!mayI('ev-add')">-</span>
-                  <b-button-group size="sm" v-if="mayI('ev-add')">
+                  <span v-if="!mayI('user-add')">-</span>
+                  <b-button-group size="sm" v-if="mayI('user-add')">
                       <b-button title="Editar" v-if="mayI('user-add')" @click.stop="edit(data.item,$event.target)">Editar</b-button>
                       <b-button title="Bases" v-if="mayI('user-add')" @click.stop="base(data.item,$event.target)">Bases</b-button>
                       <b-button title="Permissão" v-if="mayI('user-add-auth')" @click.stop="authorization(data.item,$event.target)">Permissão</b-button>
@@ -123,7 +123,7 @@ import Vue from "vue";
 import VueHead from 'vue-head';
 import config from "@/config";
 import { func } from "@/functions";
-import { accessUserService } from '../../components/common/services/access_user';
+import { userService } from '../../components/common/services/access_user';
 
 Vue.use(VueHead);
 
@@ -151,7 +151,7 @@ export default {
       this.processing = true;
 
       this.showWaitAboveAll();
-      accessUserService.authSave(this.getLoggedId(), this.popups.auth.id, item.id).then(
+      userService.authSave(this.getLoggedId(), this.popups.auth.id, item.id).then(
         response => {
           this.processing = false;
 
@@ -183,7 +183,7 @@ export default {
       this.processing = true;
 
       this.showWaitAboveAll();
-      accessUserService.baseSave(this.getLoggedId(), this.popups.base.id, item.id_base).then(
+      userService.baseSave(this.getLoggedId(), this.popups.base.id, item.id_base).then(
         response => {
           this.processing = false;
 
@@ -223,7 +223,7 @@ export default {
 
       //this.$wait.start("inprocess");
       this.showWaitAboveAll();
-      accessUserService.baseList(item.id).then(
+      userService.baseList(item.id).then(
         response => {
           this.processing = false;
           this.popups.base.grids.base.processing = false;
@@ -260,7 +260,7 @@ export default {
 
       //this.$wait.start("inprocess");
       this.showWaitAboveAll();
-      accessUserService.authList(item.id).then(
+      userService.authList(item.id).then(
         response => {
           this.processing = false;
           this.popups.auth.grids.auth.processing = false;
@@ -304,7 +304,7 @@ export default {
 
       this.$wait.start("inprocess");
       this.showWaitAboveAll();
-      accessUserService.list(this.form.search, this.grids.users.currentPage, this.grids.users.perPage).then(
+      userService.list(this.form.search, this.grids.users.currentPage, this.grids.users.perPage).then(
         response => {
           this.processing = false;
           this.grids.users.processing = false;

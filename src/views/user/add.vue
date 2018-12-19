@@ -101,7 +101,7 @@ import VueHead from 'vue-head';
 import VueMask from 'v-mask';
 import config from "@/config";
 import { func } from "@/functions";
-import { accessUserService } from '../../components/common/services/access_user';
+import { userService } from '../../components/common/services/access_user';
 
 Vue.use(VueHead);
 Vue.use(VueMask);
@@ -143,7 +143,7 @@ export default {
 
       this.$wait.start("inprocessSave");
       this.showWaitAboveAll();
-      accessUserService.save(this.isAdd ? '' : this.id, this.form.name, this.form.login, this.form.email, this.form.document, this.form.active).then(
+      userService.save(this.isAdd ? '' : this.id, this.form.name, this.form.login, this.form.email, this.form.document, this.form.active).then(
         response => {
           this.processing = false;
           this.hideWaitAboveAll();
@@ -175,7 +175,7 @@ export default {
 
       this.$wait.start("inprocess");
       this.showWaitAboveAll();
-      accessUserService.get(this.id).then(
+      userService.get(this.id).then(
         response => {
           this.processing = false;
           this.hideWaitAboveAll();
