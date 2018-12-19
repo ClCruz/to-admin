@@ -136,6 +136,24 @@ export const func = {
         getLoggedEmail() {
             return this.ls_get("email");
         },
+        mayI() {
+            //arguments
+            let anyOk = false;
+            let obj = JSON.parse(this.ls_get("codes"));
+            if (arguments.length > 0) {
+                if (arguments[0] == "all") {
+                    return true;
+                }
+            }
+
+            for (var i=0; i < arguments.length; i++) {
+                let index = obj.map(function(e) { return e.code; }).indexOf(arguments[i]);
+                anyOk = index != -1;
+                if (anyOk)
+                    break;
+            }
+            return anyOk;
+        },
         codes(after) {
             if (this.getLoggedId() == '' || this.getLoggedId() == null || this.getLoggedId() == undefined)
                 return;

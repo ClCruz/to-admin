@@ -1,23 +1,27 @@
 <template>
   <div v-if="!isAuth">
-    <b-form>
-      <b-input-group prepend="Login">
-        <b-form-input v-model="login" @keyup.enter.native="doLogin" maxlength="100"></b-form-input>
-      </b-input-group>
-
-      <b-input-group prepend="Senha">
-          <b-form-input @keyup.enter.native="doLogin" v-model="password" :type="passwordType"  maxlength="50"></b-form-input>
-      </b-input-group>
-
-      <b-btn variant="success" @click="doLogin">
-          <v-wait for="inprocess">
-              <template slot="waiting">
-                  Entrando...
-              </template>
-          </v-wait>
-          <span v-if="!processing">Entrar</span>
-      </b-btn>
-    </b-form>
+    <b-container>
+      <b-row cols="2">
+        <b-input-group prepend="Login">
+          <b-form-input v-model="login" @keyup.enter.native="doLogin" maxlength="100"></b-form-input>
+        </b-input-group>
+      </b-row>
+      <b-row>
+        <b-input-group prepend="Senha">
+            <b-form-input @keyup.enter.native="doLogin" v-model="password" :type="passwordType"  maxlength="50"></b-form-input>
+        </b-input-group>
+      </b-row>
+      <b-row>
+        <b-btn variant="success" @click="doLogin">
+            <v-wait for="inprocess">
+                <template slot="waiting">
+                    Entrando...
+                </template>
+            </v-wait>
+            <span v-if="!processing">Entrar</span>
+        </b-btn>
+      </b-row>
+    </b-container>
   </div>
 </template>
 
@@ -92,3 +96,11 @@ export default {
   }
 }
 </script>
+<style>
+.container {
+  margin-top:30px;
+}
+.input-group-text {
+  width: 72px;
+}
+</style>

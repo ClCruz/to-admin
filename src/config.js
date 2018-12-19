@@ -13,10 +13,33 @@ environment = multi.env;
 const configHelp = {
   environment,
   setapikey,
-  info: myinfo
+  info: myinfo,
+  system: {
+    perPage: 10,
+    perPageLabel: "__perPage",
+    currentPageLabel: "__currentPage",
+    totalCount: "totalCount",
+    applyPagination,
+  }
 }
 
 const defaultConfig = Object.assign({}, myconf, configHelp);
+
+function applyPagination(url, currentPage, perPage) {
+  let separator = "?";
+  if (url.indexOf("?")>-1) {
+    separator = "&";
+  }
+
+  if (currentPage == "" || currentPage == undefined || currentPage == null)
+    currentPage = 1;
+
+  if (perPage == undefined || perPage == null || perPage == "")
+    perPage = defaultConfig.system.perPage;
+
+  let ret = `${url}${separator}${defaultConfig.system.currentPageLabel}=${currentPage}&${defaultConfig.system.perPageLabel}=${perPage}`;
+  return ret;
+}
 
 function setapikey() {
   Vue.http.interceptors.push((request, next) => {

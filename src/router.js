@@ -73,7 +73,12 @@ export default new Router({
       name: 'user-add',
       component: adminUserAdd //import( /* webpackChunkName: "about" */ './views/login.vue')
     },
-
+    {
+      path: '/user/edit/:id',
+      name: 'user-edit',
+      props: true,
+      component: adminUserAdd //import( /* webpackChunkName: "about" */ './views/login.vue')
+    },
     {
       path: '/event/list',
       name: 'event-list',

@@ -1,7 +1,9 @@
 <template>
   <div id="app">
     <sidebar-menu :menu="menu" v-if="isAuth" :collapsed="true" />
+    <div class="p-5">
     <router-view/>
+    </div>
   </div>
 </template>
 
@@ -200,5 +202,8 @@ export default {
       color: #42b983;
     }
   }
+}
+.v-sidebar-menu {
+  z-index: 50000;
 }
 </style>
