@@ -44,11 +44,9 @@
                   :fields="grids.producers.fields">
 
               <template slot="actions" slot-scope="data">
-                  <span v-if="!mayI('user-add')">-</span>
-                  <b-button-group size="sm" v-if="mayI('user-add')">
-                      <b-button title="Editar" v-if="mayI('user-add')" @click.stop="edit(data.item,$event.target)">Editar</b-button>
-                      <b-button title="Bases" v-if="mayI('user-add')" @click.stop="base(data.item,$event.target)">Bases</b-button>
-                      <b-button title="Permissão" v-if="mayI('user-add-auth')" @click.stop="authorization(data.item,$event.target)">Permissão</b-button>
+                  <span v-if="!mayI('producer-add')">-</span>
+                  <b-button-group size="sm" v-if="mayI('producer-add')">
+                      <b-button title="Editar" v-if="mayI('producer-add')" @click.stop="edit(data.item,$event.target)">Editar</b-button>
                   </b-button-group>
               </template>
               <template slot="in_ativo" slot-scope="data">

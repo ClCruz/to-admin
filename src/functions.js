@@ -251,9 +251,8 @@ export const func = {
             }
             return true;
         },
-        validateJSONisEmpty(obj) {
-            let ret = Object.keys(obj).length >= 0 && obj.constructor === Object
-            debugger;
+        validateJSONisNotEmpty(obj) {
+            let ret = Object.keys(obj).length >= 0;
             return ret;
         },
         initializeMenuOverlay() {

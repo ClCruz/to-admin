@@ -47,6 +47,18 @@ const adminProducerAdd = resolve => {
   }, 'admin-producer');
 };
 
+// genre
+const adminGenreList = resolve => {
+  require.ensure(['./views/genre/list.vue'], () => {
+    resolve(require('./views/genre/list.vue'));
+  }, 'admin-genre');
+};
+const adminGenreAdd = resolve => {
+  require.ensure(['./views/genre/add.vue'], () => {
+    resolve(require('./views/genre/add.vue'));
+  }, 'admin-genre');
+};
+
 // my
 const adminMyInfo = resolve => {
   require.ensure(['./views/my/info.vue'], () => {
@@ -130,6 +142,24 @@ export default new Router({
       name: 'producer-edit',
       props: true,
       component: adminProducerAdd //import( /* webpackChunkName: "about" */ './views/login.vue')
+    },
+    //------
+    //GENRE
+    {
+      path: '/genre/list',
+      name: 'genre-list',
+      component: adminGenreList //import( /* webpackChunkName: "about" */ './views/login.vue')
+    },
+    {
+      path: '/genre/add',
+      name: 'genre-add',
+      component: adminGenreAdd //import( /* webpackChunkName: "about" */ './views/login.vue')
+    },
+    {
+      path: '/genre/edit/:id',
+      name: 'genre-edit',
+      props: true,
+      component: adminGenreAdd //import( /* webpackChunkName: "about" */ './views/login.vue')
     },
     //------
     //MY

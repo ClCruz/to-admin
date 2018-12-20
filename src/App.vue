@@ -93,6 +93,26 @@ export default {
           ]
         },
         {
+          title: 'Gênero',
+          icon: 'fas fa-band-aid',
+          code: 'genre-viewer',
+          //code: 'usr-viewer',
+          child: [
+            {
+              href: '/genre/add',
+              title: 'Adicionar',
+              icon: 'fas fa-plus',
+              code: 'genre-add'
+            },
+            {
+              href: '/genre/list',
+              title: 'Listar',
+              icon: 'fas fa-th-list',
+              code: 'genre-viewer',//'usr-viewer'
+            },
+          ]
+        },
+        {
           title: 'Produtores',
           icon: 'fas fa-people-carry',
           code: 'producer-viewer',

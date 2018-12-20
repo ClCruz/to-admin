@@ -233,7 +233,7 @@ export default {
 
           if (this.validateJSON(response))
           {
-              this.form.loaded = this.validateJSONisEmpty(response);
+              this.form.loaded = this.validateJSONisNotEmpty(response);
               if (this.form.loaded) {
                 this.form.id_produtor = response.id_produtor;
                 this.form.ds_razao_social = response.ds_razao_social;
