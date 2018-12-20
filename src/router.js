@@ -35,6 +35,18 @@ const adminUserAdd = resolve => {
   }, 'admin-user');
 };
 
+// producer
+const adminProducerList = resolve => {
+  require.ensure(['./views/producer/list.vue'], () => {
+    resolve(require('./views/producer/list.vue'));
+  }, 'admin-producer');
+};
+const adminProducerAdd = resolve => {
+  require.ensure(['./views/producer/add.vue'], () => {
+    resolve(require('./views/producer/add.vue'));
+  }, 'admin-producer');
+};
+
 // my
 const adminMyInfo = resolve => {
   require.ensure(['./views/my/info.vue'], () => {
@@ -57,12 +69,22 @@ export default new Router({
       name: 'home',
       component: Home
     },
+    //LOGIN
     {
       path: '/login',
       name: 'login',
       component: adminLogin //import( /* webpackChunkName: "about" */ './views/login.vue')
     },
-
+    {
+      path: '/logout',
+      name: 'logout',
+      beforeEnter: (to, from, next) => {
+        store.dispatch('logout');
+        //this.$router.push("/");
+      }
+    },
+    //------
+    //USER
     {
       path: '/user/list',
       name: 'user-list',
@@ -79,6 +101,8 @@ export default new Router({
       props: true,
       component: adminUserAdd //import( /* webpackChunkName: "about" */ './views/login.vue')
     },
+    //------
+    //EVENT
     {
       path: '/event/list',
       name: 'event-list',
@@ -89,7 +113,26 @@ export default new Router({
       name: 'event-add',
       component: adminEventAdd //import( /* webpackChunkName: "about" */ './views/login.vue')
     },
-
+    //------
+    //PRODUCER
+    {
+      path: '/producer/list',
+      name: 'producer-list',
+      component: adminProducerList //import( /* webpackChunkName: "about" */ './views/login.vue')
+    },
+    {
+      path: '/producer/add',
+      name: 'producer-add',
+      component: adminProducerAdd //import( /* webpackChunkName: "about" */ './views/login.vue')
+    },
+    {
+      path: '/producer/edit/:id',
+      name: 'producer-edit',
+      props: true,
+      component: adminProducerAdd //import( /* webpackChunkName: "about" */ './views/login.vue')
+    },
+    //------
+    //MY
     {
       path: '/my/info',
       name: 'my-info',
@@ -100,15 +143,7 @@ export default new Router({
       name: 'my-pass',
       component: adminMyPass //import( /* webpackChunkName: "about" */ './views/login.vue')
     },
-
-    {
-      path: '/logout',
-      name: 'logout',
-      beforeEnter: (to, from, next) => {
-        store.dispatch('logout');
-        //this.$router.push("/");
-      }
-    },
+    //------
     {path: '*', redirect: '/'}
   ],
   scrollBehavior (to, from, savedPosition) {

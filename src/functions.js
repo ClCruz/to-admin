@@ -251,6 +251,11 @@ export const func = {
             }
             return true;
         },
+        validateJSONisEmpty(obj) {
+            let ret = Object.keys(obj).length >= 0 && obj.constructor === Object
+            debugger;
+            return ret;
+        },
         initializeMenuOverlay() {
             /* Open when someone clicks on the span element */
             function openNav() {

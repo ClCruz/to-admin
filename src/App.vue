@@ -2,7 +2,7 @@
   <div id="app">
     <sidebar-menu :menu="menu" v-if="isAuth" :collapsed="true" />
     <div class="p-5">
-    <router-view/>
+      <router-view/>
     </div>
   </div>
 </template>
@@ -93,6 +93,26 @@ export default {
           ]
         },
         {
+          title: 'Produtores',
+          icon: 'fas fa-people-carry',
+          code: 'producer-viewer',
+          //code: 'usr-viewer',
+          child: [
+            {
+              href: '/producer/add',
+              title: 'Adicionar',
+              icon: 'fas fa-plus',
+              code: 'producer-add'
+            },
+            {
+              href: '/producer/list',
+              title: 'Listar',
+              icon: 'fas fa-th-list',
+              code: 'producer-viewer',//'usr-viewer'
+            },
+          ]
+        },
+        {
           title: 'Eventos - Cadastro',
           icon: 'fas fa-puzzle-piece',
           code: 'all',
@@ -162,9 +182,9 @@ export default {
   //          y--;
             return false;
           }        
-          //else {
+          else {
             //console.log("ok");
-          //}
+          }
         }
         return true;
     },
