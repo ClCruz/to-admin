@@ -59,6 +59,18 @@ const adminGenreAdd = resolve => {
   }, 'admin-genre');
 };
 
+// place
+const adminPlaceList = resolve => {
+  require.ensure(['./views/place/list.vue'], () => {
+    resolve(require('./views/place/list.vue'));
+  }, 'admin-place');
+};
+const adminPlaceAdd = resolve => {
+  require.ensure(['./views/place/add.vue'], () => {
+    resolve(require('./views/place/add.vue'));
+  }, 'admin-place');
+};
+
 // my
 const adminMyInfo = resolve => {
   require.ensure(['./views/my/info.vue'], () => {
@@ -145,6 +157,24 @@ export default new Router({
     },
     //------
     //GENRE
+    {
+      path: '/place/list',
+      name: 'place-list',
+      component: adminPlaceList //import( /* webpackChunkName: "about" */ './views/login.vue')
+    },
+    {
+      path: '/place/add',
+      name: 'place-add',
+      component: adminPlaceAdd //import( /* webpackChunkName: "about" */ './views/login.vue')
+    },
+    {
+      path: '/place/edit/:id',
+      name: 'place-edit',
+      props: true,
+      component: adminPlaceAdd //import( /* webpackChunkName: "about" */ './views/login.vue')
+    },
+    //------
+    //PLACE
     {
       path: '/genre/list',
       name: 'genre-list',

@@ -113,6 +113,26 @@ export default {
           ]
         },
         {
+          title: 'Local',
+          icon: 'fas fa-map-marked-alt',
+          code: 'place-viewer',
+          //code: 'usr-viewer',
+          child: [
+            {
+              href: '/place/add',
+              title: 'Adicionar',
+              icon: 'fas fa-plus',
+              code: 'place-add'
+            },
+            {
+              href: '/place/list',
+              title: 'Listar',
+              icon: 'fas fa-th-list',
+              code: 'place-viewer',//'usr-viewer'
+            },
+          ]
+        },
+        {
           title: 'Produtores',
           icon: 'fas fa-people-carry',
           code: 'producer-viewer',
