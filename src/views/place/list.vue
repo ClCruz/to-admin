@@ -96,7 +96,7 @@ export default {
   },
   methods: {
     edit(item) {
-      this.$router.push(`/place/edit/${item.id}`);
+      this.$router.push(`/place/edit/${item.id_local_evento}`);
     },
     pagto(to) {
       this.grids.place.currentPage = to;

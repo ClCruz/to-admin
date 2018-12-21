@@ -7,11 +7,11 @@ Vue.use(VueResource);
 config.setapikey();
 
 export const cityService = {
-  list,
+    select,
 }
 
-function list(id_state) {
-    let url = config.api + `/v1/admin/city/list?id_state=${id_state}`;
+function select(id_state) {
+    let url = config.api + `/v1/admin/city/select?id_state=${id_state}`;
 
     var ret = new Promise(
     function (resolve, reject) {

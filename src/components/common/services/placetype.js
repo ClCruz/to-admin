@@ -7,11 +7,11 @@ Vue.use(VueResource);
 config.setapikey();
 
 export const placetypeService = {
-  list,
+    select,
 }
 
-function list() {
-    let url = config.api + `/v1/admin/placetype/list`;
+function select() {
+    let url = config.api + `/v1/admin/placetype/select`;
 
     var ret = new Promise(
     function (resolve, reject) {

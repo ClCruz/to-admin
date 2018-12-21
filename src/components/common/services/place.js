@@ -8,22 +8,67 @@ config.setapikey();
 
 export const placeService = {
   list,
+  save,
+  get,
+}
+
+function get(id) {
+  if (id==undefined || id==null)
+      id = '';
+      
+  let url = config.api + `/v1/admin/place/get?id_local_evento=${id}`;
+  
+  var ret = new Promise(
+    function (resolve, reject) {
+      Vue.http.get(url).then(res => {
+      resolve(res.body);
+      }, err => {
+      reject({
+          error: true,
+          msg: err
+      });
+      });
+    }
+  );
+  return ret;
+}
+
+function save(loggedId, id_local_evento, ds_local_evento, ds_googlemaps, in_ativo, id_municipio, id_tipo_local) {
+  let url = config.api + `/v1/admin/place/save`;
+
+  let obj = {
+      id_user: loggedId, id_local_evento, ds_local_evento, ds_googlemaps, in_ativo, id_municipio, id_tipo_local
+  };
+
+  var ret = new Promise(
+      function (resolve, reject) {
+          Vue.http.post(url, obj, { emulateJSON: true }).then(res => {
+              resolve(res.body);
+          }, err => {
+              reject({
+                  error: true,
+                  msg: err
+              });
+          });    
+      }
+  );
+  return ret;
 }
 
 function list(search, id_state, id_city, in_ativo, currentPage, perPage) {
-let url = config.api + `/v1/admin/place/list?&search=${search}&id_state=${id_state}&id_city=${id_city}&in_ativo=${in_ativo}`;
-    url = config.system.applyPagination(url, currentPage, perPage);
+  let url = config.api + `/v1/admin/place/list?&search=${search}&id_state=${id_state}&id_city=${id_city}&in_ativo=${in_ativo}`;
+  url = config.system.applyPagination(url, currentPage, perPage);
 
-    var ret = new Promise(
+  var ret = new Promise(
     function (resolve, reject) {
-        Vue.http.get(url).then(res => {
-        resolve(res.body);
-        }, err => {
-        reject({
-            error: true,
-            msg: err
-        });
-        });
+      Vue.http.get(url).then(res => {
+      resolve(res.body);
+      }, err => {
+      reject({
+          error: true,
+          msg: err
+      });
+      });
     }
   );
   return ret;
