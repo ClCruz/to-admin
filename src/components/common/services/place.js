@@ -10,7 +10,27 @@ export const placeService = {
   list,
   save,
   get,
+  select,
 }
+
+function select(id_municipio) {
+    let url = config.api + `/v1/admin/place/select?id_city=${id_municipio}`;
+
+    var ret = new Promise(
+    function (resolve, reject) {
+        Vue.http.get(url).then(res => {
+        resolve(res.body);
+        }, err => {
+        reject({
+            error: true,
+            msg: err
+        });
+        });
+    }
+  );
+  return ret;
+}
+
 
 function get(id) {
   if (id==undefined || id==null)

@@ -94,7 +94,7 @@ export default {
   },
   methods: {
     edit(item) {
-      this.$router.push(`/event/edit/${item.id}`);
+      this.$router.push(`/event/edit/${item.id_evento}/${item.id_base}`);
     },
     pagto(to) {
       this.grids.event.currentPage = to;

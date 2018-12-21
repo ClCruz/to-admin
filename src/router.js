@@ -137,6 +137,12 @@ export default new Router({
       name: 'event-add',
       component: adminEventAdd //import( /* webpackChunkName: "about" */ './views/login.vue')
     },
+    {
+      path: '/event/edit/:id/:base',
+      name: 'event-edit',
+      props: true,
+      component: adminEventAdd //import( /* webpackChunkName: "about" */ './views/login.vue')
+    },
     //------
     //PRODUCER
     {

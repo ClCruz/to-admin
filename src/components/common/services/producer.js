@@ -10,6 +10,24 @@ export const producerService = {
   get,
   list,
   save,
+  select,
+}
+function select(loggedId) {
+    let url = config.api + `/v1/admin/producer/select?loggedId=${loggedId}`;
+
+    var ret = new Promise(
+    function (resolve, reject) {
+        Vue.http.get(url).then(res => {
+        resolve(res.body);
+        }, err => {
+        reject({
+            error: true,
+            msg: err
+        });
+        });
+    }
+  );
+  return ret;
 }
 
 function list(loggedId, search, currentPage, perPage) {
