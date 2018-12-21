@@ -44,35 +44,40 @@
               </b-row>
               <b-row>
                 <b-input-group size="sm">
-                    <b-input-group-prepend is-text class="firstLabel">
+                    <b-input-group-prepend is-text class="firstLabel" v-bind:class="{ errorFormValidateLabel: ($v.form.NomPeca.$invalid) }">
                         Nome:
                     </b-input-group-prepend>
                     <b-form-input id="name"
                                 type="text" 
                                 class="mb-3"
+                                v-bind:class="{ errorFormValidateInput: ($v.form.NomPeca.$invalid) }"
                                 name="name"
                                 maxlength="90"
                                 v-model="form.NomPeca"
                                 placeholder="Digite o nome">
                     </b-form-input>
                 </b-input-group>
+                <div class="errorFormValidate" v-if="!$v.form.NomPeca.required">Campo é obrigatório</div>
+                <div class="errorFormValidate" v-if="!$v.form.NomPeca.minLength">Deve ter pelo menos {{$v.form.NomPeca.$params.minLength.min}} caracteres.</div>
               </b-row>
               <b-row>
                <b-col cols="6" class="ml-0 pl-0">
                 <b-row>
                   <div class="col-12">
                     <b-input-group size="sm">
-                      <b-input-group-prepend is-text class="firstLabel">
+                      <b-input-group-prepend is-text class="firstLabel" v-bind:class="{ errorFormValidateLabel: ($v.form.description.$invalid) }">
                           Descrição:
                       </b-input-group-prepend>
                       <div class="col-12 m-0 p-0" style="height:200px; margin-bottom:50px;margin-left: 0px;">
                         <quill-editor v-model="form.description"
-                            
                             ref="editor"
+                            v-bind:class="{ errorFormValidateInput: ($v.form.description.$invalid) }"
                             :options="components.quillOptions">
                         </quill-editor>
                       </div>
                     </b-input-group>
+                    <div class="errorFormValidate errorFormValidateHack" v-if="!$v.form.description.required">Campo é obrigatório</div>
+                    <div class="errorFormValidate errorFormValidateHack" v-if="!$v.form.description.minLength">Deve ter pelo menos {{$v.form.description.$params.minLength.min}} caracteres.</div>
                   </div>
                 </b-row>
                </b-col>
@@ -377,6 +382,8 @@ import VueHead from 'vue-head';
 import VueQuillEditor from 'vue-quill-editor';
 import PictureInput from 'vue-picture-input';
 import VueMask from 'v-mask';
+import Vuelidate from 'vuelidate';
+
 import config from "@/config";
 import { func } from "@/functions";
 import { userService } from '../../components/common/services/user';
@@ -387,13 +394,16 @@ import { placeService } from '../../components/common/services/place';
 import { producerService } from '../../components/common/services/producer';
 import { eventService } from '../../components/common/services/event';
 
-import 'quill/dist/quill.core.css'
-import 'quill/dist/quill.snow.css'
-import 'quill/dist/quill.bubble.css'
+import 'quill/dist/quill.core.css';
+import 'quill/dist/quill.snow.css';
+import 'quill/dist/quill.bubble.css';
+
+import { required, minLength } from 'vuelidate/lib/validators';
 
 Vue.use(VueHead);
 Vue.use(VueQuillEditor);
 Vue.use(VueMask);
+Vue.use(Vuelidate);
 
 export default {
   mixins: [func],
@@ -684,6 +694,23 @@ export default {
       );     
     },
   },
+  validations: {
+    form: {
+      id_produtor: { required },
+      id_base: { required },
+      NomPeca: { required, minLength: minLength(5) },
+      id_genre: { required },
+      TemDurPeca: { required },
+      CenPeca: { required },
+      id_local_evento: { required },
+      description: { required, minLength: minLength(15) },
+      //meta_description: { required },
+      //meta_keyword: { required },
+      bannerDescription: { required, minLength: minLength(10) },
+      //opening_time: { required },
+      //insurance_policy: { required },
+    }
+  },
   data () {
     return {
         processing: false,
@@ -806,7 +833,9 @@ export default {
   min-height: 100%;
   overflow-y: auto;
 }
-
+.errorFormValidateHack {
+  margin-top: -4.6875rem !important;
+}
 .modal-dialog {
   width: fit-content;
   max-width: 90vw;

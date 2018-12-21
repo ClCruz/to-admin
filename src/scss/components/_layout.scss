@@ -222,3 +222,20 @@ body {
 
 .v-suggestions input:focus::-webkit-input-placeholder {
 visibility: unset;}
+
+.errorFormValidate {
+	display: block;
+	color: #f57f6c;
+	font-size: 0.75rem;
+    line-height: 1;
+    margin-left: 1px;
+    margin-top: -0.6875rem;
+    margin-bottom: 0.9375rem;
+}
+.errorFormValidateInput {
+	border-color: #f79483 !important;
+}
+.errorFormValidateLabel div {
+	color: #f04124 !important;
+	border-color: #f79483 !important;
+}
