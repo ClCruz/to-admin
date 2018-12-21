@@ -58,36 +58,40 @@
                 </b-input-group>
               </b-row>
               <b-row>
-               <b-col>
+               <b-col cols="6" class="ml-0 pl-0">
                 <b-row>
-                  <b-input-group size="sm">
+                  <div class="col-12">
+                    <b-input-group size="sm">
                       <b-input-group-prepend is-text class="firstLabel">
                           Descrição:
                       </b-input-group-prepend>
-                      <div class="row" style="height:200px; margin-bottom:50px;margin-left: 0px;">
+                      <div class="col-12 m-0 p-0" style="height:200px; margin-bottom:50px;margin-left: 0px;">
                         <quill-editor v-model="form.description"
                             
                             ref="editor"
                             :options="components.quillOptions">
                         </quill-editor>
                       </div>
-                  </b-input-group>
+                    </b-input-group>
+                  </div>
                 </b-row>
                </b-col>
-               <b-col>
+               <b-col cols="6" class="ml-0 pl-0">
                 <b-row>
-                  <b-input-group size="sm">
-                      <b-input-group-prepend is-text class="firstLabel">
-                          Descrição Banner:
-                      </b-input-group-prepend>
-                      <div class="row" style="height:200px; margin-bottom:50px;margin-left: 0px;">
-                        <quill-editor v-model="form.bannerDescription"
-                            :disabled="this.form.showInBanner!=1 && this.form.showInBanner!='1'"
-                            ref="editor"
-                            :options="components.quillOptions">
-                        </quill-editor>
-                      </div>
-                  </b-input-group>
+                  <div class="col-12">
+                    <b-input-group size="sm">
+                        <b-input-group-prepend is-text class="firstLabel">
+                            Descrição Banner:
+                        </b-input-group-prepend>
+                        <div class="col-12 m-0 p-0" style="height:200px; margin-bottom:50px;margin-left: 0px;">
+                          <quill-editor v-model="form.bannerDescription"
+                              :disabled="this.form.showInBanner!=1 && this.form.showInBanner!='1'"
+                              ref="editor"
+                              :options="components.quillOptions">
+                          </quill-editor>
+                        </div>
+                    </b-input-group>
+                  </div>
                 </b-row>
                </b-col>
               </b-row>
@@ -801,5 +805,10 @@ export default {
   height: 100%;
   min-height: 100%;
   overflow-y: auto;
+}
+
+.modal-dialog {
+  width: fit-content;
+  max-width: 90vw;
 }
 </style>
