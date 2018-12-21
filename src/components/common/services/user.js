@@ -13,7 +13,25 @@ export const userService = {
   authList,
   authSave,
   baseList,
-  baseSave
+  baseSave,
+  baseSelect,
+}
+function baseSelect(id_user) {
+    let url = config.api + `/v1/admin/base/select?id_user=${id_user}`;
+
+    var ret = new Promise(
+    function (resolve, reject) {
+        Vue.http.get(url).then(res => {
+        resolve(res.body);
+        }, err => {
+        reject({
+            error: true,
+            msg: err
+        });
+        });
+    }
+  );
+  return ret;
 }
 
 function baseList(id) {

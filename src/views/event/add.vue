@@ -132,6 +132,14 @@
               <b-row>
                 <b-input-group size="sm">
                   <b-input-group-prepend is-text class="firstLabel">
+                      Base:
+                  </b-input-group-prepend>
+                  <b-form-select v-model="form.id_base" :options="selects.base" class="mb-3" size="sm" />
+                </b-input-group>
+              </b-row>
+              <b-row>
+                <b-input-group size="sm">
+                  <b-input-group-prepend is-text class="firstLabel">
                       Gênero:
                   </b-input-group-prepend>
                   <b-form-select v-model="form.id_genre" :options="selects.genre" class="mb-3" size="sm" />
@@ -367,6 +375,7 @@ import PictureInput from 'vue-picture-input';
 import VueMask from 'v-mask';
 import config from "@/config";
 import { func } from "@/functions";
+import { userService } from '../../components/common/services/user';
 import { genreService } from '../../components/common/services/genre';
 import { cityService } from '../../components/common/services/city';
 import { stateService } from '../../components/common/services/state';
@@ -402,6 +411,7 @@ export default {
     this.populateState();
     this.populateGenre();
     this.populateProducer();
+    this.populateBases();
     if (!this.isAdd) {
       this.get();
     }
@@ -487,6 +497,7 @@ export default {
               if (this.form.loaded) {
                 this.form.CodPeca = response.CodPeca;
                 this.form.id_produtor = response.id_produtor;
+                this.form.id_base = response.id_base;
                 this.form.NomPeca = response.NomPeca;
                 this.form.CodTipPeca = response.CodTipPeca;
                 this.form.id_genre = response.id_genre;
@@ -542,6 +553,9 @@ export default {
     imageClose() {
       this.popups.url = '';
       this.$refs.imageModal.hide();
+    },
+    validate() {
+
     },
     save() {
 
@@ -606,6 +620,23 @@ export default {
           if (this.validateJSON(response))
           {
             this.selects.genre = response;
+          }
+        },
+        error => {
+          this.hideWaitAboveAll();
+          this.toastError("Falha na execução.");
+        }
+      );     
+    },
+    populateBases() {
+      this.showWaitAboveAll();
+      userService.baseSelect(this.getLoggedId()).then(
+        response => {
+          this.hideWaitAboveAll();
+
+          if (this.validateJSON(response))
+          {
+            this.selects.base = response;
           }
         },
         error => {
@@ -703,6 +734,7 @@ export default {
           place: [],
           genre: [],
           producer: [],
+          base: [],
         },
         form: {
           loaded: false,
@@ -715,27 +747,28 @@ export default {
           imageBase64: "",
 
           CodPeca: '',
-          id_produtor: '', //ja
-          NomPeca: '', //ja
-          CodTipPeca: '', //ja
-          id_genre: '', //ja
-          TemDurPeca: '', //ja
-          CenPeca: '', //ja
-          id_local_evento: '', //ja
-          ValIngresso: '', //ja
-          description: '', //ja
-          meta_description: '', //ja
-          meta_keyword: '', //ja
-          showInBanner: '', //ja
+          id_produtor: '',
+          id_base: '',
+          NomPeca: '',
+          CodTipPeca: '',
+          id_genre: '',
+          TemDurPeca: '',
+          CenPeca: '',
+          id_local_evento: '',
+          ValIngresso: '',
+          description: '',
+          meta_description: '',
+          meta_keyword: '',
+          showInBanner: '',
           bannerDescription: '',
-          opening_time: '', //ja
-          insurance_policy: '', //ja
-          QtIngrPorPedido: '4', //ja
-          qt_ingressos_por_cpf: '4', //ja
-          in_obriga_cpf: '', //ja
-          DatIniPeca: '', //ja
-          DatFinPeca: '', //ja
-          hasPresentantion: '', //ja
+          opening_time: '',
+          insurance_policy: '',
+          QtIngrPorPedido: '4',
+          qt_ingressos_por_cpf: '4',
+          in_obriga_cpf: '',
+          DatIniPeca: '',
+          DatFinPeca: '',
+          hasPresentantion: '',
           imageOriginalURI: '',
           imageBigURI: '',
           imageURI: '',
