@@ -102,7 +102,7 @@
                           Nenhuma data cadastrada
                       </b-input-group-prepend>
                       <b-input-group-prepend class="mb-3" is-text v-if="form.hasPresentantion == 1 && !isAdd">
-                          {{form.DatIniPeca}}:
+                          {{form.DatIniPeca}}
                       </b-input-group-prepend>
                       <b-input-group-prepend is-text v-if="form.hasPresentantion == 1 && !isAdd">
                           a
@@ -123,7 +123,7 @@
                           Nenhuma data cadastrada
                       </b-input-group-prepend>
                       <b-input-group-prepend class="mb-3" is-text v-if="form.hasPresentantion == 1 && !isAdd">
-                          {{form.ValIngresso}}:
+                          {{form.ValIngresso}}
                       </b-input-group-prepend>
                     </b-input-group>
                   </b-row>
@@ -439,6 +439,17 @@ export default {
     }
   },
   methods: {
+    checkproducer() {
+        let index = this.selects.producer.map(function(e) { return e.id_produtor; }).indexOf(this.form.id_produtor);
+        if (index == -1) {
+          this.$swal({
+              type: 'error',
+              text: "Atenção existe uma incompatibilidade de permissão entre você e o produtor, não é possível visualizar o produtor que está cadastrado para o evento.",
+              showConfirmButton: true,
+          }).then((result) => {
+          });
+        }
+    },
     showImage(type, url) {
       switch (type) {
         case "big":
@@ -501,6 +512,9 @@ export default {
                 this.form.imageOriginalURI = response.imageOriginalURI;
                 this.form.imageBigURI = response.imageBigURI;
                 this.form.imageURI = response.imageURI;
+                this.checkproducer();
+                this.populateCity();
+                this.populatePlace();
               }
           }
         },
