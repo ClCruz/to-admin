@@ -8,6 +8,13 @@
           <iframe v-if="this.form.ds_googlemaps.length>0" :src="googlemapsURI" height="200" width="300"></iframe>
           <b-btn class="mt-3" variant="outline-info" block @click="gmapsClose">Fechar</b-btn>
         </b-modal>
+        <b-modal ref="imageModal" hide-footer title="Image">
+          <div class="d-block text-center">
+            <h4>Imagem {{popups.image.name}}</h4>
+          </div>
+          <img v-if="popups.image.url!=''" :src="popups.image.url" />
+          <b-btn class="mt-3" variant="outline-info" block @click="imageClose">Fechar</b-btn>
+        </b-modal>
         <b-row>
           <b-col>
               <b-row v-if="form.imageURI!='' || !form.changedImage">
@@ -30,9 +37,9 @@
               </b-row>
               <b-row class="mx-auto" style="width: 295px;">
                 <b-button-group class="mb-3">
-                  <b-button size="sm" v-if="form.imageOriginalURI != ''" variant="outline-info" v-b-tooltip.hover title="Clique para ver a imagem original.">Original</b-button>
-                  <b-button size="sm" v-if="form.imageURI != ''" variant="outline-success" v-b-tooltip.hover title="Cliqye para ver a imagem do tipo card.">Card</b-button>
-                  <b-button size="sm" v-if="form.imageBigURI != ''" variant="outline-warning" v-b-tooltip.hover title="Cliqye para ver a imagem do tipo banner.">Banner</b-button>
+                  <b-button size="sm" @click="showImage('original', form.imageOriginalURI)" v-if="form.imageOriginalURI != ''" variant="outline-info" v-b-tooltip.hover title="Clique para ver a imagem original.">Original</b-button>
+                  <b-button size="sm" @click="showImage('card', form.imageURI)" v-if="form.imageURI != ''" variant="outline-success" v-b-tooltip.hover title="Clique para ver a imagem do tipo card.">Card</b-button>
+                  <b-button size="sm" @click="showImage('big', form.imageBigURI)" v-if="form.imageBigURI != ''" variant="outline-warning" v-b-tooltip.hover title="Clique para ver a imagem do tipo banner.">Banner</b-button>
                 </b-button-group>
               </b-row>
               <b-row>
@@ -432,6 +439,21 @@ export default {
     }
   },
   methods: {
+    showImage(type, url) {
+      switch (type) {
+        case "big":
+          this.popups.image.name = "Banner";
+        break;
+        case "original":
+          this.popups.image.name = "Original";
+        break;
+        case "card":
+          this.popups.image.name = "Card";
+        break;
+      }
+      this.popups.image.url = url;
+      this.$refs.imageModal.show();
+    },
     imageClick() {
       this.form.hasImage = false;
     },
@@ -502,6 +524,10 @@ export default {
     },
     gmapsClose() {
       this.$refs.gmapsModal.hide();
+    },
+    imageClose() {
+      this.popups.url = '';
+      this.$refs.imageModal.hide();
     },
     save() {
 
@@ -644,6 +670,11 @@ export default {
           gmaps: {
             loaded: false,
             name: '',
+          },
+          image: {
+            loaded: false,
+            name: '',
+            url: '',
           }
         },
         checkbox: {
