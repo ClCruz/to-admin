@@ -153,7 +153,7 @@ export default {
           ]
         },
         {
-          title: 'Eventos - Cadastro',
+          title: 'Eventos',
           icon: 'fas fa-puzzle-piece',
           code: 'all',
           child: [

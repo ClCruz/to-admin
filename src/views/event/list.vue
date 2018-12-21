@@ -12,6 +12,7 @@
                                   type="text"
                                   name="name"
                                   maxlength="100"
+                                  @keyup.enter.native="search"
                                   v-model="form.search"
                                   placeholder="Digite o nome do evento">
                       </b-form-input>

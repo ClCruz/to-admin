@@ -11,6 +11,7 @@
                       <b-form-input id="name"
                                   type="text"
                                   name="name"
+                                  @keyup.enter.native="search"
                                   maxlength="100"
                                   v-model="form.search"
                                   placeholder="Digite o nome, cidade, estado ou sigla do estado">

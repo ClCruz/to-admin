@@ -37,6 +37,7 @@
                       </b-input-group-prepend>
                       <b-form-input id="name"
                                   type="text"
+                                  @keyup.enter.native="search"
                                   name="name"
                                   maxlength="100"
                                   v-model="form.search"
@@ -50,7 +51,7 @@
                         </v-wait>
                         <span v-if="!grids.genre.processing">Consultar</span>
                       </b-button>
-                      <b-button title="Bases" v-if="mayI('genre-add')" @click.stop="base()">
+                      <b-button title="Bases" v-if="mayI('genre-add')" size="sm" @click.stop="base()">
                         Bases
                       </b-button>
 
