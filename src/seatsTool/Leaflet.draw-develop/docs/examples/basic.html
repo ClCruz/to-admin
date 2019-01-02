@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <title>Leaflet.draw drawing and editing tools</title>
+			<link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+
+			<link rel="stylesheet" 
+			href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+      <link rel="stylesheet" href="libs/leaflet.css"/>
+      <link rel="stylesheet" href="../../src/leaflet.draw.css"/>
+      <link
+         rel="stylesheet"
+         href="https://unpkg.com/leaflet.pm@latest/dist/leaflet.pm.css"
+				 />
+				 <link rel="stylesheet" href="leaflet-sidebar.css" />
+
+      <script src="libs/leaflet-src.js"></script>
+      <script src="../../src/Leaflet.draw.js"></script>
+      <script src="../../src/Leaflet.Draw.Event.js"></script>
+      <script src="../../src/edit/handler/Edit.Poly.js"></script>
+      <script src="../../src/edit/handler/Edit.SimpleShape.js"></script>
+      <script src="../../src/edit/handler/Edit.Rectangle.js"></script>
+      <script src="../../src/edit/handler/Edit.Marker.js"></script>
+      <script src="../../src/edit/handler/Edit.CircleMarker.js"></script>
+      <script src="../../src/edit/handler/Edit.Circle.js"></script>
+      <script src="../../src/draw/handler/Draw.Feature.js"></script>
+      <script src="../../src/draw/handler/Draw.Polyline.js"></script>
+      <script src="../../src/draw/handler/Draw.Polygon.js"></script>
+      <script src="../../src/draw/handler/Draw.SimpleShape.js"></script>
+      <script src="../../src/draw/handler/Draw.Rectangle.js"></script>
+      <script src="../../src/draw/handler/Draw.Circle.js"></script>
+      <script src="../../src/draw/handler/Draw.Marker.js"></script>
+      <script src="../../src/draw/handler/Draw.CircleMarker.js"></script>
+      <script src="../../src/ext/TouchEvents.js"></script>
+      <script src="../../src/ext/LatLngUtil.js"></script>
+      <script src="../../src/ext/GeometryUtil.js"></script>
+      <script src="../../src/ext/LineUtil.Intersect.js"></script>
+      <script src="../../src/ext/Polyline.Intersect.js"></script>
+      <script src="../../src/ext/Polygon.Intersect.js"></script>
+      <script src="../../src/Control.Draw.js"></script>
+      <script src="../../src/Tooltip.js"></script>
+      <script src="../../src/Toolbar.js"></script>
+      <script src="../../src/draw/DrawToolbar.js"></script>
+      <script src="../../src/edit/EditToolbar.js"></script>
+      <script src="../../src/edit/handler/EditToolbar.Edit.js"></script>
+      <script src="../../src/edit/handler/EditToolbar.Delete.js"></script>
+      <script src="Leaflet.Control.Custom.js"></script>
+			<script src="https://unpkg.com/leaflet.pm@latest/dist/leaflet.pm.min.js"></script>
+			<script type="text/javascript" src="Map.SelectArea.min.js"></script>
+			<script src="leaflet-sidebar.js"></script>
+
+   </head>
+   <body>
+      <div class="container">
+         <div class="row">
+            <div class="col-3 pr-1 ml-0 pl-0 mr-0" style="background: #e8e8e8; border: 1px solid #eee; ">
+							 <p class="mt-4">Opções</p>
+               <form id="anim-options-form">
+                  <fieldset>
+                     <div class="form-control object">
+											 <div class="form-inline mt-2">
+                        <label class="mb-2" for="">Quantidade de assentos</label>
+                        <input class="input-small form-control" id="row-name" type="text" placeholder="Nome do fileira (Ex: A)">
+                        <select class="form-control" id="seats-quantity">
+                           <option value="1">1</option>
+                           <option value="2">2</option>
+                           <option value="3">3</option>
+                           <option value="4">4</option>
+                           <option value="5">5</option>
+                           <option value="6">6</option>
+                           <option value="7">7</option>
+                           <option value="8">8</option>
+                           <option value="9">9</option>
+                           <option value="10">10</option>
+                           <option value="11">11</option>
+                           <option value="12">12</option>
+                           <option value="13">13</option>
+                           <option value="14">14</option>
+                           <option value="15">15</option>
+												</select>
+											</div>
+                        <div class="form-group mt-3">
+														<div class="form-check mb-2">
+															<input id="enable-seats" class="form-check-input" type="checkbox">
+															<label class="form-check-label checkbox inline">Pular assentos</label>
+														</div>
+														<div class="form-inline">
+														<input class="form-control " id="steps-quantity" type="text" placeholder="Quantidade entre cada assento" disabled="">
+													 <input class="form-control input-small" id="initial-value" type="number" placeholder="Número inicial" disabled="">
+													</div>
+                        </div>
+                        <div class="exemplo mt-3">
+													 <p>Resultado:</p>
+													 <br>
+													 <span id="result"></span> 
+                        </div>
+                     </div>
+                     <a class="btn btn-small non-routed" id="btn-apply-options" href="#" title="Copy generated code to clipboard" data-clipboard-target="#code-anim-keyframes" onclick="apply()">Aplicar</a>
+                  </fieldset>
+               </form>
+            </div>
+            <div class="col-8 pl-0 ml-0 border-0">
+
+    <div id="sidebar" class="sidebar collapsed">
+        <!-- Nav tabs -->
+        <div class="sidebar-tabs">
+            <ul role="tablist">
+                <li><a href="#home" role="tab"><i class="fa fa-bars"></i></a></li>
+                <li><a href="#profile" role="tab"><i class="fa fa-user"></i></a></li>
+                <li class="disabled"><a href="#messages" role="tab"><i class="fa fa-envelope"></i></a></li>
+                <li><a href="https://github.com/Turbo87/sidebar-v2" role="tab" target="_blank"><i class="fa fa-github"></i></a></li>
+            </ul>
+
+            <ul role="tablist">
+                <li><a href="#settings" role="tab"><i class="fa fa-gear"></i></a></li>
+            </ul>
+        </div>
+
+        <!-- Tab panes -->
+        <div class="sidebar-content">
+            <div class="sidebar-pane" id="home">
+                <h1 class="sidebar-header">
+                    sidebar-v2
+                    <span class="sidebar-close"><i class="fa fa-caret-left"></i></span>
+                </h1>
+
+                <p>A responsive sidebar for mapping libraries like <a href="http://leafletjs.com/">Leaflet</a> or <a href="http://openlayers.org/">OpenLayers</a>.</p>
+
+                <p class="lorem">Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.</p>
+
+                <p class="lorem">Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.</p>
+
+                <p class="lorem">Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.</p>
+
+                <p class="lorem">Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.</p>
+            </div>
+
+            <div class="sidebar-pane" id="profile">
+                <h1 class="sidebar-header">Profile<span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
+            </div>
+
+            <div class="sidebar-pane" id="messages">
+                <h1 class="sidebar-header">Messages<span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
+            </div>
+
+            <div class="sidebar-pane" id="settings">
+                <h1 class="sidebar-header">Settings<span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
+            </div>
+        </div>
+    </div>
+
+               <div id="map" style="width: 960px; height: 610px; border: 1px solid #fff"></div>
+            </div>
+         </div>
+      </div>
+      <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+      <script src="basic.js">				</script>
+      <style>
+         .leaflet-marker-icon {
+         background: darkolivegreen;
+         border-radius: 50%;
+				 }
+				 
+				 .leaflet-interactive {
+					 background: darkolivegreen;
+					 border-radius: 50%;
+				 }
+      </style>
+   </body>
+</html>
