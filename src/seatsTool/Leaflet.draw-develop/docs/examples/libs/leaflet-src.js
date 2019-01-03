@@ -7169,7 +7169,7 @@ var MarkerDrag = Handler.extend({
 	},
 
 	_adjustPan: function (e) {
-		var marker = markersToEdit[0].target,
+		var marker = this._marker,
 		    map = marker._map,
 		    speed = this._marker.options.autoPanSpeed,
 		    padding = this._marker.options.autoPanPadding,
@@ -7227,12 +7227,11 @@ var MarkerDrag = Handler.extend({
 	},
 
 	_onDrag: function (e) {
-		var marker = markersToEdit[0].target,
+		var marker = this._marker,
 		    shadow = marker._shadow,
 		iconPos = getPosition(marker._icon),
 		    latlng = marker._map.layerPointToLatLng(iconPos);
 
-				console.log(marker);
 		// update shadow position
 		if (shadow) {
 			setPosition(shadow, iconPos);
