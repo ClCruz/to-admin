@@ -95,7 +95,10 @@ var drawControl = new L.Control.Draw({
 		polyline: false,
 		polygon: false,
 		circle: false,
-		rectangle: true
+		rectangle: true,
+		marker: {
+			icon: markerIcon,
+		}
 	},
 	edit: {
 		featureGroup: drawnItems,
@@ -137,17 +140,22 @@ map.on(L.Draw.Event.CREATED, function(e) {
 				xy: xy([ lng + i * 20, lat ]),
 				class: 'available',
 				title: rowName + ' - ' + seatNumber,
-				count: i
+				count: i,
+				rowname: 'teste'
 			};
 			markers.push(y);
 		}
 
 		insertSeats(markers);
 
-		layer.parentNode.removeChild();
+		try {
+			layer.parentNode.removeChild();
+		} catch {
+			return 'Dont have a parent';
+		}
 	}
 
-	drawnItems.addLayer(layer);
+	drawnItems.addLayer(map._layers)
 });
 
 var height = map._lastCenter.lat * 2;
@@ -242,6 +250,7 @@ function insertSeats(list) {
 			available: value.available,
 			clicked: value.clicked,
 			title: value.title,
+			rowname: value.rowname,
 			clickable: true,
 			draggable: true
 		})
@@ -260,7 +269,8 @@ function insertSeats(list) {
 			})
 			.on('dragend', function(e) {
 				console.log('marker dragend event');
-			});
+			})
+
 	});
 }
 
@@ -360,3 +370,5 @@ function apply() {
 }
 
 // var sidebar = L.control.sidebar('sidebar').addTo(map);
+
+insertSeats(pointsForJson);
