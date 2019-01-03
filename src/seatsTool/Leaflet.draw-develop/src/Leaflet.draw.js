@@ -119,7 +119,7 @@ L.drawLocal = {
 			},
 			marker: {
 				tooltip: {
-					start: 'Click map to place marker.'
+					start: 'Clique para inserir assento.'
 				}
 			},
 			polygon: {

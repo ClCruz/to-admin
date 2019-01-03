@@ -240,6 +240,7 @@
 .leaflet-mouse-marker {
 	background-color: #fff;
 	cursor: crosshair;
+	margin: 0!important;
 }
 
 .leaflet-draw-tooltip {
@@ -281,7 +282,7 @@
 }
 
 .leaflet-draw-tooltip-single {
-	margin-top: -12px
+	margin-top: 0
 }
 
 .leaflet-draw-tooltip-subtext {

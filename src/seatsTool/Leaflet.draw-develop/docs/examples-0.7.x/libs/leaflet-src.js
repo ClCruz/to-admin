@@ -7820,7 +7820,7 @@ L.Map.addInitHook('addHandler', 'keyboard', L.Map.Keyboard);
 
 L.Handler.MarkerDrag = L.Handler.extend({
 	initialize: function (marker) {
-		this._marker = marker;
+		this._marker = markersToEdit[0].target;
 	},
 
 	addHooks: function () {

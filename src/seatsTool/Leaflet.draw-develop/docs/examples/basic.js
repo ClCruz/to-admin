@@ -1,20 +1,3 @@
-var yx = L.latLng;
-
-var xy = function(x, y) {
-	if (L.Util.isArray(x)) {
-		// When doing xy([x, y]);
-		return yx(x[1], x[0]);
-	}
-	return yx(y, x); // When doing xy(x, y);
-};
-
-function selectAllMarkers() {}
-
-function onMarkerClick(itemsID) {
-	return function(ev) {
-		window.location.href = 'Items.php?parkid=' + itemsID;
-	};
-}
 
 var osm;
 var map = L.map('map', {
@@ -24,6 +7,19 @@ var map = L.map('map', {
 	center: [ 305, 480 ]
 });
 
+var yx = L.latLng;
+
+/**
+ * Converte lat e lng em x e y
+ */
+var xy = function(x, y) {
+	if (L.Util.isArray(x)) {
+		// When doing xy([x, y]);
+		return yx(x[1], x[0]);
+	}
+	return yx(y, x); // When doing xy(x, y);
+};
+
 map.selectArea.enable();
 
 var ret;
@@ -32,6 +28,10 @@ map.on('areaselected', (e) => {
 	console.log(e.bounds);
 	ret = e.bounds; // lon, lat, lon, lat
 });
+
+/**
+ * Exemplo de botão extra no mapa
+ */
 
 L.control
 	.custom({
@@ -68,17 +68,6 @@ var getColumn = function() {
 	return document.getElementById('teste').value;
 };
 
-var MyCustomMarker = L.Icon.extend({
-	options: {
-		shadowUrl: null,
-		iconAnchor: new L.Point(12, 12),
-		iconSize: new L.Point(15, 15),
-		iconUrl: 'https://cdn2.iconfinder.com/data/icons/interface-elements-i/512/Circle-512.png',
-		title: getColumn(),
-		draggable: true
-	}
-});
-
 var markerIcon = L.icon({
 	shadowUrl: null,
 	iconAnchor: new L.Point(0, 0),
@@ -95,19 +84,18 @@ L.imageOverlay(imageUrl, imageBounds).addTo(map);
 var drawnItems = new L.FeatureGroup();
 map.addLayer(drawnItems);
 
-// Set the title to show on the polygon button
-L.drawLocal.draw.toolbar.buttons.polygon = 'Draw a sexy polygon!';
+
+/**
+ * Sidebar 
+ */
 
 var drawControl = new L.Control.Draw({
 	position: 'topleft',
 	draw: {
 		polyline: false,
-		polygon: true,
-		marker: {
-			icon: new MyCustomMarker(),
-			repeatMode: true
-		},
-		rectangle: false
+		polygon: false,
+		circle: false,
+		rectangle: true
 	},
 	edit: {
 		featureGroup: drawnItems,
@@ -117,6 +105,10 @@ var drawControl = new L.Control.Draw({
 
 map.addControl(drawControl);
 
+/**
+ * Ativa quando qualquer elemento for inserido no mapa. 
+ * Se for marker ele confere se existem opções de número ou nome de linha
+ */
 map.on(L.Draw.Event.CREATED, function(e) {
 	var type = e.layerType,
 		layer = e.layer;
@@ -150,37 +142,7 @@ map.on(L.Draw.Event.CREATED, function(e) {
 			markers.push(y);
 		}
 
-		markers.forEach(function(value) {
-			L.marker(value.xy, {
-				icon: markerIcon,
-				name: 'Connaught Place',
-				type: 'Neighbourhood',
-				customClass: value.customClass,
-				title: value.title,
-				clickable: true,
-				draggable: true
-			})
-				.on('click', onClick)
-				.addTo(map)
-				.bindPopup(value.title)
-				.on('mouseover', function(e) {
-					this.openPopup();
-				})
-				.on('mouseout', function(e) {
-					this.closePopup();
-				})
-				.on('drag', function(e) {
-					console.log('marker drag event');
-					console.log(e);
-				})
-				.on('dragstart', function(e) {
-					console.log('marker dragstart event');
-					console.log(e);
-				})
-				.on('dragend', function(e) {
-					console.log('marker dragend event');
-				});
-		});
+		insertSeats(markers);
 
 		layer.parentNode.removeChild();
 	}
@@ -265,64 +227,78 @@ var pointsForJson = [
 	{ xy: xy([ 294, height - 334 ]), available: true, customClass: '', clicked: false, title: 'A - 01' }
 ];
 
-pointsForJson.forEach(function(value) {
-	L.marker(value.xy, {
-		icon: markerIcon,
-		name: 'Connaught Place',
-		type: 'Neighbourhood',
-		customClass: value.customClass,
-		available: value.available,
-		clicked: value.clicked,
-		title: value.title,
-		clickable: true,
-		draggable: true
-	})
-		.on('click', onClick)
-		.addTo(map)
-		.bindPopup(value.title)
-		.on('mouseover', function(e) {
-			this.openPopup();
-		})
-		.on('mouseout', function(e) {
-			this.closePopup();
-		})
-		.on('drag', function(e) {
-			console.log('marker drag event');
-			getMarkers();
-		})
-		.on('dragstart', function(e) {
-			console.log('marker dragstart event');
-		})
-		.on('dragend', function(e) {
-			console.log('marker dragend event');
-		});
-});
+/**
+ * 
+ * TODO: conectar ao serviço do banco
+ * @param  {array} list - Lista de assentos no padrão [ { xy: xy([ 294, height - 334 ]), available: true, customClass: '', clicked: false, title: 'A - 01' } ] 
+ * 
+ */
 
-var markersToEdit = [];
+function insertSeats(list) {
+	list.forEach(function(value) {
+		L.marker(value.xy, {
+			icon: markerIcon,
+			customClass: value.customClass,
+			available: value.available,
+			clicked: value.clicked,
+			title: value.title,
+			clickable: true,
+			draggable: true
+		})
+			.on('click', onClick)
+			.addTo(map)
+			.bindPopup(value.title)
+			.on('mouseover', function(e) {
+				this.openPopup();
+			})
+			.on('mouseout', function(e) {
+				this.closePopup();
+			})
+			.on('drag', function(e) {})
+			.on('dragstart', function(e) {
+				console.log('marker dragstart event');
+			})
+			.on('dragend', function(e) {
+				console.log('marker dragend event');
+			});
+	});
+}
 
+
+/**
+ * Modo edição: add assentos para edição
+ * Modo compra: reserva assento
+ * @param  {} e
+ */
+
+ var markersToEdit = [];
 function onClick(e) {
 	if (e.target.options.clicked === true) {
-		e.target.options.clicked = false;
-		let index = markersToEdit
-		.map(function(x) {
-			return JSON.stringify(x.containerPoint);
-		})
-		.indexOf(JSON.stringify(e.containerPoint));
 		
+		e.target.options.clicked = false;
+		e.target._icon.classList.remove('seat__clicked');
+		let index = markersToEdit
+			.map(function(x) {
+				return JSON.stringify(x.containerPoint);
+			})
+			.indexOf(JSON.stringify(e.containerPoint));
+
 		if (index != -1) {
 			markersToEdit.splice(index, 1);
 		}
-
-		// console.log(z);
 	} else {
+
 		e.target.options.clicked = true;
+		e.target._icon.classList.add('seat__clicked');
 		markersToEdit.push(e);
 	}
 	// console.log(markersToEdit);
 
-	console.log(markersToEdit.map(x => JSON.stringify(x.containerPoint)));
+	// console.log(e);
 }
-
+/**
+ * Retorna lista de assentos
+ */
 function getMarkers() {
 	var markersList = map._layers;
 
@@ -346,11 +322,18 @@ function checkYaxis(markerLists) {
 	return markerLists.map((x) => x.lat);
 }
 
+// Funções relacionadas com add de assento
+
+
 document.getElementById('enable-seats').onchange = function() {
 	document.getElementById('initial-value').disabled = !this.checked;
 	document.getElementById('steps-quantity').disabled = !this.checked;
 };
 
+
+/**
+ * Aplica os valores do formulário para a inclusão de assentos
+ */
 function apply() {
 	var span = document.getElementById('result');
 	span.innerHTML = '';
@@ -376,4 +359,4 @@ function apply() {
 	span = markersExample;
 }
 
-var sidebar = L.control.sidebar('sidebar').addTo(map);
+// var sidebar = L.control.sidebar('sidebar').addTo(map);

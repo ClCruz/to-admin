@@ -33,6 +33,9 @@
 .leaflet-marker-icon,
 .leaflet-marker-shadow {
 	display: block;
+
+	margin-left: 0!important;
+	margin-top: 0!important;
 	}
 /* map is broken in FF if you have max-width: 100% on tiles */
 .leaflet-container img {

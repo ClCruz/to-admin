@@ -37,8 +37,8 @@ L.Draw.Marker = L.Draw.Feature.extend({
 				this._mouseMarker = L.marker(this._map.getCenter(), {
 					icon: L.divIcon({
 						className: 'leaflet-mouse-marker',
-						iconAnchor: [20, 20],
-						iconSize: [40, 40]
+						iconAnchor: [0, 0],
+						iconSize: [15, 15]
 					}),
 					opacity: 0,
 					zIndexOffset: this.options.zIndexOffset
