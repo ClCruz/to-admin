@@ -93,7 +93,7 @@ var drawControl = new L.Control.Draw({
 	position: 'topleft',
 	draw: {
 		polyline: false,
-		polygon: false,
+		polygon: true,
 		circle: false,
 		rectangle: true,
 		marker: {
