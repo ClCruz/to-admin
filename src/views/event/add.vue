@@ -35,21 +35,20 @@
                   :custom-strings="components.picOptions"
                   ></picture-input>
               </b-row>
-              <b-row class="mx-auto" style="width: 295px;">
-                <b-button-group class="mb-3">
+              <b-row class="mx-auto mb-3" style="width: 295px;">
+                <b-button-group>
                   <b-button size="sm" @click="showImage('original', form.imageOriginalURI)" v-if="form.imageOriginalURI != ''" variant="outline-info" v-b-tooltip.hover title="Clique para ver a imagem original.">Original</b-button>
                   <b-button size="sm" @click="showImage('card', form.imageURI)" v-if="form.imageURI != ''" variant="outline-success" v-b-tooltip.hover title="Clique para ver a imagem do tipo card.">Card</b-button>
                   <b-button size="sm" @click="showImage('big', form.imageBigURI)" v-if="form.imageBigURI != ''" variant="outline-warning" v-b-tooltip.hover title="Clique para ver a imagem do tipo banner.">Banner</b-button>
                 </b-button-group>
               </b-row>
-              <b-row>
+              <b-row class="mb-3">
                 <b-input-group size="sm">
-                    <b-input-group-prepend is-text class="firstLabel" v-bind:class="{ errorFormValidateLabel: ($v.form.NomPeca.$invalid) }">
+                    <b-input-group-prepend is-text v-bind:class="{ errorFormValidateLabel: ($v.form.NomPeca.$invalid) }">
                         Nome:
                     </b-input-group-prepend>
                     <b-form-input id="name"
                                 type="text" 
-                                class="mb-3"
                                 v-bind:class="{ errorFormValidateInput: ($v.form.NomPeca.$invalid) }"
                                 name="name"
                                 maxlength="90"
@@ -60,12 +59,12 @@
                 <div class="errorFormValidate" v-if="!$v.form.NomPeca.required">Campo é obrigatório</div>
                 <div class="errorFormValidate" v-if="!$v.form.NomPeca.minLength">Deve ter pelo menos {{$v.form.NomPeca.$params.minLength.min}} caracteres.</div>
               </b-row>
-              <b-row>
+              <b-row class="mb-3">
                <b-col cols="6" class="ml-0 pl-0">
                 <b-row>
                   <div class="col-12">
                     <b-input-group size="sm">
-                      <b-input-group-prepend is-text class="firstLabel" v-bind:class="{ errorFormValidateLabel: ($v.form.description.$invalid) }">
+                      <b-input-group-prepend is-text v-bind:class="{ errorFormValidateLabel: ($v.form.description.$invalid) }">
                           Descrição:
                       </b-input-group-prepend>
                       <div class="col-12 m-0 p-0" style="height:200px; margin-bottom:50px;margin-left: 0px;">
@@ -85,7 +84,7 @@
                 <b-row>
                   <div class="col-12">
                     <b-input-group size="sm">
-                        <b-input-group-prepend is-text class="firstLabel">
+                        <b-input-group-prepend is-text>
                             Descrição Banner:
                         </b-input-group-prepend>
                         <div class="col-12 m-0 p-0" style="height:200px; margin-bottom:50px;margin-left: 0px;">
@@ -100,17 +99,17 @@
                 </b-row>
                </b-col>
               </b-row>
-              <b-row>
+              <b-row class="mb-3">
                 <b-col>
                   <b-row>
                     <b-input-group size="sm">
-                      <b-input-group-prepend is-text class="firstLabel" v-b-tooltip.hover title="A data é modificada conforme é cadastrado novos datas para o evento.">
+                      <b-input-group-prepend is-text v-b-tooltip.hover title="A data é modificada conforme é cadastrado novos datas para o evento.">
                           Data do evento:
                       </b-input-group-prepend>
-                      <b-input-group-prepend  class="mb-3" is-text v-if="form.hasPresentantion == 0 || isAdd">
+                      <b-input-group-prepend is-text v-if="form.hasPresentantion == 0 || isAdd">
                           Nenhuma data cadastrada
                       </b-input-group-prepend>
-                      <b-input-group-prepend class="mb-3" is-text v-if="form.hasPresentantion == 1 && !isAdd">
+                      <b-input-group-prepend is-text v-if="form.hasPresentantion == 1 && !isAdd">
                           {{form.DatIniPeca}}
                       </b-input-group-prepend>
                       <b-input-group-prepend is-text v-if="form.hasPresentantion == 1 && !isAdd">
@@ -125,80 +124,79 @@
                 <b-col>
                   <b-row>
                     <b-input-group size="sm">
-                      <b-input-group-prepend is-text class="firstLabel" v-b-tooltip.hover title="O valor é modificada conforme é cadastrado novos valores.">
+                      <b-input-group-prepend is-text v-b-tooltip.hover title="O valor é modificada conforme é cadastrado novos valores.">
                           Valor do Ingresso:
                       </b-input-group-prepend>
-                      <b-input-group-prepend  class="mb-3" is-text v-if="form.hasPresentantion == 0 || isAdd">
+                      <b-input-group-prepend is-text v-if="form.hasPresentantion == 0 || isAdd">
                           Nenhuma data cadastrada
                       </b-input-group-prepend>
-                      <b-input-group-prepend class="mb-3" is-text v-if="form.hasPresentantion == 1 && !isAdd">
+                      <b-input-group-prepend is-text v-if="form.hasPresentantion == 1 && !isAdd">
                           {{form.ValIngresso}}
                       </b-input-group-prepend>
                     </b-input-group>
                   </b-row>
                 </b-col>
               </b-row>
-              <b-row>
+              <b-row class="mb-3">
                 <b-input-group size="sm">
-                  <b-input-group-prepend is-text class="firstLabel">
+                  <b-input-group-prepend is-text>
                       Base:
                   </b-input-group-prepend>
-                  <b-form-select v-model="form.id_base" :options="selects.base" class="mb-3" size="sm" />
+                  <b-form-select v-model="form.id_base" :options="selects.base" size="sm" />
                 </b-input-group>
               </b-row>
-              <b-row>
+              <b-row class="mb-3">
                 <b-input-group size="sm">
-                  <b-input-group-prepend is-text class="firstLabel">
+                  <b-input-group-prepend is-text>
                       Gênero:
                   </b-input-group-prepend>
-                  <b-form-select v-model="form.id_genre" :options="selects.genre" class="mb-3" size="sm" />
+                  <b-form-select v-model="form.id_genre" :options="selects.genre" size="sm" />
                 </b-input-group>
               </b-row>
-              <b-row>
+              <b-row class="mb-3">
                 <b-input-group size="sm">
-                  <b-input-group-prepend is-text class="firstLabel">
+                  <b-input-group-prepend is-text>
                       Produtor:
                   </b-input-group-prepend>
-                  <b-form-select v-model="form.id_produtor" :options="selects.producer" class="mb-3" size="sm" />
+                  <b-form-select v-model="form.id_produtor" :options="selects.producer" size="sm" />
                 </b-input-group>
               </b-row>
-              <b-row>
+              <b-row class="mb-3">
                 <b-input-group size="sm">
-                  <b-input-group-prepend is-text class="firstLabel">
+                  <b-input-group-prepend is-text>
                       Estado:
                   </b-input-group-prepend>
-                  <b-form-select v-on:change="selState" v-model="form.id_estado" :options="selects.state" class="mb-3" size="sm" />
+                  <b-form-select v-on:change="selState" v-model="form.id_estado" :options="selects.state" size="sm" />
                 </b-input-group>
               </b-row>
-              <b-row>
+              <b-row class="mb-3">
                 <b-input-group size="sm">
-                  <b-input-group-prepend is-text class="firstLabel">
+                  <b-input-group-prepend is-text>
                       Cidade:
                   </b-input-group-prepend>
-                  <b-form-select v-on:change="selCity" v-model="form.id_municipio" :options="selects.city" class="mb-3" size="sm" />
+                  <b-form-select v-on:change="selCity" v-model="form.id_municipio" :options="selects.city" size="sm" />
                 </b-input-group>
               </b-row>
-              <b-row>
+              <b-row class="mb-3">
                 <b-input-group size="sm">
-                  <b-input-group-prepend is-text class="firstLabel">
+                  <b-input-group-prepend is-text>
                       Local:
                   </b-input-group-prepend>
-                  <b-form-select v-on:change="selPlace" v-model="form.id_local_evento" :options="selects.place" class="mb-3" size="sm" />
-                  <b-button :disabled="form.id_local_evento=='' || form.id_local_evento == 0" type="button" variant="outline-info" size="sm"  class="mb-3" @click="openMaps">
+                  <b-form-select v-on:change="selPlace" v-model="form.id_local_evento" :options="selects.place" size="sm" />
+                  <b-button :disabled="form.id_local_evento=='' || form.id_local_evento == 0" type="button" variant="outline-info" size="sm"  @click="openMaps">
                     <span>Ver no Google Maps</span>
                   </b-button>
                 </b-input-group>
               </b-row>
-              <b-row>
+              <b-row class="mb-3">
                 <b-col>
                   <b-row>
                     <b-input-group size="sm">
-                      <b-input-group-prepend is-text class="firstLabel">
+                      <b-input-group-prepend is-text>
                           Duração:
                       </b-input-group-prepend>
                       <b-form-input id="TemDurPeca"
                                   type="text"
-                                  class="mb-3"
                                   name="TemDurPeca"
                                   v-mask="'###'"
                                   maxlength="3"
@@ -214,12 +212,11 @@
                 <b-col>
                   <b-row>
                     <b-input-group size="sm" style="padding-left:10px;">
-                      <b-input-group-prepend is-text class="firstLabel">
+                      <b-input-group-prepend is-text>
                           Censura:
                       </b-input-group-prepend>
                       <b-form-input id="CenPeca"
                                   type="text"
-                                  class="mb-3"
                                   name="CenPeca"
                                   v-mask="'##'"
                                   maxlength="3"
@@ -233,16 +230,15 @@
                   </b-row>
                 </b-col>
               </b-row>
-              <b-row>
+              <b-row class="mb-3">
                 <b-col>
                   <b-row>
                     <b-input-group size="sm">
-                      <b-input-group-prepend is-text class="firstLabel">
+                      <b-input-group-prepend is-text>
                           Abertura:
                       </b-input-group-prepend>
                       <b-form-input id="opening_time"
                                   type="text"
-                                  class="mb-3"
                                   name="opening_time"
                                   maxlength="50"
                                   v-model="form.opening_time"
@@ -254,12 +250,11 @@
                 <b-col>
                   <b-row>
                     <b-input-group size="sm" style="padding-left:10px;">
-                      <b-input-group-prepend is-text class="firstLabel">
+                      <b-input-group-prepend is-text>
                           Apólice de seguro:
                       </b-input-group-prepend>
                       <b-form-input id="insurance_policy"
                                   type="text"
-                                  class="mb-3"
                                   name="insurance_policy"
                                   maxlength="50"
                                   v-model="form.insurance_policy"
@@ -269,16 +264,15 @@
                   </b-row>
                 </b-col>
               </b-row>
-              <b-row>
+              <b-row class="mb-3">
                 <b-col>
                   <b-row>
                     <b-input-group size="sm">
-                      <b-input-group-prepend is-text class="firstLabel">
+                      <b-input-group-prepend is-text>
                           Qta. máxima de ingressos por pedido na venda:
                       </b-input-group-prepend>
                       <b-form-input id="QtIngrPorPedido"
                                   type="text"
-                                  class="mb-3"
                                   name="QtIngrPorPedido"
                                   v-mask="'###'"
                                   maxlength="3"
@@ -291,12 +285,11 @@
                 <b-col>
                   <b-row>
                     <b-input-group size="sm" style="padding-left:10px;">
-                      <b-input-group-prepend is-text class="firstLabel">
+                      <b-input-group-prepend is-text>
                           Qta. máxima de ingressos por cpf na venda:
                       </b-input-group-prepend>
                       <b-form-input id="qt_ingressos_por_cpf"
                                   type="text"
-                                  class="mb-3"
                                   name="qt_ingressos_por_cpf"
                                   v-mask="'###'"
                                   maxlength="3"
@@ -307,16 +300,16 @@
                   </b-row>
                 </b-col>
               </b-row>
-              <b-row>
+              <b-row class="mb-3">
                 <b-col>
                   <b-row>
                     <b-input-group size="sm">
-                      <b-input-group-prepend is-text class="firstLabel">
+                      <b-input-group-prepend is-text>
                           Meta - Descrição:
                       </b-input-group-prepend>
                       <b-form-input id="meta_description"
                                   type="text"
-                                  class="mb-3"
+                                
                                   name="meta_description"
                                   maxlength="300"
                                   v-model="form.meta_description"
@@ -328,12 +321,12 @@
                 <b-col>
                   <b-row>
                     <b-input-group size="sm" style="padding-left:10px;">
-                      <b-input-group-prepend is-text class="firstLabel">
+                      <b-input-group-prepend is-text>
                           Meta - Keywords:
                       </b-input-group-prepend>
                       <b-form-input id="meta_keyword"
                                   type="text"
-                                  class="mb-3"
+                                
                                   name="meta_keyword"
                                   maxlength="300"
                                   v-model="form.meta_keyword"
@@ -343,7 +336,7 @@
                   </b-row>
                 </b-col>
               </b-row>
-              <b-row class="mx-auto" style="width: 556px;">
+              <b-row class="mx-auto mb-3" style="width: 556px;">
                 <b-form-group label="">
                   <b-form-checkbox-group v-model="checkboxs"
                                         buttons
@@ -355,7 +348,7 @@
                 </b-form-group>
               </b-row>
 
-              <b-row>
+              <b-row class="mb-3">
                 <b-button type="button" variant="success" size="sm" @click="save">
                   <v-wait for="inprocess">
                       <template slot="waiting">
@@ -569,10 +562,62 @@ export default {
       this.$refs.imageModal.hide();
     },
     validate() {
-
+      return true;
     },
     save() {
+      if (this.validate()) {
+        let id_produtor = "", CodPeca = "", NomPeca = "", CodTipPeca = "", TemDurPeca = "", CenPeca = "", id_local_evento = "", ValIngresso = "", description = "", meta_description = "", meta_keyword = "", opening_time = "", insurance_policy = "", showInBanner = "", bannerDescription = "", QtIngrPorPedido = "", in_obriga_cpf = "", qt_ingressos_por_cpf = "", id_base = "";
 
+        id_base = this.form.id_base;
+        id_produtor = this.form.id_produtor;
+        CodPeca = this.form.CodPeca;
+        NomPeca = this.form.NomPeca;
+        CodTipPeca = this.form.CodTipPeca;
+        TemDurPeca = this.form.TemDurPeca;
+        CenPeca = this.form.CenPeca;
+        id_local_evento = this.form.id_local_evento;
+        ValIngresso = this.form.ValIngresso;
+        description = this.form.description;
+        meta_description = this.form.meta_description;
+        meta_keyword = this.form.meta_keyword;
+        opening_time = this.form.opening_time;
+        insurance_policy = this.form.insurance_policy;
+        showInBanner = this.form.showInBanner;
+        bannerDescription = this.form.bannerDescription;
+        QtIngrPorPedido = this.form.QtIngrPorPedido;
+        in_obriga_cpf = this.form.in_obriga_cpf;
+        qt_ingressos_por_cpf = this.form.qt_ingressos_por_cpf;
+
+        eventService.save(this.getLoggedId(), id_base, id_produtor
+                          ,CodPeca,NomPeca,CodTipPeca
+                          ,TemDurPeca,CenPeca,id_local_evento
+                          ,ValIngresso,description,meta_description
+                          ,meta_keyword,opening_time,insurance_policy
+                          ,showInBanner,bannerDescription,QtIngrPorPedido
+                          ,in_obriga_cpf,qt_ingressos_por_cpf).then(
+          response => {
+            this.processing = false;
+            this.grids.event.processing = false;
+            this.hideWaitAboveAll();
+            this.$wait.end("inprocess");
+
+             if (response.success) {
+               this.toastSuccess("Salvo com sucesso");
+               //this.$router.push(`/event/list`);
+             }
+             else {
+               this.toastError(response.msg);
+             }
+          },
+          error => {
+            this.grids.event.processing = false;
+            this.processing = false;
+            this.hideWaitAboveAll();
+            this.$wait.end("inprocess");
+            this.toastError("Falha na execução.");
+        }
+      );
+      }
     },
     selState() {
       Vue.nextTick().then(response => {
@@ -833,8 +878,11 @@ export default {
   min-height: 100%;
   overflow-y: auto;
 }
+.errorFormValidate {
+  margin-top: 5px !important;
+}
 .errorFormValidateHack {
-  margin-top: -4.6875rem !important;
+  margin-top: -100px !important;
 }
 .modal-dialog {
   width: fit-content;
