@@ -10,7 +10,7 @@ var map = L.map('map', {
 var yx = L.latLng;
 
 /**
- * Converte lat e lng em x e y
+ * Converte lat e lng em x e y para CRS 
  */
 var xy = function(x, y) {
 	if (L.Util.isArray(x)) {
@@ -26,43 +26,33 @@ var ret;
 
 map.on('areaselected', (e) => {
 	console.log(e.bounds);
+
+	markersToEdit.map(x => {
+		x.sourceTarget.options.clicked = false;
+		x.sourceTarget._icon.classList.remove('seat__clicked');
+	})
+	markersToEdit = [];
 	ret = e.bounds; // lon, lat, lon, lat
+
+	console.log(ret);
+	
+	getMarkersSorted().map(x => {
+		if (x._latlng.lat > ret._southWest.lat && x._latlng.lat < ret._northEast.lat && x._latlng.lng > ret._southWest.lng && x._latlng.lng < ret._northEast.lng) {
+			x.options.clicked = true;
+			x._icon.classList.add('seat__clicked');
+
+			y = {
+				sourceTarget: x
+			}
+			markersToEdit.push(y);
+		}
+	})
 });
 
 /**
  * Exemplo de botão extra no mapa
  */
 
-L.control
-	.custom({
-		position: 'topright',
-		content:
-			'	<select class="form-control" id="teste"> <option>1</option> <option>2</option> <option>3</option> <option>4</option> <option>5</option> </select>',
-		classes: 'btn-group-vertical btn-group-sm',
-		style: {
-			margin: '10px',
-			padding: '0px 10px 0 0',
-			cursor: 'pointer'
-		},
-		datas: {
-			foo: 'bar'
-		},
-		events: {
-			click: function(data) {
-				console.log('wrapper div element clicked');
-				console.log(data);
-			},
-			dblclick: function(data) {
-				console.log('wrapper div element dblclicked');
-				console.log(data);
-			},
-			contextmenu: function(data) {
-				console.log('wrapper div element contextmenu');
-				console.log(data);
-			}
-		}
-	})
-	.addTo(map);
 
 var getColumn = function() {
 	return document.getElementById('teste').value;
@@ -93,16 +83,19 @@ var drawControl = new L.Control.Draw({
 	position: 'topleft',
 	draw: {
 		polyline: false,
-		polygon: true,
+		polygon: false,
 		circle: false,
-		rectangle: true,
+		rectangle: false,
+		square: false,
 		marker: {
 			icon: markerIcon,
-		}
+		},
+		circlemarker: false
 	},
 	edit: {
 		featureGroup: drawnItems,
-		remove: true
+		remove: false,
+		edit: false
 	}
 });
 
@@ -282,8 +275,13 @@ function insertSeats(list) {
  */
 
  var markersToEdit = [];
+
+
+ var g;
 function onClick(e) {
 	if (e.target.options.clicked === true) {
+
+		g = e;
 		
 		e.target.options.clicked = false;
 		e.target._icon.classList.remove('seat__clicked');
@@ -298,12 +296,18 @@ function onClick(e) {
 		}
 	} else {
 
+		g = e;
+
 		e.target.options.clicked = true;
 		e.target._icon.classList.add('seat__clicked');
 		markersToEdit.push(e);
 	}
 	// console.log(markersToEdit);
 
+
+	updateFirstName();
+	document.getElementById('markers_quantity').innerText = markersToEdit.length; 
+	sidebarEdit.show();
 	// console.log(e);
 }
 /**
@@ -315,6 +319,25 @@ function getMarkers() {
 	return markersList;
 }
 
+function getMarkersSorted() {
+	var list = [];
+	markersList = getMarkers();
+
+	for (var key in markersList) {
+		if (markersList.hasOwnProperty(key)) {
+			list.push(markersList[key]);
+		}
+	}
+
+	list = list.filter((x) => x !== undefined);
+	list = list.slice(2,);
+	return list;
+}
+
+function moveMarker(marker, x, y) {
+
+}
+
 function getXY(markersList) {
 	var list = [];
 
@@ -323,7 +346,6 @@ function getXY(markersList) {
 			list.push(markersList[key]._latlng);
 		}
 	}
-
 	list = list.filter((x) => x !== undefined);
 	return list;
 }
@@ -369,6 +391,162 @@ function apply() {
 	span = markersExample;
 }
 
-// var sidebar = L.control.sidebar('sidebar').addTo(map);
-
 insertSeats(pointsForJson);
+
+L.easyButton( 'fa fa-edit', function(){
+  sidebarEdit.toggle();
+}).addTo(map);
+
+
+var sidebarEdit = L.control.sidebar('sidebar_edit', {
+	position: 'right',
+	closeButton: true,
+	autoPan: false,
+});
+
+var sidebarCreate = L.control.sidebar('sidebar_create', {
+	position: 'right',
+	closeButton: true,
+	autoPan: false
+})
+
+map.addControl(sidebarEdit);
+map.addControl(sidebarCreate);
+
+document.getElementById('move_left').onclick = function() {
+
+	var value = document.getElementById('move_quantity').value;
+
+	value == '' ? (value = parseInt(1)) : (value = parseInt(value));
+
+	if (markersToEdit.length > 0) {
+		markersToEdit.map(x => 
+			x.sourceTarget.slideTo([x.sourceTarget._latlng.lat, x.sourceTarget._latlng.lng - value], {duration: 1, keepAtCenter: false}
+		))
+	}
+};
+
+document.getElementById('move_right').onclick = function() {
+
+	var value = document.getElementById('move_quantity').value;
+
+	value == '' ? (value = parseInt(1)) : (value = parseInt(value));
+
+	if (markersToEdit.length > 0) {
+		markersToEdit.map(x => 
+			x.sourceTarget.slideTo([x.sourceTarget._latlng.lat, x.sourceTarget._latlng.lng + value], {duration: 1, keepAtCenter: false}
+		))
+	}
+};
+
+document.getElementById('move_up').onclick = function() {
+
+	var value = document.getElementById('move_quantity').value;
+
+	value == '' ? (value = parseInt(1)) : (value = parseInt(value));
+
+	if (markersToEdit.length > 0) {
+		markersToEdit.map(x => 
+			x.sourceTarget.slideTo([x.sourceTarget._latlng.lat + value, x.sourceTarget._latlng.lng ], {duration: 1, keepAtCenter: false}
+		))
+	}
+};
+
+document.getElementById('move_down').onclick = function() {
+
+	var value = document.getElementById('move_quantity').value;
+
+	value == '' ? (value = parseInt(1)) : (value = parseInt(value));
+
+	if (markersToEdit.length > 0) {
+		markersToEdit.map(x => 
+			x.sourceTarget.slideTo([x.sourceTarget._latlng.lat - value, x.sourceTarget._latlng.lng ], {duration: 1, keepAtCenter: false}
+		))
+	}
+};
+document.getElementById('reset_markers').onclick = function() {
+
+	if (markersToEdit.length > 0) {
+		markersToEdit.map(x => 
+			x.sourceTarget.slideTo([x.latlng.lat, x.latlng.lng ], {duration: 1, keepAtCenter: false}
+		))
+	}
+};
+document.getElementById('delete_markers').onclick = function() {
+
+	if (markersToEdit.length > 0) {
+		markersToEdit.map(
+			x => map.removeLayer(x.sourceTarget)
+		)
+
+		markersToEdit = [];
+		document.getElementById('markers_quantity').innerText = markersToEdit.length; 
+	}
+};
+document.getElementById('accessible_markers').onclick = function() {
+
+	if (markersToEdit.length > 0) {
+		markersToEdit.map(
+			x => {
+				if (x.sourceTarget._icon.classList.contains('seat__accessibility')) {
+						x.sourceTarget._icon.classList.remove('seat__accessibility')
+					} else {	
+						x.sourceTarget._icon.classList.add('seat__accessibility')
+						x.sourceTarget._icon.classList.remove('seat__clicked')
+						x.sourceTarget._icon.classList.add('seat__clicked')
+				}
+			}
+		)
+	}
+};
+document.getElementById('delete_markers').onclick = function() {
+
+	if (markersToEdit.length > 0) {
+		markersToEdit.map(
+			x => map.removeLayer(x.sourceTarget)
+		)
+
+		markersToEdit = [];
+		document.getElementById('markers_quantity').innerText = markersToEdit.length; 
+	}
+};
+/**
+ * Abre sidebar de criação de assento ao clicar no icone
+ * @param  {} '#map>div.leaflet-control-container>div.leaflet-top.leaflet-left>div.leaflet-draw.leaflet-control>div>div>a'
+ * @param  {} .onclick=function(
+ */
+document.querySelector('#map > div.leaflet-control-container > div.leaflet-top.leaflet-left > div.leaflet-draw.leaflet-control > div > div > a').onclick = function() {
+	sidebarCreate.show();	
+};
+/**
+ * TODO: Editar multiplas fileiras
+ */
+
+
+// function updateListToEdit() {
+	
+// 	document.getElementById('seats_to_edit').innerHTML = ''; 
+	
+// 	markersToEdit.map(x => {
+// 		document.getElementById('seats_to_edit').innerHTML += 
+// 			'<div class="form-inline mt-2">' +
+// 			'<label class="mb-2" for="">Nome do assento: ' + x.sourceTarget.options.title +'</label>' +
+// 			'<input class="input-small" id="row-name" type="text" placeholder="Novo nome (Ex: AA 03)">'+
+// 		'</div>'
+// 	});
+// }
+
+/**
+ * Atualiza nome do primeiro selecionado na ferramenta de edição
+ */
+function updateFirstName() {
+	document.getElementById('seat_name').innerText = '' + markersToEdit[0].sourceTarget.options.title;
+}
+
+
+document.getElementById('update_first_seat').onclick = function() {
+	markersToEdit[0].sourceTarget.options.title = document.getElementById('new_seat_name').value;
+
+	updateFirstName();
+};
+
