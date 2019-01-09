@@ -96,6 +96,9 @@ export default {
     edit(item) {
       this.$router.push(`/event/edit/${item.id_evento}/${item.id_base}`);
     },
+    datas(item) {
+      this.$router.push(`/event/edit/${item.id_evento}/${item.id_base}?opendate=true`);
+    },
     pagto(to) {
       this.grids.event.currentPage = to;
       this.search();

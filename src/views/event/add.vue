@@ -1,5 +1,13 @@
 <template>
-    <div>
+    <div v-if="mayIsee">
+      <b-modal ref="presentationModal" hide-footer title="Apresentação">
+        <div class="d-block text-center">
+          <h4>Apresentação</h4>
+        </div>
+        <dateadd :key="id" ref="dateadd" v-bind:id="id"></dateadd>
+        <b-btn class="mt-3" variant="outline-info" block @click="presentationClose">Fechar</b-btn>
+      </b-modal>
+
       <b-container>
         <b-modal ref="gmapsModal" hide-footer title="Google Maps">
           <div class="d-block text-center">
@@ -35,11 +43,12 @@
                   :custom-strings="components.picOptions"
                   ></picture-input>
               </b-row>
-              <b-row class="mx-auto mb-3" style="width: 295px;">
+              <b-row class="mx-auto mb-3" style="width: 403px;" v-if="form.imageURI!=''">
                 <b-button-group>
-                  <b-button size="sm" @click="showImage('original', form.imageOriginalURI)" v-if="form.imageOriginalURI != ''" variant="outline-info" v-b-tooltip.hover title="Clique para ver a imagem original.">Original</b-button>
-                  <b-button size="sm" @click="showImage('card', form.imageURI)" v-if="form.imageURI != ''" variant="outline-success" v-b-tooltip.hover title="Clique para ver a imagem do tipo card.">Card</b-button>
-                  <b-button size="sm" @click="showImage('big', form.imageBigURI)" v-if="form.imageBigURI != ''" variant="outline-warning" v-b-tooltip.hover title="Clique para ver a imagem do tipo banner.">Banner</b-button>
+                  <b-button size="sm" @click="showImage('original', form.imageOriginalURI)" v-if="form.imageOriginalURI != '' && !form.changedImage" variant="outline-info" v-b-tooltip.hover title="Clique para ver a imagem original.">Original</b-button>
+                  <b-button size="sm" @click="showImage('card', form.imageURI)" v-if="form.imageURI != '' && !form.changedImage" variant="outline-success" v-b-tooltip.hover title="Clique para ver a imagem do tipo card.">Card</b-button>
+                  <b-button size="sm" @click="showImage('big', form.imageBigURI)" v-if="form.imageBigURI != '' && !form.changedImage" variant="outline-warning" v-b-tooltip.hover title="Clique para ver a imagem do tipo banner.">Banner</b-button>
+                  <b-button size="sm" @click="imageClick" variant="outline-danger" v-b-tooltip.hover title="Clique para abrir a opção de alterar a imagem.">Alterar a imagem</b-button>
                 </b-button-group>
               </b-row>
               <b-row class="mb-3">
@@ -104,7 +113,7 @@
                   <b-row>
                     <b-input-group size="sm">
                       <b-input-group-prepend is-text v-b-tooltip.hover title="A data é modificada conforme é cadastrado novos datas para o evento.">
-                          Data do evento:
+                          Data(s) do evento:
                       </b-input-group-prepend>
                       <b-input-group-prepend is-text v-if="form.hasPresentantion == 0 || isAdd">
                           Nenhuma data cadastrada
@@ -376,7 +385,12 @@
                   </v-wait>
                   <span v-if="!processing">Salvar</span>
                 </b-button>
+                <b-button :disabled="id == 0 || id == null || id == undefined" type="button" variant="info" size="sm"  @click="addPresentation">
+                  <span>Ver datas</span>
+                </b-button>
+
               </b-row>
+              
           </b-col>
         </b-row>
       </b-container>
@@ -390,6 +404,8 @@ import VueQuillEditor from 'vue-quill-editor';
 import PictureInput from 'vue-picture-input';
 import VueMask from 'v-mask';
 import Vuelidate from 'vuelidate';
+
+import dateadd from '../presentation/add';
 
 import config from "@/config";
 import { func } from "@/functions";
@@ -415,7 +431,8 @@ Vue.use(Vuelidate);
 export default {
   mixins: [func],
   components: {
-    PictureInput
+    PictureInput,
+    dateadd
   },
   props: ['id','base'],
   name: 'event-add',
@@ -470,6 +487,15 @@ export default {
     }
   },
   methods: {
+    addPresentation() {
+      this.presentationOpen();
+    },
+    presentationOpen() {
+      this.$refs.presentationModal.show();
+    },
+    presentationClose() {
+      this.$refs.presentationModal.hide();
+    },
     checkproducer() {
         let index = this.selects.producer.map(function(e) { return e.id_produtor; }).indexOf(this.form.id_produtor);
         if (index == -1) {
@@ -498,6 +524,8 @@ export default {
     },
     imageClick() {
       this.form.hasImage = false;
+      this.form.imageURI = '';
+      this.form.changedImage = true;
     },
     get() {
       if (this.processing) return;
@@ -547,6 +575,10 @@ export default {
                 this.checkproducer();
                 this.populateCity();
                 this.populatePlace();
+
+                if (this.queryString("opendate")) {
+                  this.addPresentation();
+                }
               }
           }
         },
@@ -883,7 +915,7 @@ export default {
 .imgthumb {
   margin: 0 auto;
   text-align: center;
-  width: 15%;
+  width: 25%;
   height: 50%;
   cursor: pointer;
 }
