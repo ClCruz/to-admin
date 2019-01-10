@@ -4,13 +4,13 @@
 
 <ctk-date-time-picker
   v-model="form.data"
+  :min-date="today"
   formatted="HH:mm"
   time-format="HH:mm"
   format="HH:mm"
   auto-close
   label="Escolha a hora"
   :minute-interval="1"
-  disable-date
   />
 
 
@@ -47,6 +47,7 @@ import VueHead from 'vue-head';
 import config from "@/config";
 import { func } from "@/functions";
 import { presentationService } from '../../components/common/services/presentation';
+import moment from 'moment';
 
 import VueCtkDateTimePicker from 'vue-ctk-date-time-picker';
 
@@ -81,7 +82,10 @@ export default {
     },
     isAdd() {
       return this.id == '' || this.id == null || this.id == undefined;
-    }
+    },
+    today() {
+      return new Date().toString();
+    },
   },
   methods: {
     save() {
