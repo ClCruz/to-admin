@@ -14,7 +14,6 @@ var yx = L.latLng;
  */
 var xy = function(x, y) {
 	if (L.Util.isArray(x)) {
-		// When doing xy([x, y]);
 		return yx(x[1], x[0]);
 	}
 	return yx(y, x); // When doing xy(x, y);
@@ -120,17 +119,19 @@ map.on(L.Draw.Event.CREATED, function(e) {
 		var rowName = document.getElementById('row-name').value;
 		var steps = document.getElementById('steps-quantity').value;
 		var initialValue = document.getElementById('initial-value').value;
+		var spaceBetween = document.getElementById('space-between').value;
 
 		var markers = [];
 
 		initialValue == '' ? (initialValue = parseInt(0)) : (initialValue = parseInt(initialValue));
 		steps == '' ? (steps = parseInt(1)) : (steps = parseInt(steps));
+		spaceBetween == '' ? (spaceBetween = parseInt(20)) : (spaceBetween = parseInt(spaceBetween));
 
 		// debugger
 		for (var i = 0; i < quantityOfColumns; i++) {
 			seatNumber = initialValue + (i == 0 ? i : i * steps);
 			var y = {
-				xy: xy([ lng + i * 20, lat ]),
+				xy: xy([ lng + i * spaceBetween, lat ]),
 				class: 'available',
 				title: rowName + ' - ' + seatNumber,
 				count: i,
