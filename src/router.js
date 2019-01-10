@@ -11,6 +11,13 @@ const adminLogin = resolve => {
   }, 'admin');
 };
 
+// presentation
+const adminPresentationAdd = resolve => {
+  require.ensure(['./views/presentation/add.vue'], () => {
+    resolve(require('./views/presentation/add.vue'));
+  }, 'admin-presentation');
+};
+
 // event
 const adminEventList = resolve => {
   require.ensure(['./views/event/list.vue'], () => {
@@ -91,7 +98,7 @@ export default new Router({
     {
       path: '/',
       name: 'home',
-      component: Home
+      component: adminLogin
     },
     //LOGIN
     {

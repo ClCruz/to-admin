@@ -1,5 +1,13 @@
 <template>
-    <div>
+    <div v-if="mayIsee">
+      <b-modal ref="presentationModal" hide-footer title="Apresentação">
+        <div class="d-block text-center">
+          <h4>Apresentação</h4>
+        </div>
+        <dateadd :key="id" ref="dateadd" v-bind:id="id"></dateadd>
+        <b-btn class="mt-3" variant="outline-info" block @click="presentationClose">Fechar</b-btn>
+      </b-modal>
+
       <b-container>
         <b-modal ref="gmapsModal" hide-footer title="Google Maps">
           <div class="d-block text-center">
@@ -35,11 +43,12 @@
                   :custom-strings="components.picOptions"
                   ></picture-input>
               </b-row>
-              <b-row class="mx-auto mb-3" style="width: 295px;">
+              <b-row class="mx-auto mb-3" style="width: 403px;" v-if="form.imageURI!=''">
                 <b-button-group>
-                  <b-button size="sm" @click="showImage('original', form.imageOriginalURI)" v-if="form.imageOriginalURI != ''" variant="outline-info" v-b-tooltip.hover title="Clique para ver a imagem original.">Original</b-button>
-                  <b-button size="sm" @click="showImage('card', form.imageURI)" v-if="form.imageURI != ''" variant="outline-success" v-b-tooltip.hover title="Clique para ver a imagem do tipo card.">Card</b-button>
-                  <b-button size="sm" @click="showImage('big', form.imageBigURI)" v-if="form.imageBigURI != ''" variant="outline-warning" v-b-tooltip.hover title="Clique para ver a imagem do tipo banner.">Banner</b-button>
+                  <b-button size="sm" @click="showImage('original', form.imageOriginalURI)" v-if="form.imageOriginalURI != '' && !form.changedImage" variant="outline-info" v-b-tooltip.hover title="Clique para ver a imagem original.">Original</b-button>
+                  <b-button size="sm" @click="showImage('card', form.imageURI)" v-if="form.imageURI != '' && !form.changedImage" variant="outline-success" v-b-tooltip.hover title="Clique para ver a imagem do tipo card.">Card</b-button>
+                  <b-button size="sm" @click="showImage('big', form.imageBigURI)" v-if="form.imageBigURI != '' && !form.changedImage" variant="outline-warning" v-b-tooltip.hover title="Clique para ver a imagem do tipo banner.">Banner</b-button>
+                  <b-button size="sm" @click="imageClick" variant="outline-danger" v-b-tooltip.hover title="Clique para abrir a opção de alterar a imagem.">Alterar a imagem</b-button>
                 </b-button-group>
               </b-row>
               <b-row class="mb-3">
@@ -104,7 +113,7 @@
                   <b-row>
                     <b-input-group size="sm">
                       <b-input-group-prepend is-text v-b-tooltip.hover title="A data é modificada conforme é cadastrado novos datas para o evento.">
-                          Data do evento:
+                          Data(s) do evento:
                       </b-input-group-prepend>
                       <b-input-group-prepend is-text v-if="form.hasPresentantion == 0 || isAdd">
                           Nenhuma data cadastrada
@@ -139,60 +148,66 @@
               </b-row>
               <b-row class="mb-3">
                 <b-input-group size="sm">
-                  <b-input-group-prepend is-text>
+                  <b-input-group-prepend is-text v-bind:class="{ errorFormValidateLabel: ($v.form.id_base.$invalid) }">
                       Base:
                   </b-input-group-prepend>
-                  <b-form-select v-model="form.id_base" :options="selects.base" size="sm" />
+                  <b-form-select v-model="form.id_base" :options="selects.base" size="sm" v-bind:class="{ errorFormValidateInput: ($v.form.id_base.$invalid) }" />
                 </b-input-group>
+                <div class="errorFormValidate" v-if="!$v.form.id_base.required">Campo é obrigatório</div>
               </b-row>
               <b-row class="mb-3">
                 <b-input-group size="sm">
-                  <b-input-group-prepend is-text>
+                  <b-input-group-prepend is-text v-bind:class="{ errorFormValidateLabel: ($v.form.id_genre.$invalid) }">
                       Gênero:
                   </b-input-group-prepend>
-                  <b-form-select v-model="form.id_genre" :options="selects.genre" size="sm" />
+                  <b-form-select v-model="form.id_genre" :options="selects.genre" size="sm" v-bind:class="{ errorFormValidateInput: ($v.form.id_genre.$invalid) }" />
                 </b-input-group>
+                <div class="errorFormValidate" v-if="!$v.form.id_genre.required">Campo é obrigatório</div>
               </b-row>
               <b-row class="mb-3">
                 <b-input-group size="sm">
-                  <b-input-group-prepend is-text>
+                  <b-input-group-prepend is-text v-bind:class="{ errorFormValidateLabel: ($v.form.id_produtor.$invalid) }">
                       Produtor:
                   </b-input-group-prepend>
-                  <b-form-select v-model="form.id_produtor" :options="selects.producer" size="sm" />
+                  <b-form-select v-model="form.id_produtor" :options="selects.producer" size="sm" v-bind:class="{ errorFormValidateInput: ($v.form.id_produtor.$invalid) }" />
                 </b-input-group>
+                <div class="errorFormValidate" v-if="!$v.form.id_produtor.required">Campo é obrigatório</div>
               </b-row>
               <b-row class="mb-3">
                 <b-input-group size="sm">
-                  <b-input-group-prepend is-text>
+                  <b-input-group-prepend is-text v-bind:class="{ errorFormValidateLabel: ($v.form.id_estado.$invalid) }">
                       Estado:
                   </b-input-group-prepend>
-                  <b-form-select v-on:change="selState" v-model="form.id_estado" :options="selects.state" size="sm" />
+                  <b-form-select v-on:change="selState" v-model="form.id_estado" :options="selects.state" size="sm" v-bind:class="{ errorFormValidateInput: ($v.form.id_estado.$invalid) }" />
                 </b-input-group>
+                <div class="errorFormValidate" v-if="!$v.form.id_estado.required">Campo é obrigatório</div>
               </b-row>
               <b-row class="mb-3">
                 <b-input-group size="sm">
-                  <b-input-group-prepend is-text>
+                  <b-input-group-prepend is-text v-bind:class="{ errorFormValidateLabel: ($v.form.id_municipio.$invalid) }">
                       Cidade:
                   </b-input-group-prepend>
-                  <b-form-select v-on:change="selCity" v-model="form.id_municipio" :options="selects.city" size="sm" />
+                  <b-form-select v-on:change="selCity" v-model="form.id_municipio" :options="selects.city" size="sm" v-bind:class="{ errorFormValidateInput: ($v.form.id_municipio.$invalid) }" />
                 </b-input-group>
+                <div class="errorFormValidate" v-if="!$v.form.id_municipio.required">Campo é obrigatório</div>
               </b-row>
               <b-row class="mb-3">
                 <b-input-group size="sm">
-                  <b-input-group-prepend is-text>
+                  <b-input-group-prepend is-text v-bind:class="{ errorFormValidateLabel: ($v.form.id_local_evento.$invalid) }">
                       Local:
                   </b-input-group-prepend>
-                  <b-form-select v-on:change="selPlace" v-model="form.id_local_evento" :options="selects.place" size="sm" />
+                  <b-form-select v-on:change="selPlace" v-model="form.id_local_evento" :options="selects.place" size="sm" v-bind:class="{ errorFormValidateInput: ($v.form.id_local_evento.$invalid) }" />
                   <b-button :disabled="form.id_local_evento=='' || form.id_local_evento == 0" type="button" variant="outline-info" size="sm"  @click="openMaps">
                     <span>Ver no Google Maps</span>
                   </b-button>
                 </b-input-group>
+                <div class="errorFormValidate" v-if="!$v.form.id_local_evento.required">Campo é obrigatório</div>
               </b-row>
               <b-row class="mb-3">
                 <b-col>
                   <b-row>
                     <b-input-group size="sm">
-                      <b-input-group-prepend is-text>
+                      <b-input-group-prepend is-text v-bind:class="{ errorFormValidateLabel: ($v.form.TemDurPeca.$invalid) }">
                           Duração:
                       </b-input-group-prepend>
                       <b-form-input id="TemDurPeca"
@@ -201,18 +216,20 @@
                                   v-mask="'###'"
                                   maxlength="3"
                                   v-model="form.TemDurPeca"
+                                  v-bind:class="{ errorFormValidateInput: ($v.form.TemDurPeca.$invalid) }"
                                   placeholder="Digite a duração do evento">
                       </b-form-input>
                       <b-input-group-prepend is-text>
                           min
                       </b-input-group-prepend>
                     </b-input-group>
+                    <div class="errorFormValidate" v-if="!$v.form.TemDurPeca.required">Campo é obrigatório</div>
                   </b-row>
                 </b-col>
                 <b-col>
                   <b-row>
                     <b-input-group size="sm" style="padding-left:10px;">
-                      <b-input-group-prepend is-text>
+                      <b-input-group-prepend is-text v-bind:class="{ errorFormValidateLabel: ($v.form.CenPeca.$invalid) }">
                           Censura:
                       </b-input-group-prepend>
                       <b-form-input id="CenPeca"
@@ -221,12 +238,14 @@
                                   v-mask="'##'"
                                   maxlength="3"
                                   v-model="form.CenPeca"
+                                  v-bind:class="{ errorFormValidateInput: ($v.form.CenPeca.$invalid) }"
                                   placeholder="Digite a censura">
                       </b-form-input>
                       <b-input-group-prepend is-text>
                           anos
                       </b-input-group-prepend>
                     </b-input-group>
+                    <div class="errorFormValidate errorFormValidateHack2" v-if="!$v.form.CenPeca.required">Campo é obrigatório</div>
                   </b-row>
                 </b-col>
               </b-row>
@@ -268,7 +287,7 @@
                 <b-col>
                   <b-row>
                     <b-input-group size="sm">
-                      <b-input-group-prepend is-text>
+                      <b-input-group-prepend is-text v-bind:class="{ errorFormValidateLabel: ($v.form.QtIngrPorPedido.$invalid) }">
                           Qta. máxima de ingressos por pedido na venda:
                       </b-input-group-prepend>
                       <b-form-input id="QtIngrPorPedido"
@@ -277,15 +296,17 @@
                                   v-mask="'###'"
                                   maxlength="3"
                                   v-model="form.QtIngrPorPedido"
+                                  v-bind:class="{ errorFormValidateInput: ($v.form.QtIngrPorPedido.$invalid) }"
                                   placeholder="Digite a quantidade máxima de ingressos por pedido na venda">
                       </b-form-input>
                     </b-input-group>
+                    <div class="errorFormValidate" v-if="!$v.form.QtIngrPorPedido.required">Campo é obrigatório</div>
                   </b-row>
                 </b-col>
                 <b-col>
                   <b-row>
                     <b-input-group size="sm" style="padding-left:10px;">
-                      <b-input-group-prepend is-text>
+                      <b-input-group-prepend is-text v-bind:class="{ errorFormValidateLabel: ($v.form.qt_ingressos_por_cpf.$invalid) }">
                           Qta. máxima de ingressos por cpf na venda:
                       </b-input-group-prepend>
                       <b-form-input id="qt_ingressos_por_cpf"
@@ -294,9 +315,11 @@
                                   v-mask="'###'"
                                   maxlength="3"
                                   v-model="form.qt_ingressos_por_cpf"
+                                  v-bind:class="{ errorFormValidateInput: ($v.form.qt_ingressos_por_cpf.$invalid) }"
                                   placeholder="Digite a quantidade máxima de ingressos por cpf na venda">
                       </b-form-input>
                     </b-input-group>
+                    <div class="errorFormValidate errorFormValidateHack2" v-if="!$v.form.qt_ingressos_por_cpf.required">Campo é obrigatório</div>
                   </b-row>
                 </b-col>
               </b-row>
@@ -362,7 +385,12 @@
                   </v-wait>
                   <span v-if="!processing">Salvar</span>
                 </b-button>
+                <b-button :disabled="id == 0 || id == null || id == undefined" type="button" variant="info" size="sm"  @click="addPresentation">
+                  <span>Ver datas</span>
+                </b-button>
+
               </b-row>
+              
           </b-col>
         </b-row>
       </b-container>
@@ -376,6 +404,8 @@ import VueQuillEditor from 'vue-quill-editor';
 import PictureInput from 'vue-picture-input';
 import VueMask from 'v-mask';
 import Vuelidate from 'vuelidate';
+
+import dateadd from '../presentation/add';
 
 import config from "@/config";
 import { func } from "@/functions";
@@ -401,7 +431,8 @@ Vue.use(Vuelidate);
 export default {
   mixins: [func],
   components: {
-    PictureInput
+    PictureInput,
+    dateadd
   },
   props: ['id','base'],
   name: 'event-add',
@@ -456,6 +487,15 @@ export default {
     }
   },
   methods: {
+    addPresentation() {
+      this.presentationOpen();
+    },
+    presentationOpen() {
+      this.$refs.presentationModal.show();
+    },
+    presentationClose() {
+      this.$refs.presentationModal.hide();
+    },
     checkproducer() {
         let index = this.selects.producer.map(function(e) { return e.id_produtor; }).indexOf(this.form.id_produtor);
         if (index == -1) {
@@ -484,6 +524,8 @@ export default {
     },
     imageClick() {
       this.form.hasImage = false;
+      this.form.imageURI = '';
+      this.form.changedImage = true;
     },
     get() {
       if (this.processing) return;
@@ -533,6 +575,10 @@ export default {
                 this.checkproducer();
                 this.populateCity();
                 this.populatePlace();
+
+                if (this.queryString("opendate")) {
+                  this.addPresentation();
+                }
               }
           }
         },
@@ -546,7 +592,7 @@ export default {
     },
     onChange (image) {
         if (image) {
-            this.form.image = image;
+            this.form.imagebase64 = image;
             this.form.changedImage = true;
         }
     },
@@ -562,17 +608,19 @@ export default {
       this.$refs.imageModal.hide();
     },
     validate() {
-      return true;
+      return !this.$v.form.$invalid;
     },
     save() {
+      if (this.processing) return;
+
       if (this.validate()) {
-        let id_produtor = "", CodPeca = "", NomPeca = "", CodTipPeca = "", TemDurPeca = "", CenPeca = "", id_local_evento = "", ValIngresso = "", description = "", meta_description = "", meta_keyword = "", opening_time = "", insurance_policy = "", showInBanner = "", bannerDescription = "", QtIngrPorPedido = "", in_obriga_cpf = "", qt_ingressos_por_cpf = "", id_base = "";
+        let id_produtor = "", CodPeca = "", NomPeca = "", CodTipPeca = "", TemDurPeca = "", CenPeca = "", id_local_evento = "", ValIngresso = "", description = "", meta_description = "", meta_keyword = "", opening_time = "", insurance_policy = "", showInBanner = "", bannerDescription = "", QtIngrPorPedido = "", in_obriga_cpf = "", qt_ingressos_por_cpf = "", id_base = "", imagechanged = false, imagebase64 = "";
 
         id_base = this.form.id_base;
         id_produtor = this.form.id_produtor;
         CodPeca = this.form.CodPeca;
         NomPeca = this.form.NomPeca;
-        CodTipPeca = this.form.CodTipPeca;
+        CodTipPeca = this.form.id_genre;
         TemDurPeca = this.form.TemDurPeca;
         CenPeca = this.form.CenPeca;
         id_local_evento = this.form.id_local_evento;
@@ -588,18 +636,24 @@ export default {
         in_obriga_cpf = this.form.in_obriga_cpf;
         qt_ingressos_por_cpf = this.form.qt_ingressos_por_cpf;
 
+        imagechanged = this.form.changedImage;
+        imagebase64 = this.form.imagebase64;
+
+        this.$wait.start("inprocessSave");
+        this.processing = true;
+
         eventService.save(this.getLoggedId(), id_base, id_produtor
                           ,CodPeca,NomPeca,CodTipPeca
                           ,TemDurPeca,CenPeca,id_local_evento
                           ,ValIngresso,description,meta_description
                           ,meta_keyword,opening_time,insurance_policy
                           ,showInBanner,bannerDescription,QtIngrPorPedido
-                          ,in_obriga_cpf,qt_ingressos_por_cpf).then(
+                          ,in_obriga_cpf,qt_ingressos_por_cpf
+                          ,imagechanged,imagebase64).then(
           response => {
             this.processing = false;
-            this.grids.event.processing = false;
             this.hideWaitAboveAll();
-            this.$wait.end("inprocess");
+            this.$wait.end("inprocessSave");
 
              if (response.success) {
                this.toastSuccess("Salvo com sucesso");
@@ -613,10 +667,13 @@ export default {
             this.grids.event.processing = false;
             this.processing = false;
             this.hideWaitAboveAll();
-            this.$wait.end("inprocess");
+            this.$wait.end("inprocessSave");
             this.toastError("Falha na execução.");
-        }
-      );
+          }
+        );
+      }
+      else {
+        this.toastError("Preencha os campos obrigatórios.");
       }
     },
     selState() {
@@ -741,19 +798,19 @@ export default {
   },
   validations: {
     form: {
-      id_produtor: { required },
-      id_base: { required },
       NomPeca: { required, minLength: minLength(5) },
+      description: { required, minLength: minLength(15) },
+      id_base: { required },
       id_genre: { required },
+      id_produtor: { required },
+      id_estado: { required },
+      id_municipio: { required },
+      id_local_evento: { required },
       TemDurPeca: { required },
       CenPeca: { required },
-      id_local_evento: { required },
-      description: { required, minLength: minLength(15) },
-      //meta_description: { required },
-      //meta_keyword: { required },
-      bannerDescription: { required, minLength: minLength(10) },
-      //opening_time: { required },
-      //insurance_policy: { required },
+      QtIngrPorPedido: { required },
+      qt_ingressos_por_cpf: { required },
+
     }
   },
   data () {
@@ -820,7 +877,7 @@ export default {
           ds_googlemaps: '',
           hasImage: true,
           changedImage: false,
-          imageBase64: "",
+          imagebase64: "",
 
           CodPeca: '',
           id_produtor: '',
@@ -854,11 +911,11 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .imgthumb {
   margin: 0 auto;
   text-align: center;
-  width: 15%;
+  width: 25%;
   height: 50%;
   cursor: pointer;
 }
@@ -880,9 +937,13 @@ export default {
 }
 .errorFormValidate {
   margin-top: 5px !important;
+  margin-bottom: -10px;
 }
 .errorFormValidateHack {
   margin-top: -100px !important;
+}
+.errorFormValidateHack2 {
+    padding-left: 12px;
 }
 .modal-dialog {
   width: fit-content;

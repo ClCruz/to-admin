@@ -55,7 +55,8 @@ function save(id_to_admin_user, id_base,id_produtor
     ,ValIngresso,description,meta_description
     ,meta_keyword,opening_time,insurance_policy
     ,showInBanner,bannerDescription,QtIngrPorPedido
-    ,in_obriga_cpf,qt_ingressos_por_cpf) {
+    ,in_obriga_cpf,qt_ingressos_por_cpf
+    ,imagechanged,imagebase64) {
 
     let url = config.api + `/v1/admin/event/save`;
 
@@ -67,6 +68,7 @@ function save(id_to_admin_user, id_base,id_produtor
         ,meta_keyword,opening_time,insurance_policy
         ,showInBanner,bannerDescription,QtIngrPorPedido
         ,in_obriga_cpf,qt_ingressos_por_cpf
+        ,imagechanged,imagebase64
     };
 
     console.log(obj);
