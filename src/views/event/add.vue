@@ -1,10 +1,7 @@
 <template>
     <div v-if="mayIsee">
-      <b-modal ref="presentationModal" hide-footer title="Apresentação">
-        <div class="d-block text-center">
-          <h4>Apresentação</h4>
-        </div>
-        <dateadd :key="id" ref="dateadd" v-bind:id="id"></dateadd>
+      <b-modal ref="presentationModal" class="mymodal" hide-footer title="Apresentação">
+        <dateadd :key="id" ref="dateadd" v-bind:id="id" v-bind:id_base="base"></dateadd>
         <b-btn class="mt-3" variant="outline-info" block @click="presentationClose">Fechar</b-btn>
       </b-modal>
 
@@ -492,6 +489,7 @@ export default {
     },
     presentationOpen() {
       this.$refs.presentationModal.show();
+      this.$refs.dateadd.populateGrid();
     },
     presentationClose() {
       this.$refs.presentationModal.hide();
@@ -947,6 +945,7 @@ export default {
 }
 .modal-dialog {
   width: fit-content;
-  max-width: 90vw;
+  max-width: 740px !important;
+  width: 740px !important
 }
 </style>
