@@ -47,6 +47,7 @@ import VueHead from 'vue-head';
 import config from "@/config";
 import { func } from "@/functions";
 import { presentationService } from '../../components/common/services/presentation';
+import moment from 'moment';
 
 import VueCtkDateTimePicker from 'vue-ctk-date-time-picker';
 
