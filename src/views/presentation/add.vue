@@ -148,5 +148,11 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
+
+.modal-dialog {
+  width: fit-content;
+  max-width: 960px !important;
+  width: 960px !important
+}
 </style>
