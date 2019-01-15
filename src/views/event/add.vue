@@ -2,7 +2,6 @@
     <div v-if="mayIsee">
       <b-modal ref="presentationModal" class="mymodal" hide-footer title="Apresentação">
         <dateadd :key="id" ref="dateadd" v-bind:id="id" v-bind:id_base="base"></dateadd>
-        <b-btn class="mt-3" variant="outline-info" block @click="presentationClose">Fechar</b-btn>
       </b-modal>
 
       <b-container>
