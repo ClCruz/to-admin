@@ -42,6 +42,18 @@ const adminUserAdd = resolve => {
   }, 'admin-user');
 };
 
+// partner
+const adminPartnerList = resolve => {
+  require.ensure(['./views/partner/list.vue'], () => {
+    resolve(require('./views/partner/list.vue'));
+  }, 'admin-partner');
+};
+const adminPartnerAdd = resolve => {
+  require.ensure(['./views/partner/add.vue'], () => {
+    resolve(require('./views/partner/add.vue'));
+  }, 'admin-partner');
+};
+
 // producer
 const adminProducerList = resolve => {
   require.ensure(['./views/producer/list.vue'], () => {
@@ -119,102 +131,121 @@ export default new Router({
     {
       path: '/user/list',
       name: 'user-list',
-      component: adminUserList //import( /* webpackChunkName: "about" */ './views/login.vue')
+      component: adminUserList
     },
     {
       path: '/user/add',
       name: 'user-add',
-      component: adminUserAdd //import( /* webpackChunkName: "about" */ './views/login.vue')
+      component: adminUserAdd
     },
     {
       path: '/user/edit/:id',
       name: 'user-edit',
       props: true,
-      component: adminUserAdd //import( /* webpackChunkName: "about" */ './views/login.vue')
+      component: adminUserAdd
+    },
+    //------
+    //------
+    //partner
+    {
+      path: '/partner/list',
+      name: 'partner-list',
+      component: adminPartnerList
+    },
+    {
+      path: '/partner/add',
+      name: 'partner-add',
+      component: adminPartnerAdd
+    },
+    {
+      path: '/partner/edit/:id',
+      name: 'partner-edit',
+      props: true,
+      component: adminPartnerAdd
     },
     //------
     //EVENT
     {
       path: '/event/list',
       name: 'event-list',
-      component: adminEventList //import( /* webpackChunkName: "about" */ './views/login.vue')
+      component: adminEventList
     },
     {
       path: '/event/add',
       name: 'event-add',
-      component: adminEventAdd //import( /* webpackChunkName: "about" */ './views/login.vue')
+      component: adminEventAdd
     },
     {
       path: '/event/edit/:id/:base',
       name: 'event-edit',
       props: true,
-      component: adminEventAdd //import( /* webpackChunkName: "about" */ './views/login.vue')
+      component: adminEventAdd
     },
     //------
     //PRODUCER
     {
       path: '/producer/list',
       name: 'producer-list',
-      component: adminProducerList //import( /* webpackChunkName: "about" */ './views/login.vue')
+      component: adminProducerList
     },
     {
       path: '/producer/add',
       name: 'producer-add',
-      component: adminProducerAdd //import( /* webpackChunkName: "about" */ './views/login.vue')
+      component: adminProducerAdd
     },
     {
       path: '/producer/edit/:id',
       name: 'producer-edit',
       props: true,
-      component: adminProducerAdd //import( /* webpackChunkName: "about" */ './views/login.vue')
+      component: adminProducerAdd
     },
     //------
     //GENRE
     {
       path: '/place/list',
       name: 'place-list',
-      component: adminPlaceList //import( /* webpackChunkName: "about" */ './views/login.vue')
+      component: adminPlaceList
     },
     {
       path: '/place/add',
       name: 'place-add',
-      component: adminPlaceAdd //import( /* webpackChunkName: "about" */ './views/login.vue')
+      component: adminPlaceAdd
     },
     {
       path: '/place/edit/:id',
       name: 'place-edit',
       props: true,
-      component: adminPlaceAdd //import( /* webpackChunkName: "about" */ './views/login.vue')
+      component: adminPlaceAdd
     },
     //------
     //PLACE
     {
       path: '/genre/list',
       name: 'genre-list',
-      component: adminGenreList //import( /* webpackChunkName: "about" */ './views/login.vue')
+      component: adminGenreList
     },
     {
       path: '/genre/add',
       name: 'genre-add',
-      component: adminGenreAdd //import( /* webpackChunkName: "about" */ './views/login.vue')
+      component: adminGenreAdd
     },
     {
       path: '/genre/edit/:id',
       name: 'genre-edit',
       props: true,
-      component: adminGenreAdd //import( /* webpackChunkName: "about" */ './views/login.vue')
+      component: adminGenreAdd
     },
     //------
     //MY
     {
       path: '/my/info',
       name: 'my-info',
-      component: adminMyInfo //import( /* webpackChunkName: "about" */ './views/login.vue')
+      component: adminMyInfo
     },
     {
       path: '/my/pass',
       name: 'my-pass',
-      component: adminMyPass //import( /* webpackChunkName: "about" */ './views/login.vue')
+      component: adminMyPass
     },
     //------
     {path: '*', redirect: '/'}

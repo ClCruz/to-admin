@@ -24,6 +24,12 @@ export const func = {
         }
     },
     methods: {
+        gotoFarFromHome(uri) {
+            if (!uri.startsWith("http")) {
+                uri = "https://"+uri;
+            }
+            window.open(uri, '_blank');
+        },
         goHome() {
             this.$router.push("/");
         },

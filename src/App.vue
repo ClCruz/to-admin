@@ -187,6 +187,25 @@ export default {
           ]
         },
         {
+          title: 'Parceiros',
+          icon: 'far fa-handshake',
+          code: 'partner-viewer',
+          child: [
+            {
+              href: '/partner/add',
+              title: 'Adicionar',
+              icon: 'fas fa-plus',
+              code: 'partner-add'
+            },
+            {
+              href: '/partner/list',
+              title: 'Listar',
+              icon: 'fas fa-th-list',
+              code: 'partner-viewer',//'usr-viewer'
+            },
+          ]
+        },
+        {
           title: 'Eventos',
           icon: 'fas fa-puzzle-piece',
           code: 'all',
