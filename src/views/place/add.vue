@@ -11,13 +11,13 @@
 
         <b-row>
           <b-col>
-              <b-row>
+              <b-row class="mb-3">
                   <b-input-group size="sm">
                       <b-input-group-prepend is-text class="firstLabel">
                           Nome:
                       </b-input-group-prepend>
                       <b-form-input id="name"
-                                  class="mb-3"
+                                  
                                   type="text"
                                   name="name"
                                   maxlength="100"
@@ -26,60 +26,60 @@
                       </b-form-input>
                   </b-input-group>
               </b-row>
-              <b-row>
+              <b-row class="mb-3">
                   <b-input-group size="sm">
                       <b-input-group-prepend is-text class="firstLabel">
                           Estado:
                       </b-input-group-prepend>
-                      <b-form-select v-on:change="selState" v-model="form.id_estado" :options="selects.state" class="mb-3" size="sm" />
+                      <b-form-select v-on:change="selState" v-model="form.id_estado" :options="selects.state" size="sm" />
                   </b-input-group>
               </b-row>
-              <b-row>
+              <b-row class="mb-3">
                   <b-input-group size="sm">
                       <b-input-group-prepend is-text class="firstLabel">
                           Cidade:
                       </b-input-group-prepend>
-                      <b-form-select v-model="form.id_municipio" :options="selects.city" class="mb-3" size="sm" />
+                      <b-form-select v-model="form.id_municipio" :options="selects.city" size="sm" />
                   </b-input-group>
               </b-row>
-              <b-row>
+              <b-row class="mb-3">
                   <b-input-group size="sm">
                       <b-input-group-prepend is-text class="firstLabel">
                           Tipo:
                       </b-input-group-prepend>
-                      <b-form-select v-model="form.id_tipo_local" :options="selects.placetype" class="mb-3" size="sm" />
+                      <b-form-select v-model="form.id_tipo_local" :options="selects.placetype" size="sm" />
                   </b-input-group>
               </b-row>
-              <b-row>
+              <b-row class="mb-3">
                   <b-input-group size="sm">
                       <b-input-group-prepend is-text class="firstLabel">
                           Endereço:
                       </b-input-group-prepend>
                       <b-form-input id="name"
                                   type="text"
-                                  class="mb-3"
+                                
                                   name="name"
                                   maxlength="600"
                                   v-model="form.ds_googlemaps"
                                   placeholder="Digite o endereço">
                       </b-form-input>
-                      <b-button type="button" variant="outline-info" size="sm"  class="mb-3" @click="openMaps">
+                      <b-button type="button" variant="outline-info" size="sm"  @click="openMaps">
                         <span>Ver no Google Maps</span>
                       </b-button>
                   </b-input-group>
               </b-row>
-              <b-row>
+              <b-row class="mb-3">
                   <b-input-group size="sm">
                       <b-form-checkbox id="active"
                                       v-model="form.in_ativo"
-                                      class="mb-3"
+                                    
                                       value="1">
                       <span v-if="form.in_ativo == 1">Ativo</span>
                       <span v-else>Inativo</span>
                       </b-form-checkbox>
                   </b-input-group>
               </b-row>
-              <b-row>
+              <b-row class="mb-3">
                 <b-button type="button" variant="success" size="sm" @click="save">
                   <v-wait for="inprocess">
                       <template slot="waiting">
@@ -116,7 +116,7 @@ Vue.use(VueHead);
 export default {
   mixins: [func],
   props: ['id'],
-  name: 'genre-add',
+  name: 'place-add',
   head: {
     title: function () {
       return { 
@@ -135,7 +135,7 @@ export default {
   },
   computed: {
     mayIsee() {
-      return this.mayI('genre-add', 'genre-viewer');
+      return this.mayI('place-add', 'place-viewer');
     },
     typeOf() {
       return this.isAdd ? "Adicionar" : "Alterar";
@@ -259,12 +259,14 @@ export default {
           this.hideWaitAboveAll();
           this.$wait.end("inprocess");
 
+          //debugger;
+
           if (this.validateJSON(response))
           {
-              this.form.loaded = this.validateJSONisNotEmpty(response);
+            this.form.loaded = this.validateJSONisNotEmpty(response);
               if (this.form.loaded) {
                 this.form.ds_local_evento = response.ds_local_evento;
-                this.form.ds_googlemaps = response.ds_googlemaps;
+                this.form.ds_googlemaps = response.ds_googlemaps == null ? "" : response.ds_googlemaps;
                 this.form.in_ativo = response.in_ativo;
                 this.form.id_municipio = response.id_municipio;
                 this.form.id_tipo_local = response.id_tipo_local;

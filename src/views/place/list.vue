@@ -55,8 +55,14 @@
 
               <template slot="actions" slot-scope="data">
                   <span v-if="!mayI('place-add')">-</span>
-                  <b-button-group size="sm" v-if="mayI('place-add')">
-                      <b-button title="Editar" v-if="mayI('place-add')" @click.stop="edit(data.item,$event.target)">Editar</b-button>
+                  <b-button-group size="sm" v-if="mayI('place-add', 'place-link')">
+                      <b-button title="Editar" variant="secondary" v-if="mayI('place-add')" @click.stop="edit(data.item,$event.target)">Editar</b-button>
+                      <b-button title="Vincular" variant="outline-warning" v-if="mayI('place-link') && data.item.linked == 0" @click.stop="link(data.item,$event.target)">
+                        Vincular
+                      </b-button>
+                      <b-button title="Desvincular" variant="warning" v-if="mayI('place-link') && data.item.linked == 1" @click.stop="link(data.item,$event.target)">
+                        Desvincular
+                      </b-button>
                   </b-button-group>
               </template>
           </b-table>
@@ -96,6 +102,36 @@ export default {
     }
   },
   methods: {
+    link(item) {
+      if (this.processing) return;
+      this.processing = true;
+
+      this.showWaitAboveAll();
+      placeService.link(this.getLoggedId(), item.id_local_evento).then(
+        response => {
+          this.processing = false;
+          this.hideWaitAboveAll();
+
+          if (this.validateJSON(response))
+          {
+            if (response.success) {
+                if (item.linked == 0) {
+                  this.toastSuccess("Vinculado com sucesso.");
+                }
+                else {
+                  this.toastSuccess("Desvinculado com sucesso.");
+                }
+                this.search();
+            }
+          }
+        },
+        error => {
+          this.processing = false;
+          this.hideWaitAboveAll();
+          this.toastError("Falha na execução.");
+        }
+      );      
+    },
     edit(item) {
       this.$router.push(`/place/edit/${item.id_local_evento}`);
     },
@@ -148,7 +184,7 @@ export default {
           search: '',
           id_city: '',
           id_state: '',
-          in_ativo: ''
+          in_ativo: 1
         },
         grids: {
             place: {

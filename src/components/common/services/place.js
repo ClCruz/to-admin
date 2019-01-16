@@ -11,6 +11,7 @@ export const placeService = {
   save,
   get,
   select,
+  link,
 }
 
 function select(id_municipio) {
@@ -74,6 +75,29 @@ function save(loggedId, id_local_evento, ds_local_evento, ds_googlemaps, in_ativ
   );
   return ret;
 }
+
+
+function link(loggedId, id_local_evento) {
+    let url = config.api + `/v1/admin/place/link`;
+  
+    let obj = {
+        id_user: loggedId, id_local_evento
+    };
+  
+    var ret = new Promise(
+        function (resolve, reject) {
+            Vue.http.post(url, obj, { emulateJSON: true }).then(res => {
+                resolve(res.body);
+            }, err => {
+                reject({
+                    error: true,
+                    msg: err
+                });
+            });    
+        }
+    );
+    return ret;
+  }
 
 function list(search, id_state, id_city, in_ativo, currentPage, perPage) {
   let url = config.api + `/v1/admin/place/list?&search=${search}&id_state=${id_state}&id_city=${id_city}&in_ativo=${in_ativo}`;

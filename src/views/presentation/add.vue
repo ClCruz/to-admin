@@ -76,7 +76,7 @@
         </b-row>
         <b-row>
           <b-col>
-            <b-collapse v-model="form.collapseGeneratedDays" id="collapse1" class="mt-2">
+            <b-collapse v-model="grids.added.loaded" id="collapse1" class="mt-2">
                 <h4>Dias gerados:</h4>
                 <b-row>
                     <b-col>
@@ -92,18 +92,11 @@
                               :items="grids.added.items"
                               :fields="grids.added.fields">
 
-                          <template slot="imageURI" slot-scope="data">
-                            <img :src="data.item.imageURI" style="width:80px; max-width:80%" />
-                          </template>
-                          <template slot="ds_municipio" slot-scope="data">
-                              {{data.item.ds_municipio}}/{{data.item.sg_estado}}
-                          </template>
 
                           <template slot="actions" slot-scope="data">
                               <span v-if="!mayI('ev-add')">-</span>
                               <b-button-group size="sm" v-if="mayI('ev-add')">
-                                  <b-button title="Editar" v-if="mayI('ev-add')" @click.stop="edit(data.item,$event.target)">Editar</b-button>
-                                  <b-button title="Datas" v-if="mayI('ev-add')" @click.stop="datas(data.item,$event.target)">Datas</b-button>
+                                  <b-button title="Editar" v-if="mayI('ev-add')" @click.stop="edit(data.item,$event.target)">Remover</b-button>
                               </b-button-group>
                           </template>
                       </b-table>
@@ -198,9 +191,6 @@ export default {
     },
     today() {
       return new Date().toString();
-    },
-    collapseGeneratedDays() {
-      return grids.added.items.length > 0;
     }
   },
   methods: {
@@ -209,50 +199,79 @@ export default {
     },
     addnewsession() {
       Vue.nextTick().then(response => {
-        let weekday = 0;
-        let weekdayName = "";
+        let howmanytoadd = 0;
+        let do_mon = false, do_tue = false, do_wed = false, do_thu = false, do_fri = false, do_sat = false, do_sun = false;
+        do_mon = this.form.weekday.mon;
+        do_tue = this.form.weekday.tue;
+        do_wed = this.form.weekday.wed;
+        do_thu = this.form.weekday.thu;
+        do_fri = this.form.weekday.fri;
+        do_sat = this.form.weekday.sat;
+        do_sun = this.form.weekday.sun;
 
-        if (this.form.weekday.mon) {
-          weekday = 2;
-          weekdayName = "Segunda";
-        }
-        if (this.form.weekday.mon) {
-          weekday = 3;
-          weekdayName = "Terça";
-        }
-        if (this.form.weekday.mon) {
-          weekday = 4;
-          weekdayName = "Quarta";
-        }
-        if (this.form.weekday.mon) {
-          weekday = 5;
-          weekdayName = "Quinta";
-        }
-        if (this.form.weekday.mon) {
-          weekday = 6;
-          weekdayName = "Sexta";
-        }
-        if (this.form.weekday.mon) {
-          weekday = 0;
-          weekdayName = "Sabado";
-        }
-        if (this.form.weekday.mon) {
-          weekday = 1;
-          weekdayName = "Domingo";
-        }
+        howmanytoadd = (do_mon ? 1 : 0) + 
+                        (do_tue ? 1 : 0) +
+                        (do_wed ? 1 : 0) +
+                        (do_thu ? 1 : 0) +
+                        (do_fri ? 1 : 0) +
+                        (do_sat ? 1 : 0) +
+                        (do_sun ? 1 : 0)
 
-        let obj = {
-          codSala: this.form.codSala,
-          codApresentacao: this.form.codApresentacao,
-          weekdayName,
-          weekday,
-          ValPeca: this.form.amount,
-          HorSessao: `${this.form.sessionTime.HH}:${this.form.sessionTime.mm}`,
-          dateStart: this.form.selectedDate.start,
-          dateEnd: this.form.selectedDate.end,
-        };
-        debugger;
-        this.grids.added.items.push(obj);
+        for (let index = 1; index <= howmanytoadd; index++) {
+          let weekday = 0;
+          let weekdayName = "";
+
+          if (do_mon) {
+            weekday = 2;
+            weekdayName = "Segunda";
+            do_mon = false;
+          }
+          if (do_tue && weekday == 0) {
+            weekday = 3;
+            weekdayName = "Terça";
+            do_tue = false;
+          }
+          if (do_wed && weekday == 0) {
+            weekday = 4;
+            weekdayName = "Quarta";
+            do_wed = false;
+          }
+          if (do_thu && weekday == 0) {
+            weekday = 5;
+            weekdayName = "Quinta";
+            do_thu = false;
+          }
+          if (do_fri && weekday == 0) {
+            weekday = 6;
+            weekdayName = "Sexta";
+            do_fri = false;
+          }
+          if (do_sat && weekday == 0) {
+            weekday = 0;
+            weekdayName = "Sabado";
+            do_sat = false;
+          }
+          if (do_sun && weekday == 0) {
+            weekday = 1;
+            weekdayName = "Domingo";
+            do_sun = false;
+          }
+
+          let obj = {
+            codSala: this.form.codSala,
+            codApresentacao: this.form.codApresentacao,
+            weekdayName,
+            weekday,
+            ValPeca: this.form.amount,
+            HorSessao: `${this.form.sessionTime.HH}:${this.form.sessionTime.mm}`,
+            dateStart: this.form.selectedDate.start,
+            dateEnd: this.form.selectedDate.end,
+          };
+          this.grids.added.items.push(obj);
+          
+        }
+        
+        this.grids.added.loaded = true;
       });
     },
     removeAdded() {
@@ -427,11 +446,11 @@ export default {
             },
             format: 'DD/MM/YYYY',
             presetRanges: {
-              today: function () { debugger; return { label: "Hoje", active: false, dateRange: { start: moment().startOf('day').toDate(), end: moment().endOf('day').toDate() } }; },
-              thisMonth: function () {  return { label: "5 dias", active: false, dateRange: { start: moment().startOf('day').toDate(), end: moment().endOf('day').add(5, "days").toDate() } }; },
-              lastMonth: function () { return {  label: '1 semana', active: false, dateRange: { start: moment().startOf('day').toDate(), end: moment().endOf('day').add(1, "week").toDate() } }; },
-              last7days: function () { return {  label: '1 mês', active: false, dateRange: { start: moment().startOf('day').toDate(), end: moment().endOf('day').add(1, "month").toDate() } }; },
-              last30days: function () { return {  label: '2 meses', active: false, dateRange: { start: moment().startOf('day').toDate(), end: moment().endOf('day').add(2, "month").toDate() } }; },
+              today: function () { return { label: "Hoje", active: false, dateRange: { start: moment().startOf('day').add('days', 1).toDate(), end: moment().endOf('day').add('days', 1).toDate() } }; },
+              thisMonth: function () {  return { label: "5 dias", active: false, dateRange: { start: moment().startOf('day').add('days', 1).toDate(), end: moment().endOf('day').add('days', 1).add(5, "days").toDate() } }; },
+              lastMonth: function () { return {  label: '1 semana', active: false, dateRange: { start: moment().startOf('day').add('days', 1).toDate(), end: moment().endOf('day').add('days', 1).add(1, "week").toDate() } }; },
+              last7days: function () { return {  label: '1 mês', active: false, dateRange: { start: moment().startOf('day').add('days', 1).toDate(), end: moment().endOf('day').add('days', 1).add(1, "month").toDate() } }; },
+              //  last30days: function () { return {  label: '2 meses', active: false, dateRange: { start: moment().startOf('day').toDate(), end: moment().endOf('day').add(2, "month").toDate() } }; },
             } 
           }
         },
