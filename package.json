@@ -28,7 +28,6 @@
     "vue-moment": "^4.0.0",
     "vue-picture-input": "^2.1.6",
     "vue-quill-editor": "^3.0.6",
-    "vue-rangedate-picker": "^0.3.4",
     "vue-resource": "^1.5.1",
     "vue-router": "^3.0.1",
     "vue-sidebar-menu": "^2.4.1",
