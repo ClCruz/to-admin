@@ -44,6 +44,13 @@
                   :items="grids.partners.items"
                   :fields="grids.partners.fields">
 
+              <template slot="isDemo" slot-scope="data">
+                  <span v-b-tooltip.hover title="Cliente Ativo e produtivo" v-if="data.item.isDemo == 0 && data.item.isTrial == 0 && data.item.isDev == 0"><i class="fas fa-user-tie"></i></span>
+                  <span v-b-tooltip.hover title="Cliente de trial" v-if="data.item.isDemo == 0 && data.item.isTrial == 1 && data.item.isDev == 0"><i class="fas fa-user-ninja"></i></span>
+                  <span v-b-tooltip.hover title="Cliente de demonstração" v-if="data.item.isDemo == 1 && data.item.isTrial == 0 && data.item.isDev == 0"><i class="fas fa-user-astronaut"></i></span>
+                  <span v-b-tooltip.hover title="Ambiente de desenvolvimento" v-if="data.item.isDev == 1"><i class="fas fa-skiing"></i></span>
+              </template>
+
               <template slot="dateStart" slot-scope="data">
                   <span v-if="data.item.dateEnd != ''"> {{data.item.dateStart}} Até {{data.item.dateEnd}}</span>
                   <span v-b-tooltip.hover title="Sem previsão de termino." v-else>Iniciado em {{data.item.dateStart}}</span>
@@ -174,6 +181,7 @@ export default {
                 perPage: 10,
                 items: [],
                 fields: {
+                    isDemo: { label: 'Tipo', sortable: false },
                     name: { label: 'Nome', sortable: false },
                     domain: { label: 'Domínio', sortable: false },
                     dateStart: { label: 'Data Validade', sortable: false },

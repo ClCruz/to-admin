@@ -1,12 +1,12 @@
 <template>
   <div v-if="!isAuth">
     <b-container>
-      <b-row cols="2">
+      <b-row cols="2" class="mb-3">
         <b-input-group prepend="Login">
           <b-form-input v-model="login" @keyup.enter.native="doLogin" maxlength="100"></b-form-input>
         </b-input-group>
       </b-row>
-      <b-row>
+      <b-row class="mb-3">
         <b-input-group prepend="Senha">
             <b-form-input @keyup.enter.native="doLogin" v-model="password" :type="passwordType"  maxlength="50"></b-form-input>
         </b-input-group>

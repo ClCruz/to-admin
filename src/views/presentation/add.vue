@@ -18,8 +18,6 @@
           <b-col>
             <b-collapse v-model="form.collapseDays" id="collapse1" class="mt-2">
                 <h3>Qual os dias?</h3>
-                <vue-rangedate-picker class="mx-auto mx-0 centerforme" @selected="onDateSelected" :presetRanges="components.datepicker.presetRanges" :format="components.datepicker.format" :months="components.datepicker.months" :shortDays="components.datepicker.shortDays" :captions="components.datepicker.captions" i18n="EN">
-                </vue-rangedate-picker>
             </b-collapse>
           </b-col>
         </b-row>
@@ -148,19 +146,17 @@
 import Vue from "vue";
 import VueHead from 'vue-head';
 import config from "@/config";
+import Moment from 'moment';
+import VueTimepicker from 'vue2-timepicker';
+import { VMoney } from 'v-money';
+import { extendMoment } from 'moment-range';
 import { func } from "@/functions";
 import { presentationService } from '../../components/common/services/presentation';
 import { roomService } from '../../components/common/services/room';
-import Moment from 'moment';
-import { extendMoment } from 'moment-range';
-import VueRangedatePicker from 'vue-rangedate-picker';
-import VueTimepicker from 'vue2-timepicker';
-import { VMoney } from 'v-money';
 
 
 const moment = extendMoment(Moment);
 
-Vue.use(VueRangedatePicker);
 Vue.use(VueTimepicker);
 
 Vue.use(VueHead);
@@ -169,7 +165,7 @@ export default {
   mixins: [func],
   props: ['id', 'id_base'],
   directives: {money: VMoney},
-  components: { VueTimepicker, VueRangedatePicker },
+  components: { VueTimepicker },
   name: 'pres-add',
   head: {
     title: function () {

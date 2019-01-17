@@ -25,6 +25,7 @@
     "vue": "^2.5.17",
     "vue-clipboard2": "^0.2.1",
     "vue-head": "^2.1.0",
+    "vue-hotel-datepicker": "^2.7.1",
     "vue-moment": "^4.0.0",
     "vue-picture-input": "^2.1.6",
     "vue-quill-editor": "^3.0.6",
