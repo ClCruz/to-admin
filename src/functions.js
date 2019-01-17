@@ -3,6 +3,7 @@ import Vue from 'vue';
 import VueResource from "vue-resource";
 import { getInfo } from 'localStorage-info';
 import SecureLS from 'secure-ls';
+import moment from 'moment';
 
 import { authService } from "./components/common/services/auth";
 
@@ -24,6 +25,30 @@ export const func = {
         }
     },
     methods: {
+        debugger() {
+            debugger;
+        },
+        validateLoginForMe() {
+            let ret = false;
+            if (this.getLoggedId()!='' && this.getLoggedId() != null) {
+                let lastcheck = this.ls_get('lastcheck');
+                if (lastcheck == null || lastcheck == undefined || lastcheck == '' || (moment(lastcheck).isValid() && moment(lastcheck).toDate() <= moment().toDate()) ) {
+        
+                    authService.revalid(this.getLoggedId()).then(response => {
+                        if (response.valid) {
+                            debugger;
+                            this.ls_add("lastcheck", moment().add(10,'minutes').format("YYYY-MM-DD HH:mm"));                           
+                        } else {
+                            localStorage.clear();
+                            window.location.reload(true);
+                        }
+                    }, error => { });
+                }
+                ret = true;
+            }
+
+            return ret;
+        },
         gotoFarFromHome(uri) {
             if (!uri.startsWith("http")) {
                 uri = "https://"+uri;

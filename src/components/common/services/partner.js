@@ -10,8 +10,31 @@ export const partnerService = {
   list,
   get,
   save,
+  regen
 }
+function regen(loggedId,id, keyTo) {
+    let url = config.api + `/v1/admin/partner/gen`;
 
+    let obj = {
+        id_user: loggedId
+        ,id
+        ,keyTo
+    };
+
+    var ret = new Promise(
+        function (resolve, reject) {
+            Vue.http.post(url, obj, { emulateJSON: true }).then(res => {
+                resolve(res.body);
+            }, err => {
+                reject({
+                    error: true,
+                    msg: err
+                });
+            });    
+        }
+    );
+    return ret;
+}
 function save(loggedId,id, name, domain, dateStart, dateEnd, type, active) {
     let url = config.api + `/v1/admin/partner/save`;
 

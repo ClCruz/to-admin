@@ -78,7 +78,7 @@
                             v-clipboard:success="clipboardSuccess"
                             v-clipboard:error="clipboardError"><i class="fas fa-key"></i></span>
                       </b-input-group-prepend>
-                      <b-input-group-append>
+                      <b-input-group-append v-if="mayIregen">
                           <b-btn variant="outline-danger" @click="regenerateNewKey">Criar nova?</b-btn>
                       </b-input-group-append>
                   </b-input-group>
@@ -95,7 +95,7 @@
                             v-clipboard:success="clipboardSuccess"
                             v-clipboard:error="clipboardError"><i class="fas fa-key"></i></span>
                       </b-input-group-prepend>
-                      <b-input-group-append>
+                      <b-input-group-append v-if="mayIregen">
                           <b-btn variant="outline-danger" @click="regenerateNewKeyTest">Criar nova?</b-btn>
                       </b-input-group-append>
                   </b-input-group>
@@ -168,11 +168,16 @@ export default {
     },
   },
   created() {
-    if (!this.isAdd) {
-      this.get();
-    }
+    Vue.nextTick().then(response => {
+      if (!this.isAdd) {
+        this.get();
+      }
+    });
   },
   computed: {
+    mayIregen() {
+      return this.mayI('partner-regen');
+    },
     mayIsee() {
       return this.mayI('partner-add', 'partner-viewer');
     },
@@ -185,10 +190,10 @@ export default {
   },
   methods: {
     startchanged(date) {
-      this.form.selectedDate.start = moment(date).format("YYYY-MM-DD");
+      this.form.selectedDate.start = moment(date).isValid() ? moment(date).format("YYYY-MM-DD") : '';
     },
     endchanged(date) {
-      this.form.selectedDate.end = moment(date).format("YYYY-MM-DD");
+      this.form.selectedDate.end = moment(date).isValid() ? moment(date).format("YYYY-MM-DD") : '';
     },
     regenerateNewKey() {
       this.$swal({
@@ -202,6 +207,36 @@ export default {
         html: "Deseja realmente gerar uma nova chave de API? <p><small>(A antiga irá parar de funcionar no momento.)</small></p>",
       }).then((result) => {
         if (result.value) {
+          if (this.processing) return;
+
+          this.processing = true;
+
+          this.$wait.start("inprocessSave");
+          this.showWaitAboveAll();
+          partnerService.regen(this.getLoggedId(), this.id, "prod").then(
+            response => {
+              this.processing = false;
+              this.hideWaitAboveAll();
+              this.$wait.end("inprocessSave");
+
+              if (this.validateJSON(response))
+              {
+                if (response.success) {
+                  this.toastSuccess("Chave gerada com sucesso");
+                  this.get();
+                }
+                else {
+                  this.toastError(response.msg);
+                }
+              }
+            },
+            error => {
+              this.processing = false;
+              this.hideWaitAboveAll();
+              this.$wait.end("inprocessSave");
+              this.toastError("Falha na execução.");
+            }
+          );      
         }
         else if (result.dismiss === this.$swal.DismissReason.cancel) {
         }
@@ -219,6 +254,36 @@ export default {
         html: "Deseja realmente gerar uma nova chave de API? <p><small>(A antiga irá parar de funcionar no momento.)</small></p>",
       }).then((result) => {
         if (result.value) {
+          if (this.processing) return;
+
+          this.processing = true;
+
+          this.$wait.start("inprocessSave");
+          this.showWaitAboveAll();
+          partnerService.regen(this.getLoggedId(), this.id, "test").then(
+            response => {
+              this.processing = false;
+              this.hideWaitAboveAll();
+              this.$wait.end("inprocessSave");
+
+              if (this.validateJSON(response))
+              {
+                if (response.success) {
+                  this.toastSuccess("Chave gerada com sucesso");
+                  this.get();
+                }
+                else {
+                  this.toastError(response.msg);
+                }
+              }
+            },
+            error => {
+              this.processing = false;
+              this.hideWaitAboveAll();
+              this.$wait.end("inprocessSave");
+              this.toastError("Falha na execução.");
+            }
+          );      
         }
         else if (result.dismiss === this.$swal.DismissReason.cancel) {
         }
@@ -243,7 +308,7 @@ export default {
 
       this.$wait.start("inprocessSave");
       this.showWaitAboveAll();
-      partnerService.save(this.isAdd ? '' : this.id, this.form.name, this.form.login, this.form.email, this.form.document, this.form.active).then(
+      partnerService.save(this.getLoggedId(), this.isAdd ? '' : this.id, this.form.name, this.form.domain, this.form.selectedDate.start, this.form.selectedDate.end, this.form.type, this.form.active).then(
         response => {
           this.processing = false;
           this.hideWaitAboveAll();

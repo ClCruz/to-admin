@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import Home from './views/Home.vue';
 import store from './store';
+import { func } from './functions';
 
 Vue.use(Router);
 
@@ -102,8 +102,7 @@ const adminMyPass = resolve => {
   }, 'admin-my');
 };
 
-
-export default new Router({
+const obj = new Router({
   mode: 'history',
   base: process.env.BASE_URL,
   routes: [
@@ -253,4 +252,25 @@ export default new Router({
   scrollBehavior (to, from, savedPosition) {
     return { x: 0, y: 0 }
   }
+});
+
+obj.beforeEach((to, from, next) => {
+  let doNext = false;
+  switch (to) {
+    case "login":
+    case "home":
+    case "logout":
+      doNext = true;
+    break;
+    default:
+        doNext = true;
+        func.methods.validateLoginForMe();
+    break;
+  }
+  
+  if (doNext) {
+    next();
+  }
 })
+
+export default obj;
