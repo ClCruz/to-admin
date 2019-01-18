@@ -125,6 +125,9 @@ export default {
     clipboardError() {
       this.toastError("Erro ao tentar copiar.");
     },
+    whitelabel(item) {
+      this.$router.push(`/partner/whitelabel/${item.id}`);
+    },
     edit(item) {
       this.$router.push(`/partner/edit/${item.id}`);
     },

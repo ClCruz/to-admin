@@ -53,6 +53,11 @@ const adminPartnerAdd = resolve => {
     resolve(require('./views/partner/add.vue'));
   }, 'admin-partner');
 };
+const adminPartnerWhitelabel = resolve => {
+  require.ensure(['./views/partner/whitelabel.vue'], () => {
+    resolve(require('./views/partner/whitelabel.vue'));
+  }, 'admin-partner');
+};
 
 // producer
 const adminProducerList = resolve => {
@@ -161,6 +166,12 @@ const obj = new Router({
       name: 'partner-edit',
       props: true,
       component: adminPartnerAdd
+    },
+    {
+      path: '/partner/whitelabel/:id',
+      name: 'partner-whitelabel',
+      props: true,
+      component: adminPartnerWhitelabel
     },
     //------
     //EVENT

@@ -20,6 +20,24 @@
                   <div class="errorFormValidate" v-if="!$v.form.name.required">Campo é obrigatório</div>
               </b-row>
               <b-row class="mb-3">
+                  <b-input-group size="sm" v-b-tooltip.hover title="Atenção esse nome deve ser único e não pode ser alterado após criação." >
+                      <b-input-group-prepend is-text v-bind:class="{ errorFormValidateLabel: ($v.form.uniquename.$invalid) }">
+                          Nome único:
+                      </b-input-group-prepend>
+                      <b-form-input id="uniquename"
+                                  :disabled="!isAdd"
+                                  type="text"
+                                  name="uniquename"
+                                  v-bind:class="{ errorFormValidateInput: ($v.form.uniquename.$invalid) }"
+                                  v-mask="'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'"
+                                  maxlength="400"
+                                  v-model="form.uniquename"
+                                  placeholder="Digite o nome único do parceiro">
+                      </b-form-input>
+                  </b-input-group>
+                  <div class="errorFormValidate" v-if="!$v.form.uniquename.required">Campo é obrigatório</div>
+              </b-row>
+              <b-row class="mb-3">
                   <b-input-group size="sm">
                       <b-input-group-prepend is-text v-bind:class="{ errorFormValidateLabel: ($v.form.domain.$invalid) }">
                           Domínio:
@@ -28,7 +46,6 @@
                                   type="text"
                                   name="domain"
                                   v-bind:class="{ errorFormValidateInput: ($v.form.domain.$invalid) }"
-                                  v-mask="'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'"
                                   maxlength="800"
                                   v-model="form.domain"
                                   placeholder="Digite o dominio">
@@ -308,7 +325,7 @@ export default {
 
       this.$wait.start("inprocessSave");
       this.showWaitAboveAll();
-      partnerService.save(this.getLoggedId(), this.isAdd ? '' : this.id, this.form.name, this.form.domain, this.form.selectedDate.start, this.form.selectedDate.end, this.form.type, this.form.active).then(
+      partnerService.save(this.getLoggedId(), this.isAdd ? '' : this.id, this.form.uniquename, this.form.name, this.form.domain, this.form.selectedDate.start, this.form.selectedDate.end, this.form.type, this.form.active).then(
         response => {
           this.processing = false;
           this.hideWaitAboveAll();
@@ -359,6 +376,7 @@ export default {
               this.form.loaded = true;
               this.form.id = response.id;
               this.form.name = response.name;
+              this.form.uniquename = response.uniquename;
               this.form.active = response.active,
               this.form.domain = response.domain;
               this.form.type = response.type;
@@ -379,6 +397,7 @@ export default {
     form: {
       name: { required },
       domain: { required },
+      uniquename: { required },
       type: { required },
       selectedDate: {
         start: { required }
@@ -416,6 +435,7 @@ export default {
           id: '',
           name: '',
           active: 1,
+          uniquename: '',
           domain: '',
           type: '',
           key: '',

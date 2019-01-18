@@ -36,7 +36,6 @@ export const func = {
         
                     authService.revalid(this.getLoggedId()).then(response => {
                         if (response.valid) {
-                            debugger;
                             this.ls_add("lastcheck", moment().add(10,'minutes').format("YYYY-MM-DD HH:mm"));                           
                         } else {
                             localStorage.clear();

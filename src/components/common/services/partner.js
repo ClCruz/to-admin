@@ -10,8 +10,57 @@ export const partnerService = {
   list,
   get,
   save,
-  regen
+  regen,
+  getwl,
+  confdb,
+  confdbuser,
 }
+
+function confdb(loggedId,id) {
+    let url = config.api + `/v1/admin/partner/confdb`;
+
+    let obj = {
+        id_user: loggedId
+        ,id
+    };
+
+    var ret = new Promise(
+        function (resolve, reject) {
+            Vue.http.post(url, obj, { emulateJSON: true }).then(res => {
+                resolve(res.body);
+            }, err => {
+                reject({
+                    error: true,
+                    msg: err
+                });
+            });    
+        }
+    );
+    return ret;
+}
+function confdbuser(loggedId,id) {
+    let url = config.api + `/v1/admin/partner/confdbuser`;
+
+    let obj = {
+        id_user: loggedId
+        ,id
+    };
+
+    var ret = new Promise(
+        function (resolve, reject) {
+            Vue.http.post(url, obj, { emulateJSON: true }).then(res => {
+                resolve(res.body);
+            }, err => {
+                reject({
+                    error: true,
+                    msg: err
+                });
+            });    
+        }
+    );
+    return ret;
+}
+
 function regen(loggedId,id, keyTo) {
     let url = config.api + `/v1/admin/partner/gen`;
 
@@ -35,12 +84,13 @@ function regen(loggedId,id, keyTo) {
     );
     return ret;
 }
-function save(loggedId,id, name, domain, dateStart, dateEnd, type, active) {
+function save(loggedId,id, uniquename, name, domain, dateStart, dateEnd, type, active) {
     let url = config.api + `/v1/admin/partner/save`;
 
     let obj = {
         id_user: loggedId
         ,id
+        ,uniquename
         ,name
         ,domain
         ,dateStart
@@ -66,6 +116,24 @@ function save(loggedId,id, name, domain, dateStart, dateEnd, type, active) {
 
 function get(loggedId, id) {
     let url = config.api + `/v1/admin/partner/get?loggedId=${loggedId}&id=${id}`;
+
+    var ret = new Promise(
+    function (resolve, reject) {
+        Vue.http.get(url).then(res => {
+        resolve(res.body);
+        }, err => {
+        reject({
+            error: true,
+            msg: err
+        });
+        });
+    }
+  );
+  return ret;
+}
+
+function getwl(loggedId, id) {
+    let url = config.api + `/v1/admin/partner/getforwl?loggedId=${loggedId}&id=${id}`;
 
     var ret = new Promise(
     function (resolve, reject) {
