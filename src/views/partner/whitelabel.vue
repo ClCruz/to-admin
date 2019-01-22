@@ -106,6 +106,34 @@
                         <b-row class="mb-3">
                             <b-input-group size="sm">
                                 <b-input-group-prepend is-text>
+                                    Endereço da empresa:
+                                </b-input-group-prepend>
+                                <b-form-input id="json_info_companyaddress"
+                                            type="text"
+                                            name="json_info_companyaddress"
+                                            maxlength="200"
+                                            v-model="form.json_info_companyaddress"
+                                            placeholder="Digite o endereço da empresa">
+                                </b-form-input>
+                            </b-input-group>
+                        </b-row>
+                        <b-row class="mb-3">
+                            <b-input-group size="sm">
+                                <b-input-group-prepend is-text>
+                                    Google Analytics TAG:
+                                </b-input-group-prepend>
+                                <b-form-input id="json_ga"
+                                            type="text"
+                                            name="json_ga"
+                                            maxlength="50"
+                                            v-model="form.json_ga"
+                                            placeholder="Digite o código do Google Analytics">
+                                </b-form-input>
+                            </b-input-group>
+                        </b-row>
+                        <b-row class="mb-3">
+                            <b-input-group size="sm">
+                                <b-input-group-prepend is-text>
                                     Cor primária:
                                 </b-input-group-prepend>
                             <swatches v-model="form.scss_colors_primary" colors="text-advanced">
@@ -125,11 +153,9 @@
                         </b-row>
 
 <b-button v-if="false" variant="outline-success" v-b-tooltip.hover title="Clique para gerar o site" @click="scaffolder_test">aaaah</b-button>
-                        <b-button variant="outline-success" v-b-tooltip.hover title="Clique para gerar o site" @click="scaffolder">Gerar o site</b-button>
+                        <b-button variant="outline-success" v-b-tooltip.hover title="Clique para salvar as informações" @click="scaffolder(false)">Salvar</b-button>
+                        <b-button variant="outline-danger" v-b-tooltip.hover title="Clique para salvar as informações e gerar o site" @click="scaffolderAsk">Salvar e Gerar</b-button>
                       </b-jumbotron>
-                    </b-tab>
-                    <b-tab title="Home (whitelabel)">
-                      Configuração da home
                     </b-tab>
                   </b-tabs>
                 </b-card>
@@ -281,10 +307,30 @@ export default {
         this.form.json_info_description = "desc";
         this.form.json_info_cnpj = "45.464.654/6546-54";
         this.form.json_info_companyname = "nome empresa";
+        this.form.json_ga = "";
+        this.form.json_info_companyaddress = "Rua das flores";
         this.form.scss_colors_primary = "#980000";
         this.form.scss_colors_secondary = "#4c1130";
     },
-    scaffolder() {
+    scaffolderAsk() {
+      this.$swal({
+        allowEscapeKey: false,
+        allowOutsideClick: false,
+        allowEnterKey: false,
+        showCancelButton: true,
+        confirmButtonText: 'Sim',
+        cancelButtonText: 'Não',
+        title: 'Geração do site',
+        html: "Deseja realmente gerar o site? <p><small>(Atenção não fechar o navegador enquanto não houver o retorno de OK, essa ação leva um tempo extra.)</small></p>",
+      }).then((result) => {
+        if (result.value) {
+          this.scaffolder(true);
+        }
+        else if (result.dismiss === this.$swal.DismissReason.cancel) {
+        }
+      });
+    },
+    scaffolder(generate) {
       if (!this.form.candoanything) {
         this.toastError("Aguarde a execução do job para executar outro.");
         return;
@@ -296,7 +342,7 @@ export default {
       this.$wait.start("inprocess");
       this.showWaitAboveAll();
 
-      partnerService.scaffolder(this.getLoggedId(), this.id, this.form.json_meta_description, this.form.json_meta_keywords, this.form.json_template, this.form.json_info_title, this.form.json_info_cnpj, this.form.json_info_companyname, this.form.scss_colors_primary, this.form.scss_colors_secondary).then(
+      partnerService.scaffolder(this.getLoggedId(), this.id, this.form.json_meta_description, this.form.json_meta_keywords, this.form.json_template, this.form.json_info_title, this.form.json_info_cnpj, this.form.json_info_companyname, this.form.json_info_companyaddress, this.form.json_ga, this.form.scss_colors_primary, this.form.scss_colors_secondary, generate).then(
         response => {
           this.processing = false;
           this.hideWaitAboveAll();
@@ -376,6 +422,8 @@ export default {
               this.form.tab1.userOK = response.userOK;
               this.form.tab1.userStatus = response.userStatus;
 
+              this.form.json_info_companyaddress = response.json_info_companyaddress
+              this.form.json_ga = response.json_ga
               this.form.json_meta_description = response.json_meta_description
               this.form.json_meta_keywords = response.json_meta_keywords
               this.form.json_template = response.json_template
@@ -438,6 +486,8 @@ export default {
           loaded: false,
           id: '',
 
+          json_ga: '',
+          json_info_companyaddress: '',
           json_meta_description: '',
           json_meta_keywords: '',
           json_template: '',
