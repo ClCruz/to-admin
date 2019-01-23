@@ -1,9 +1,5 @@
 <template>
     <div v-if="mayIsee">
-      <b-modal ref="presentationModal" class="mymodal" hide-footer title="Apresentação">
-        <dateadd :key="id" ref="dateadd" v-bind:id="id" v-bind:id_base="base"></dateadd>
-      </b-modal>
-
       <b-container>
         <b-modal ref="gmapsModal" hide-footer title="Google Maps">
           <div class="d-block text-center">
@@ -400,6 +396,7 @@ import VueQuillEditor from 'vue-quill-editor';
 import PictureInput from 'vue-picture-input';
 import VueMask from 'v-mask';
 import Vuelidate from 'vuelidate';
+import VModal from 'vue-js-modal';
 
 import dateadd from '../presentation/add';
 
@@ -419,6 +416,7 @@ import 'quill/dist/quill.bubble.css';
 
 import { required, minLength } from 'vuelidate/lib/validators';
 
+Vue.use(VModal, { dynamic: true, injectModalsContainer: true });
 Vue.use(VueHead);
 Vue.use(VueQuillEditor);
 Vue.use(VueMask);
@@ -428,7 +426,6 @@ export default {
   mixins: [func],
   components: {
     PictureInput,
-    dateadd
   },
   props: ['id','base'],
   name: 'event-add',
@@ -484,11 +481,18 @@ export default {
   },
   methods: {
     addPresentation() {
-      this.presentationOpen();
-    },
-    presentationOpen() {
-      this.$refs.presentationModal.show();
-      this.$refs.dateadd.populateGrid();
+      this.$modal.show(dateadd, {
+        id: this.id,
+        id_base: this.base
+      },
+      {
+        draggable: false,
+        resizable: true,
+        adaptive: true,
+        height: "auto",
+        // resizable: true,
+        scrollable: true,
+      });
     },
     presentationClose() {
       this.$refs.presentationModal.hide();
@@ -907,7 +911,15 @@ export default {
   }
 }
 </script>
-
+<style>
+.datepicker--open {
+    z-index: 5000;
+    position: fixed !important;
+    left: 50% !important;
+    margin-left: -286px !important;
+    top: 200px !important;
+}
+</style>
 <style scoped>
 .imgthumb {
   margin: 0 auto;
@@ -942,9 +954,6 @@ export default {
 .errorFormValidateHack2 {
     padding-left: 12px;
 }
-.modal-dialog {
-  width: fit-content;
-  max-width: 740px !important;
-  width: 740px !important
-}
+
+
 </style>
