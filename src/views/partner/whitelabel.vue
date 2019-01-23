@@ -7,7 +7,7 @@
                 <b-card no-body>
                   <b-alert variant="success" show><h3>Parceiro: {{form.name}} - {{form.uniquename}}</h3></b-alert>
                   <b-tabs pills card vertical>
-                    <b-tab title="Base de dados" >
+                    <b-tab title="Base de dados" active>
                       <h4>Configuração da base de dados</h4>
                       <b-jumbotron header="" lead="Configuração referente a base de dados única do parceiro e as conexões." >
                         <b-button-group>
@@ -185,7 +185,7 @@
                         </b-dropdown>
                       </b-jumbotron>
                     </b-tab>
-                    <b-tab title="Deploy" active>
+                    <b-tab title="Deploy">
                       <h4>Deploy automático</h4>
                       <b-jumbotron header="" lead="Após o primeiro deploy, utilize essa tela para refazer o deploy para cada sistema." >
                         <b-button-group v-if="!processing">
