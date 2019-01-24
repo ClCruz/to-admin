@@ -7,7 +7,7 @@
                 <b-card no-body>
                   <b-alert variant="success" show><h3>Parceiro: {{form.name}} - {{form.uniquename}}</h3></b-alert>
                   <b-tabs pills card vertical>
-                    <b-tab title="Base de dados" >
+                    <b-tab title="Base de dados" active>
                       <h4>Configuração da base de dados</h4>
                       <b-jumbotron header="" lead="Configuração referente a base de dados única do parceiro e as conexões." >
                         <b-button-group>
@@ -16,9 +16,26 @@
                         </b-button-group>
                       </b-jumbotron>
                     </b-tab>
-                    <b-tab title="Scaffolder" active>
+                    <b-tab title="Scaffolder">
                       <h4>Configuração dos JSON</h4>
                       <b-jumbotron header="" lead="Configuração referente ao site." >
+                        <b-row class="mb-3">
+                          <img v-if="!form.changedImage" v-on:click="imageClick" :src="form.imageURI" alt="" title="Clique em cima para trocar a imagem." class="imgthumb" />
+                          <picture-input
+                            ref="pictureInput" 
+                            v-if="form.changedImage"
+                            @change="onChange" 
+                            width="160" 
+                            height="180" 
+                            margin="0"
+                            accept="image/jpeg,image/png" 
+                            :crop="false"
+                            :hide-change-button="true"
+                            size="1" 
+                            button-class="btn"
+                            :custom-strings="components.picOptions"
+                            ></picture-input>
+                        </b-row>
                         <b-row class="mb-3">
                             <b-input-group size="sm">
                                 <b-input-group-prepend is-text>
@@ -152,9 +169,39 @@
                             </b-input-group>
                         </b-row>
 
-<b-button v-if="false" variant="outline-success" v-b-tooltip.hover title="Clique para gerar o site" @click="scaffolder_test">aaaah</b-button>
-                        <b-button variant="outline-success" v-b-tooltip.hover title="Clique para salvar as informações" @click="scaffolder(false)">Salvar</b-button>
-                        <b-button variant="outline-danger" v-b-tooltip.hover title="Clique para salvar as informações e gerar o site" @click="scaffolderAsk">Salvar e Gerar</b-button>
+                        <v-wait for="inprocess">
+                            <template slot="waiting">
+                                <b-dropdown id="ddown-split" variant="success" size="sm" split text="Aguarde..." class="m-2">
+                                </b-dropdown>
+                            </template>
+                        </v-wait>
+
+                        <b-dropdown v-if="!processing" id="ddown-split" variant="success" size="sm" split text="Salvar" @click="saveme(0);" class="m-2">
+                          <b-dropdown-item href="#" @click="saveme(1)">Salvar e Criar</b-dropdown-item>
+                          <b-dropdown-item href="#" @click="saveme(2)">Salvar e Criar (apenas site)</b-dropdown-item>
+                          <b-dropdown-item href="#" @click="saveme(4)">Salvar e Criar (apenas legacy)</b-dropdown-item>
+                          <b-dropdown-item href="#" @click="saveme(3)">Salvar e Criar (apenas api)</b-dropdown-item>
+                          <b-dropdown-item href="#" @click="scaffolder_test">Preencher</b-dropdown-item>
+                        </b-dropdown>
+                      </b-jumbotron>
+                    </b-tab>
+                    <b-tab title="Deploy">
+                      <h4>Deploy automático</h4>
+                      <b-jumbotron header="" lead="Após o primeiro deploy, utilize essa tela para refazer o deploy para cada sistema." >
+                        <b-button-group v-if="!processing">
+                          <b-button variant="outline-dark" v-b-tooltip.hover title="Clique aqui para fazer o deploy dos scripts da base de dados." @click="deployAsk(1)">Base de dados</b-button>
+                          <b-button variant="outline-dark" v-b-tooltip.hover title="Clique aqui para fazer o deploy do Site" @click="deployAsk(2)">Site</b-button>
+                          <b-button variant="outline-dark" v-b-tooltip.hover title="Clique aqui para fazer o deploy da API" @click="deployAsk(3)">API</b-button>
+                          <b-button variant="outline-dark" v-b-tooltip.hover title="Clique aqui para fazer o deploy do Legado" @click="deployAsk(4)">Legado</b-button>
+                          <b-button variant="outline-dark" v-b-tooltip.hover title="Clique aqui para fazer o deploy do Admin" @click="deployAsk(5)">Admin</b-button>
+                        </b-button-group>
+                        <b-button-group v-if="processing">
+                          <b-button variant="outline-dark" v-b-tooltip.hover title="Aguarde...">Aguarde...</b-button>
+                          <b-button variant="outline-dark" v-b-tooltip.hover title="Aguarde...">Aguarde...</b-button>
+                          <b-button variant="outline-dark" v-b-tooltip.hover title="Aguarde...">Aguarde...</b-button>
+                          <b-button variant="outline-dark" v-b-tooltip.hover title="Aguarde...">Aguarde...</b-button>
+                          <b-button variant="outline-dark" v-b-tooltip.hover title="Aguarde...">Aguarde...</b-button>
+                        </b-button-group>
                       </b-jumbotron>
                     </b-tab>
                   </b-tabs>
@@ -170,10 +217,12 @@
 import Vue from "vue";
 import VueHead from 'vue-head';
 import VueMask from 'v-mask';
+import PictureInput from 'vue-picture-input';
 import Swatches from 'vue-swatches';
 import config from "@/config";
 import { func } from "@/functions";
 import { partnerService } from '../../components/common/services/partner';
+import { deployService } from '../../components/common/services/deploy';
 
 import "vue-swatches/dist/vue-swatches.min.css";
 
@@ -184,7 +233,7 @@ export default {
   mixins: [func],
   props: ['id'],
   name: 'partner-wl',
-  components: { Swatches },
+  components: { Swatches, PictureInput },
   head: {
     title: function () {
       return { 
@@ -255,6 +304,75 @@ export default {
     },
   },
   methods: {
+    deployAsk(who) {
+      this.$swal({
+        allowEscapeKey: false,
+        allowOutsideClick: false,
+        allowEnterKey: false,
+        showCancelButton: true,
+        confirmButtonText: 'Sim',
+        cancelButtonText: 'Não',
+        title: 'Deploy',
+        html: "Deseja realmente realizar o deploy? <p><small>(Atenção não fechar o navegador enquanto não houver o retorno de OK, essa ação leva um tempo extra.)</small></p>",
+      }).then((result) => {
+        if (result.value) {
+          this.deploy(who);
+        }
+        else if (result.dismiss === this.$swal.DismissReason.cancel) {
+        }
+      });
+    },
+    deploy(who) {
+      if (!this.form.candoanything) {
+        this.toastError("Aguarde a execução do job para executar outro.");
+        return;
+      }
+      if (this.processing) return;
+
+      this.processing = true;
+
+      this.$wait.start("inprocess");
+      this.showWaitAboveAll();
+
+      deployService.exec(this.getLoggedId(), who).then(
+        response => {
+          this.processing = false;
+          this.hideWaitAboveAll();
+          this.$wait.end("inprocess");
+
+          if (this.validateJSON(response))
+          {
+            if (response.success) {
+              this.toastSuccess("Processo de deploy iniciado, em breve estará finalizado.");
+            }
+          }
+        },
+        error => {
+          this.processing = false;
+          this.hideWaitAboveAll();
+          this.$wait.end("inprocess");
+          this.toastError("Falha na execução.");
+        }
+      );
+    },
+    saveme(type) {
+      if (type>0) {
+        this.scaffolderAsk(type);
+      }
+      else {
+        this.scaffolder(0);
+      }
+    },
+    imageClick() {
+      this.form.imageURI = '';
+      this.form.changedImage = true;
+    },
+    onChange (image) {
+        if (image) {
+            this.form.imagebase64 = image;
+            this.form.changedImage = true;
+        }
+    },
     setdatabasetimer() {
         this.timers.database = setInterval(this.get, 10000);
     },
@@ -312,7 +430,7 @@ export default {
         this.form.scss_colors_primary = "#980000";
         this.form.scss_colors_secondary = "#4c1130";
     },
-    scaffolderAsk() {
+    scaffolderAsk(type) {
       this.$swal({
         allowEscapeKey: false,
         allowOutsideClick: false,
@@ -324,7 +442,7 @@ export default {
         html: "Deseja realmente gerar o site? <p><small>(Atenção não fechar o navegador enquanto não houver o retorno de OK, essa ação leva um tempo extra.)</small></p>",
       }).then((result) => {
         if (result.value) {
-          this.scaffolder(true);
+          this.scaffolder(type);
         }
         else if (result.dismiss === this.$swal.DismissReason.cancel) {
         }
@@ -342,7 +460,7 @@ export default {
       this.$wait.start("inprocess");
       this.showWaitAboveAll();
 
-      partnerService.scaffolder(this.getLoggedId(), this.id, this.form.json_meta_description, this.form.json_meta_keywords, this.form.json_template, this.form.json_info_title, this.form.json_info_cnpj, this.form.json_info_companyname, this.form.json_info_companyaddress, this.form.json_ga, this.form.scss_colors_primary, this.form.scss_colors_secondary, generate).then(
+      partnerService.scaffolder(this.getLoggedId(), this.id, this.form.json_meta_description, this.form.json_meta_keywords, this.form.json_template, this.form.json_info_title, this.form.json_info_cnpj, this.form.json_info_companyname, this.form.json_info_companyaddress, this.form.json_ga, this.form.scss_colors_primary, this.form.scss_colors_secondary, this.form.changedImage, this.form.imagebase64, generate).then(
         response => {
           this.processing = false;
           this.hideWaitAboveAll();
@@ -351,7 +469,24 @@ export default {
           if (this.validateJSON(response))
           {
             if (response.success) {
-              this.toastSuccess("Site gerado por favor aguarde até 24hrs para o mesmo estar disponível.");
+              switch (generate) {
+                case 0:
+                  this.toastSuccess("Dados salvos com sucesso.");
+                break;
+                case 1:
+                  this.toastSuccess("Dados salvos com sucesso, processo de deploy irá acontecer em breve.");
+                break;
+                case 2:
+                  this.toastSuccess("Dados salvos com sucesso, processo de deploy do SITE irá acontecer em breve.");
+                break;
+                case 3:
+                  this.toastSuccess("Dados salvos com sucesso, processo de deploy do LEGADO irá acontecer em breve.");
+                break;
+                case 3:
+                  this.toastSuccess("Dados salvos com sucesso, processo de deploy da API irá acontecer em breve.");
+                break;
+              }
+
               this.get();
             }
           }
@@ -422,17 +557,18 @@ export default {
               this.form.tab1.userOK = response.userOK;
               this.form.tab1.userStatus = response.userStatus;
 
-              this.form.json_info_companyaddress = response.json_info_companyaddress
-              this.form.json_ga = response.json_ga
-              this.form.json_meta_description = response.json_meta_description
-              this.form.json_meta_keywords = response.json_meta_keywords
-              this.form.json_template = response.json_template
-              this.form.json_info_title = response.json_info_title
-              this.form.json_info_description = response.json_info_description
-              this.form.json_info_cnpj = response.json_info_cnpj
-              this.form.json_info_companyname = response.json_info_companyname
-              this.form.scss_colors_primary = response.scss_colors_primary
-              this.form.scss_colors_secondary = response.scss_colors_secondary
+              this.form.json_info_companyaddress = response.json_info_companyaddress;
+              this.form.json_ga = response.json_ga;
+              this.form.json_meta_description = response.json_meta_description;
+              this.form.json_meta_keywords = response.json_meta_keywords;
+              this.form.json_template = response.json_template;
+              this.form.json_info_title = response.json_info_title;
+              this.form.json_info_description = response.json_info_description;
+              this.form.json_info_cnpj = response.json_info_cnpj;
+              this.form.json_info_companyname = response.json_info_companyname;
+              this.form.scss_colors_primary = response.scss_colors_primary;
+              this.form.scss_colors_secondary = response.scss_colors_secondary;
+              this.form.imageURI = "https://media.tixs.me/logos/logo-"+response.uniquename+".png?"+this.randomString();
 
               switch (response.databaseStatus) {
                 case "not_init":
@@ -481,10 +617,27 @@ export default {
         timers: {
           database: null,
         },
+        components: {
+          picOptions: {
+              upload: '<p>Não foi possível realizar o upload.</p>', // HTML allowed
+              drag: 'Arraste a imagem ou clique para selecionar', // HTML allowed
+              tap: 'Toque aqui para selecionar uma imagem', // HTML allowed
+              change: 'Mudar', // Text only
+              remove: 'Remover', // Text only
+              select: 'Selecione uma imagem', // Text only
+              selected: '<p>Imagem selecionada com sucesso.</p>', // HTML allowed
+              fileSize: 'O tamanho da imagem ultrapassou o limite.', // Text only
+              fileType: 'Esse tipo de arquivo não é suportado.', // Text only
+              aspect: 'Landscape/Portrait' // Text only
+          },
+        },
         form: {
           candoanything: false,
           loaded: false,
           id: '',
+          changedImage: false,
+          imageURI: '',
+          imagebase64: "",
 
           json_ga: '',
           json_info_companyaddress: '',
@@ -523,4 +676,11 @@ export default {
 </script>
 
 <style scoped>
+.imgthumb {
+  margin: 0 auto;
+  text-align: center;
+  width: 20%;
+  height: 50%;
+  cursor: pointer;
+}
 </style>

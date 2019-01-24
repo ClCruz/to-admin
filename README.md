@@ -1,13 +1,27 @@
-# admin
+# SITE (HOME) 
+### Builded in VUEJS.  
 
-## Project setup
+## How to develop
+
+### Setup
 ```
 npm install
 ```
-
-### Compiles and hot-reloads for development
+### Gulp
+```
+gulp watch
+```
+### localhost
 ```
 npm run serve
+```
+
+
+## How to install  
+
+### Setup
+```
+npm install
 ```
 
 ### Compiles and minifies for production
@@ -15,15 +29,28 @@ npm run serve
 npm run build
 ```
 
-### Run your tests
-```
-npm run test
-```
-
-### Lints and fixes files
-```
-npm run lint
+### Docker
+```bash
+sudo docker run -it -d -p 2000:80 --restart=always --name unique.admin \
+-v /var/www/unique/admin:/var/www/html \
+blcoccaro/phpwithsql:v1
 ```
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+### meanings 
+| location | what |
+| -------- | ----- |
+| /var/www/unique/admin | where is the build of site (admin) |
+
+### .htaccess
+```.htaccess
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+  RewriteRule ^index\.html$ - [L]
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule . /index.html [L]
+</IfModule>
+```
+
+![MC HAMMER](https://camo.githubusercontent.com/294d473d32d1d33750ea6a059bcd44cf31398535/687474703a2f2f692e696d6775722e636f6d2f6163484d3330786c2e6a7067)

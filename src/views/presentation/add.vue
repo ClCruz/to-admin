@@ -18,6 +18,14 @@
           <b-col>
             <b-collapse v-model="form.collapseDays" id="collapse1" class="mt-2">
                 <h3>Qual os dias?</h3>
+                <HotelDatePicker :id="components.datepicker.id" ref="dtpicker" :format="components.datepicker.format" :minNights="components.datepicker.minNights"
+                :maxNights="components.datepicker.maxNights"
+                :hoveringTooltip="components.datepicker.hoveringTooltip"
+                :i18n="components.datepicker.ptBr"
+                :displayClearButton="components.datepicker.displayClearButton"
+                v-on:check-in-changed="startchanged"
+                v-on:check-out-changed="endchanged"
+                ></HotelDatePicker>
             </b-collapse>
           </b-col>
         </b-row>
@@ -26,6 +34,8 @@
             <b-collapse v-model="form.collapseWeekdays" id="collapse1" class="mt-2">
                 <h3>Quais os dias da semana?</h3>
                 <div class="weekDays-selector mx-auto mx-0 centerforme">
+                  <input type="checkbox" @click="clickedonweekday" id="weekday-sun" v-model="form.weekday.sun" :disabled="!form.weekday.sunEnabled" v-bind:class="{ disablemeinput: !form.weekday.sunEnabled }" class="weekday" />
+                  <label for="weekday-sun" v-bind:class="{ disablemelabel: !form.weekday.sunEnabled }">DOM</label>
                   <input type="checkbox" @click="clickedonweekday" id="weekday-mon" v-model="form.weekday.mon" :disabled="!form.weekday.monEnabled" v-bind:class="{ disablemeinput: !form.weekday.monEnabled }" class="weekday" />
                   <label for="weekday-mon" v-bind:class="{ disablemelabel: !form.weekday.monEnabled }">SEG</label>
                   <input type="checkbox" @click="clickedonweekday" id="weekday-tue" v-model="form.weekday.tue" :disabled="!form.weekday.tueEnabled" v-bind:class="{ disablemeinput: !form.weekday.tueEnabled }" class="weekday" />
@@ -38,8 +48,6 @@
                   <label for="weekday-fri" v-bind:class="{ disablemelabel: !form.weekday.friEnabled }">SEX</label>
                   <input type="checkbox" @click="clickedonweekday" id="weekday-sat" v-model="form.weekday.sat" :disabled="!form.weekday.satEnabled" v-bind:class="{ disablemeinput: !form.weekday.satEnabled }" class="weekday" />
                   <label for="weekday-sat" v-bind:class="{ disablemelabel: !form.weekday.satEnabled }">SAB</label>
-                  <input type="checkbox" @click="clickedonweekday" id="weekday-sun" v-model="form.weekday.sun" :disabled="!form.weekday.sunEnabled" v-bind:class="{ disablemeinput: !form.weekday.sunEnabled }" class="weekday" />
-                  <label for="weekday-sun" v-bind:class="{ disablemelabel: !form.weekday.sunEnabled }">DOM</label>
                 </div>
             </b-collapse>
           </b-col>
@@ -49,12 +57,12 @@
             <b-collapse v-model="form.collapseSession" id="collapse1" class="mt-2">
                 <h3>Adicione as sessões</h3>
                 <b-row>
-                    <b-col>
+                    <b-col cols="6">
                       <b-input-group size="sm">
                         <b-input-group-prepend is-text>
                             Horário:
                         </b-input-group-prepend>
-                        <vue-timepicker v-model="form.sessionTime" format="HH:mm" :minute-interval="1"></vue-timepicker>
+                        <vue-timepicker v-model="form.sessionTime" format="HH:mm" :minute-interval="1" class="fontsizetimepicker"></vue-timepicker>
                       </b-input-group>
                     </b-col>
                     <b-col>
@@ -90,11 +98,13 @@
                               :items="grids.added.items"
                               :fields="grids.added.fields">
 
-
+                          <template slot="ValPeca" slot-scope="data">
+                              <span>R$ {{data.item.ValPeca}}</span>
+                          </template>
                           <template slot="actions" slot-scope="data">
                               <span v-if="!mayI('ev-add')">-</span>
                               <b-button-group size="sm" v-if="mayI('ev-add')">
-                                  <b-button title="Editar" v-if="mayI('ev-add')" @click.stop="edit(data.item,$event.target)">Remover</b-button>
+                                  <b-button title="Excluir" v-if="mayI('ev-add')" @click.stop="exclude(data.item,$event.target)">Remover</b-button>
                               </b-button-group>
                           </template>
                       </b-table>
@@ -105,7 +115,7 @@
           </b-col>
         </b-row>
       </b-container>
-      <b-container v-if="!isAdd">
+      <b-container v-if="!isAdd && !dummy">
         <b-row>
           <b-col>
             <b-button-group size="sm">
@@ -139,6 +149,7 @@
           </b-col>
         </b-row>
       </b-container>
+      <div class="dummy" v-if="dummy"></div>
     </div>
 </template>
 
@@ -148,11 +159,13 @@ import VueHead from 'vue-head';
 import config from "@/config";
 import Moment from 'moment';
 import VueTimepicker from 'vue2-timepicker';
+import HotelDatePicker from 'vue-hotel-datepicker';
 import { VMoney } from 'v-money';
 import { extendMoment } from 'moment-range';
 import { func } from "@/functions";
 import { presentationService } from '../../components/common/services/presentation';
 import { roomService } from '../../components/common/services/room';
+import { defer } from 'q';
 
 
 const moment = extendMoment(Moment);
@@ -165,7 +178,7 @@ export default {
   mixins: [func],
   props: ['id', 'id_base'],
   directives: {money: VMoney},
-  components: { VueTimepicker },
+  components: { VueTimepicker, HotelDatePicker },
   name: 'pres-add',
   head: {
     title: function () {
@@ -177,6 +190,7 @@ export default {
     },
   },
   created() {
+    this.populateGrid();
   },
   computed: {
     mayIsee() {
@@ -190,6 +204,16 @@ export default {
     }
   },
   methods: {
+    startchanged(date) {
+      this.form.selectedDate.start = moment(date).isValid() ? moment(date).format("YYYY-MM-DD") : '';
+      this.form.collapseWeekdays = true;
+      this.workwithweekdays();
+    },
+    endchanged(date) {
+      this.form.selectedDate.end = moment(date).isValid() ? moment(date).format("YYYY-MM-DD") : '';
+      this.form.collapseWeekdays = true;
+      this.workwithweekdays();
+    },
     selRoom() {
       this.form.collapseDays = true;
     },
@@ -218,37 +242,37 @@ export default {
           let weekdayName = "";
 
           if (do_mon) {
-            weekday = 2;
+            weekday = 1;
             weekdayName = "Segunda";
             do_mon = false;
           }
           if (do_tue && weekday == 0) {
-            weekday = 3;
+            weekday = 2;
             weekdayName = "Terça";
             do_tue = false;
           }
           if (do_wed && weekday == 0) {
-            weekday = 4;
+            weekday = 3;
             weekdayName = "Quarta";
             do_wed = false;
           }
           if (do_thu && weekday == 0) {
-            weekday = 5;
+            weekday = 4;
             weekdayName = "Quinta";
             do_thu = false;
           }
           if (do_fri && weekday == 0) {
-            weekday = 6;
+            weekday = 5;
             weekdayName = "Sexta";
             do_fri = false;
           }
           if (do_sat && weekday == 0) {
-            weekday = 0;
+            weekday = 6;
             weekdayName = "Sabado";
             do_sat = false;
           }
           if (do_sun && weekday == 0) {
-            weekday = 1;
+            weekday = 0;
             weekdayName = "Domingo";
             do_sun = false;
           }
@@ -263,18 +287,29 @@ export default {
             dateStart: this.form.selectedDate.start,
             dateEnd: this.form.selectedDate.end,
           };
-          this.grids.added.items.push(obj);
-          
+          if (this.grids.added.items.filter(function (data) {
+            return data.codSala == obj.codSala && data.HorSessao == obj.HorSessao && data.weekday == obj.weekday;
+          }).length == 0) {
+            this.grids.added.items.push(obj);
+            this.form.amount = "0.00";
+          }
         }
-        
         this.grids.added.loaded = true;
+        this.grids.added.items = this.grids.added.items.sort((a, b) => {
+          return a.weekday - b.weekday;
+        });
       });
     },
-    removeAdded() {
-
+    exclude(item) {
+      console.log(this.grids.added.items.filter(o => { return o.weekday == item.weekday && o.HorSessao === item.HorSessao; }));
+//      console.log("item:"+item.HorSessao+"/"+item.weekday);
+      this.grids.added.items = this.grids.added.items.filter(data=> {
+        return (data.weekday.toString()+"|"+data.HorSessao) != (item.weekday.toString()+"|"+item.HorSessao);
+      });
     },
     add() {
       this.isAdd = true;
+      this.dummy = true;
       this.populateRoom();
     },
     edit() {
@@ -307,7 +342,7 @@ export default {
     workwithweekdays() {
       let weeks = new Array();
       if (moment(this.form.selectedDate.start).isValid()) {
-        if (this.form.selectedDate.end == null) {
+        if (this.form.selectedDate.end == null || this.form.selectedDate.end == "") {
           weeks.push(moment(this.form.selectedDate.start).day());
         }
         else {
@@ -318,14 +353,13 @@ export default {
           }
         }
       }
-
-      this.form.weekday.sunEnabled = weeks.includes(1);
-      this.form.weekday.monEnabled = weeks.includes(2);
-      this.form.weekday.tueEnabled = weeks.includes(3);
-      this.form.weekday.wedEnabled = weeks.includes(4);
-      this.form.weekday.thuEnabled = weeks.includes(5);
-      this.form.weekday.friEnabled = weeks.includes(6);
-      this.form.weekday.satEnabled = weeks.includes(0);
+      this.form.weekday.sunEnabled = weeks.includes(0);
+      this.form.weekday.monEnabled = weeks.includes(1);
+      this.form.weekday.tueEnabled = weeks.includes(2);
+      this.form.weekday.wedEnabled = weeks.includes(3);
+      this.form.weekday.thuEnabled = weeks.includes(4);
+      this.form.weekday.friEnabled = weeks.includes(5);
+      this.form.weekday.satEnabled = weeks.includes(6);
 
     },
     clickedonweekday: function() {
@@ -349,11 +383,6 @@ export default {
           this.form.collapseSession = false;
         }
       });
-    },
-    onDateSelected: function (daterange) {
-      this.form.selectedDate = daterange;
-      this.form.collapseWeekdays = true;
-      this.workwithweekdays();
     },
     populateRoom() {
       this.showWaitAboveAll();
@@ -385,6 +414,7 @@ export default {
 
           if (this.validateJSON(response))
           {
+              this.dummy = false;
               this.grids.result.loaded = true;
               this.grids.result.items = response;
           }
@@ -422,6 +452,7 @@ export default {
   data () {
     return {
         processing: false,
+        dummy: true,
         loading: false,
         isAdd: false,
         components: { 
@@ -434,20 +465,20 @@ export default {
               masked: false /* doesn't work with directive */
           },
           datepicker: {
-            months: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'],
-            shortDays: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab'],
-            captions: {
-              'title': 'Escolha uma ou duas datas',
-              'ok_button': 'Escolher'
-            },
+            id: 1,
             format: 'DD/MM/YYYY',
-            presetRanges: {
-              today: function () { return { label: "Hoje", active: false, dateRange: { start: moment().startOf('day').add('days', 1).toDate(), end: moment().endOf('day').add('days', 1).toDate() } }; },
-              thisMonth: function () {  return { label: "5 dias", active: false, dateRange: { start: moment().startOf('day').add('days', 1).toDate(), end: moment().endOf('day').add('days', 1).add(5, "days").toDate() } }; },
-              lastMonth: function () { return {  label: '1 semana', active: false, dateRange: { start: moment().startOf('day').add('days', 1).toDate(), end: moment().endOf('day').add('days', 1).add(1, "week").toDate() } }; },
-              last7days: function () { return {  label: '1 mês', active: false, dateRange: { start: moment().startOf('day').add('days', 1).toDate(), end: moment().endOf('day').add('days', 1).add(1, "month").toDate() } }; },
-              //  last30days: function () { return {  label: '2 meses', active: false, dateRange: { start: moment().startOf('day').toDate(), end: moment().endOf('day').add(2, "month").toDate() } }; },
-            } 
+            minNights: 0,
+            maxNights: 80,
+            hoveringTooltip: true,
+            displayClearButton: true,
+            ptBr: {
+              night: 'Dia',
+              nights: 'Dias',
+              'day-names': ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab'],
+              'check-in': 'Início',
+              'check-out': 'Fim',
+              'month-names': ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'],
+            }
           }
         },
         form: {
@@ -518,7 +549,7 @@ export default {
                 weekdayName: { label: 'Dia da Semana', sortable: false },
                 HorSessao: { label: 'Hora', sortable: false },
                 ValPeca: { label: 'Valor', sortable: false },
-                actions: { label: 'Excluir', sortable: false }
+                actions: { label: 'Ações', sortable: false }
             },
           }
         }
@@ -526,6 +557,11 @@ export default {
   }
 }
 </script>
+<style>
+.fontsizetimepicker {
+  font-size:.875rem !important;
+}
+</style>
 
 <style scoped>
 .weekDays-selector input {
@@ -564,5 +600,11 @@ export default {
 }
 .disablemelabel {
   color: #b3b3b3;
+}
+.dummy {
+  height: 200px;
+}
+.input.display-time {
+  font-size:.875rem;
 }
 </style>
