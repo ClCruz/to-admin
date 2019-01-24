@@ -6,40 +6,19 @@ Vue.use(VueResource);
 
 config.setapikey();
 
-export const userService = {
+export const genreService = {
   get,
   list,
+  select,
   save,
-  authList,
-  authSave,
-  baseList,
-  baseSave
+  bases,
+  sync,
 }
-
-function baseList(id) {
-    let url = config.api + `/v1/admin/user/base/list?id=${id}`;
-
-    var ret = new Promise(
-    function (resolve, reject) {
-        Vue.http.get(url).then(res => {
-        resolve(res.body);
-        }, err => {
-        reject({
-            error: true,
-            msg: err
-        });
-        });
-    }
-  );
-  return ret;
-}
-function baseSave(loggedId, id, id_base) {
-    let url = config.api + `/v1/admin/user/base/save`;
+function sync(id_base) {
+    let url = config.api + `/v1/admin/genre/base/sync`;
 
     let obj = {
-        loggedId,
-        id,
-        id_base,
+        id_base
     };
 
     var ret = new Promise(
@@ -56,9 +35,8 @@ function baseSave(loggedId, id, id_base) {
     );
     return ret;
 }
-
-function authList(id) {
-    let url = config.api + `/v1/admin/user/authorization/list?id=${id}`;
+function bases(loggedId) {
+    let url = config.api + `/v1/admin/genre/base/list?loggedId=${loggedId}`;
 
     var ret = new Promise(
     function (resolve, reject) {
@@ -74,32 +52,9 @@ function authList(id) {
   );
   return ret;
 }
-function authSave(loggedId, id, id_auth) {
-    let url = config.api + `/v1/admin/user/authorization/save`;
 
-    let obj = {
-        loggedId,
-        id,
-        id_auth,
-    };
-
-    var ret = new Promise(
-        function (resolve, reject) {
-            Vue.http.post(url, obj, { emulateJSON: true }).then(res => {
-                resolve(res.body);
-            }, err => {
-                reject({
-                    error: true,
-                    msg: err
-                });
-            });    
-        }
-    );
-    return ret;
-}
-
-function list(search, currentPage, perPage) {
-    let url = config.api + `/v1/admin/user/list?search=${search}`;
+function list(loggedId, search, currentPage, perPage) {
+    let url = config.api + `/v1/admin/genre/list?loggedId=${loggedId}&search=${search}`;
     url = config.system.applyPagination(url, currentPage, perPage);
 
     var ret = new Promise(
@@ -116,8 +71,25 @@ function list(search, currentPage, perPage) {
   );
   return ret;
 }
-function get(id) {
-    let url = config.api + `/v1/admin/user/get?id=${id}`;
+function select(loggedId) {
+    let url = config.api + `/v1/admin/genre/select?loggedId=${loggedId}`;
+
+    var ret = new Promise(
+    function (resolve, reject) {
+        Vue.http.get(url).then(res => {
+        resolve(res.body);
+        }, err => {
+        reject({
+            error: true,
+            msg: err
+        });
+        });
+    }
+  );
+  return ret;
+}
+function get(loggedId, id) {        
+    let url = config.api + `/v1/admin/genre/get?loggedId=${loggedId}&id=${id}`;
     
     var ret = new Promise(
     function (resolve, reject) {
@@ -133,16 +105,14 @@ function get(id) {
   );
   return ret;
 }
-function save(id, name, login, email, document, active) {
-    let url = config.api + `/v1/admin/user/save`;
+function save(loggedId,id,name,active) {
+    let url = config.api + `/v1/admin/genre/save`;
 
     let obj = {
-        id: id != undefined && id != null ? id : '',
-        name,
-        login,
-        email,
-        document,
-        active
+        id_user: loggedId
+        ,id
+        ,name
+        ,active
     };
 
     var ret = new Promise(

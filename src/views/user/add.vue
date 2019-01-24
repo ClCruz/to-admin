@@ -101,7 +101,7 @@ import VueHead from 'vue-head';
 import VueMask from 'v-mask';
 import config from "@/config";
 import { func } from "@/functions";
-import { userService } from '../../components/common/services/access_user';
+import { userService } from '../../components/common/services/user';
 
 Vue.use(VueHead);
 Vue.use(VueMask);
@@ -126,7 +126,7 @@ export default {
   },
   computed: {
     mayIsee() {
-      return this.mayI('ev-add', 'ev-viewer');
+      return this.mayI('user-add', 'user-viewer');
     },
     typeOf() {
       return this.isAdd ? "Adicionar" : "Alterar";

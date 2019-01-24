@@ -12,6 +12,7 @@
                                   type="text"
                                   name="name"
                                   maxlength="100"
+                                  @keyup.enter.native="search"
                                   v-model="form.search"
                                   placeholder="Digite o nome do evento">
                       </b-form-input>
@@ -93,7 +94,10 @@ export default {
   },
   methods: {
     edit(item) {
-      this.$router.push(`/event/edit/${item.id}`);
+      this.$router.push(`/event/edit/${item.id_evento}/${item.id_base}`);
+    },
+    datas(item) {
+      this.$router.push(`/event/edit/${item.id_evento}/${item.id_base}?opendate=true`);
     },
     pagto(to) {
       this.grids.event.currentPage = to;

@@ -2,7 +2,7 @@
   <div id="app">
     <sidebar-menu :menu="menu" v-if="isAuth" :collapsed="true" />
     <div class="p-5">
-    <router-view/>
+      <router-view/>
     </div>
   </div>
 </template>
@@ -21,6 +21,16 @@ export default {
   mixins: [func],
   name: 'home',
   created() {
+    // Listen for swUpdated event and display refresh snackbar as required.
+    document.addEventListener('swUpdated', this.showRefreshUI, { once: true });
+    // Refresh all open app tabs when a new service worker is installed.
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (this.refreshing) return;
+      this.refreshing = true;
+      window.location.reload();
+    });
+
+
     if (this.getLoggedId() == null) {
       this.goLogin();
       return;
@@ -40,6 +50,30 @@ export default {
     },
   },
   methods: {
+    showRefreshUI (e) {
+      this.registration = e.detail;
+      this.updateExists = true;
+      this.$swal({
+        title: 'Nova versão',
+        text: "Realizamos atualizações no sistema, iremos atualizar agora.",
+        type: 'success',
+        toast: true,
+        position: 'top-end',
+        customClass: 'alert__tixsme alert__sucess',
+        background: '#333',
+        showConfirmButton: false,
+        timer: 4000,
+      }).then((result) => {
+        this.refreshApp();
+      });
+//      this.refreshApp();
+      //this.toastSuccess("Realizamos atualizações no site, iremos atualizar agora.");
+    },
+    refreshApp () {
+      this.updateExists = false;
+      if (!this.registration || !this.registration.waiting) { return; }
+      this.registration.waiting.postMessage('skipWaiting');
+    },
     setMenu() {
       let menuHelper = [
         {
@@ -93,7 +127,86 @@ export default {
           ]
         },
         {
-          title: 'Eventos - Cadastro',
+          title: 'Gênero',
+          icon: 'fas fa-band-aid',
+          code: 'genre-viewer',
+          //code: 'usr-viewer',
+          child: [
+            {
+              href: '/genre/add',
+              title: 'Adicionar',
+              icon: 'fas fa-plus',
+              code: 'genre-add'
+            },
+            {
+              href: '/genre/list',
+              title: 'Listar',
+              icon: 'fas fa-th-list',
+              code: 'genre-viewer',//'usr-viewer'
+            },
+          ]
+        },
+        {
+          title: 'Local',
+          icon: 'fas fa-map-marked-alt',
+          code: 'place-viewer',
+          //code: 'usr-viewer',
+          child: [
+            {
+              href: '/place/add',
+              title: 'Adicionar',
+              icon: 'fas fa-plus',
+              code: 'place-add'
+            },
+            {
+              href: '/place/list',
+              title: 'Listar',
+              icon: 'fas fa-th-list',
+              code: 'place-viewer',//'usr-viewer'
+            },
+          ]
+        },
+        {
+          title: 'Produtores',
+          icon: 'fas fa-people-carry',
+          code: 'producer-viewer',
+          //code: 'usr-viewer',
+          child: [
+            {
+              href: '/producer/add',
+              title: 'Adicionar',
+              icon: 'fas fa-plus',
+              code: 'producer-add'
+            },
+            {
+              href: '/producer/list',
+              title: 'Listar',
+              icon: 'fas fa-th-list',
+              code: 'producer-viewer',//'usr-viewer'
+            },
+          ]
+        },
+        {
+          title: 'Parceiros',
+          icon: 'far fa-handshake',
+          code: 'partner-viewer',
+          child: [
+            {
+              href: '/partner/add',
+              title: 'Adicionar',
+              icon: 'fas fa-plus',
+              code: 'partner-add'
+            },
+            {
+              href: '/partner/list',
+              title: 'Listar',
+              icon: 'fas fa-th-list',
+              code: 'partner-viewer',//'usr-viewer'
+            },
+          ]
+        },
+        {
+          title: 'Eventos',
           icon: 'fas fa-puzzle-piece',
           code: 'all',
           child: [
@@ -162,9 +275,9 @@ export default {
   //          y--;
             return false;
           }        
-          //else {
+          else {
             //console.log("ok");
-          //}
+          }
         }
         return true;
     },
@@ -180,6 +293,9 @@ export default {
   data() {
     return {
       menu: [],
+      refreshing: false,
+      registration: null,
+      updateExists: false,
     }
   }
 }

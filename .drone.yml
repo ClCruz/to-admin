@@ -1,23 +1,28 @@
 kind: 
-name: default
+name: admin
 
 steps:
 - name: install
-  image: blcoccaro/linuxphpsql:v4
+  image: blcoccaro/to-deploy:v2
   volumes:
   - name: wl
     path: /tmp/host
   commands:
-  - rsync -vrR --exclude='.git' * /tmp/host/teste
-  - chmod -R 777 /tmp/host/teste
+  - npm install
+  - npm run build
+  - cd dist
+  - rsync -vr /tmp/host/admin/ /tmp/host/bk/admin
+  - rsync -vrR --exclude='.git' * /tmp/host/admin
+  - rsync -vrR --exclude='.git' .htaccess /tmp/host/admin
+  - chmod -R 777 /tmp/host/admin
   
 volumes:
 - name: wl
   host:
-    path: /var/www/unique
+    path: /hd/www/unique
 
 trigger:
   branch:
   - master
   event:
-  - tag
+  - push

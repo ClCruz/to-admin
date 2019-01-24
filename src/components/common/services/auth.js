@@ -10,7 +10,30 @@ export const authService = {
   login,
   loginbytoken,
   codes,
+  revalid
 }
+
+function revalid(id) {
+    let url = config.api + `/v1/admin/authorization/userrevalid`;
+  
+    let obj = {
+        id,
+    };
+  
+    var ret = new Promise(
+        function (resolve, reject) {
+            Vue.http.post(url, obj, { emulateJSON: true }).then(res => {
+                resolve(res.body);
+            }, err => {
+                reject({
+                    error: true,
+                    msg: err
+                });
+            });    
+        }
+    );
+    return ret;
+  }
 
 function codes(id) {
   let url = config.api + `/v1/admin/authorization/code`;

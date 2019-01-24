@@ -67,6 +67,7 @@
                                   type="text"
                                   name="name"
                                   maxlength="100"
+                                  @keyup.enter.native="search"
                                   v-model="form.search"
                                   placeholder="Digite o nome, login, email ou documento">
                       </b-form-input>
@@ -123,7 +124,7 @@ import Vue from "vue";
 import VueHead from 'vue-head';
 import config from "@/config";
 import { func } from "@/functions";
-import { userService } from '../../components/common/services/access_user';
+import { userService } from '../../components/common/services/user';
 
 Vue.use(VueHead);
 
