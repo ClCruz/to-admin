@@ -77,7 +77,7 @@
                                 </b-form-select>
                             </b-input-group>
                         </b-row>
-                        <b-row class="mb-3">
+                        <b-row class="mb-3" v-if="form.json_template=='ticketHubVideo'">
                           <b-col>
                             <file-pond
                                 name="mp4"
@@ -106,7 +106,7 @@
                                 v-on:init="handleFilePondInit"/>
                           </b-col>
                         </b-row>
-                        <b-row class="mb-3">
+                        <b-row class="mb-3" v-if="form.json_template=='ticketHubVideo'">
                           <b-col>
                             <video v-if="form.videos.mp4.has" controls muted playsinline style="width: 191px;">
                               <source :src="form.videos.mp4.uri" type="video/mp4">
@@ -194,9 +194,8 @@
                                 <b-input-group-prepend is-text>
                                     Cor primária:
                                 </b-input-group-prepend>
-                            <swatches v-model="form.scss_colors_primary" colors="text-advanced">
-                              <input slot="trigger" :value="form.scss_colors_primary" class="form__input__element" readonly>
-                            </swatches>
+                                <input v-model="form.scss_colors_primary" class="form__input__element">
+                                <swatches colors="text-advanced" popover-to="left" v-model="form.scss_colors_primary"></swatches>
                             </b-input-group>
                         </b-row>
                         <b-row class="mb-3">
@@ -204,9 +203,8 @@
                                 <b-input-group-prepend is-text>
                                     Cor secundaria:
                                 </b-input-group-prepend>
-                            <swatches v-model="form.scss_colors_secondary" colors="text-advanced">
-                              <input slot="trigger" :value="form.scss_colors_secondary" class="form__input__element" readonly>
-                            </swatches>
+                                <input v-model="form.scss_colors_secondary" class="form__input__element">
+                                <swatches colors="text-advanced" popover-to="left" v-model="form.scss_colors_secondary"></swatches>
                             </b-input-group>
                         </b-row>
 
@@ -938,6 +936,14 @@ export default {
 <style>
 .filepond--list-scroller {
   color:black;
+}
+.vue-swatches {
+  top: 2px !important;
+  padding-left:5px !important;
+}
+.vue-swatches__trigger {
+  width: 26px !important;
+  height: 26px !important;
 }
 </style>
 
