@@ -1,7 +1,7 @@
 <template>
     <div v-if="mayIsee">
       <b-container v-if="isAdd">
-        <b-row>
+        <b-row class="mb-3">
           <b-col>
             <b-collapse v-model="form.collapseRoom" id="collapse1" class="mt-2">
                 <h3>Qual a sala?</h3>
@@ -14,7 +14,7 @@
             </b-collapse>
           </b-col>
         </b-row>
-        <b-row>
+        <b-row class="mb-3">
           <b-col>
             <b-collapse v-model="form.collapseDays" id="collapse1" class="mt-2">
                 <h3>Qual os dias?</h3>
@@ -29,7 +29,7 @@
             </b-collapse>
           </b-col>
         </b-row>
-        <b-row>
+        <b-row class="mb-3">
           <b-col>
             <b-collapse v-model="form.collapseWeekdays" id="collapse1" class="mt-2">
                 <h3>Quais os dias da semana?</h3>
@@ -52,11 +52,11 @@
             </b-collapse>
           </b-col>
         </b-row>
-        <b-row>
+        <b-row class="mb-3">
           <b-col>
             <b-collapse v-model="form.collapseSession" id="collapse1" class="mt-2">
                 <h3>Adicione as sessões</h3>
-                <b-row>
+                <b-row class="mb-3">
                     <b-col cols="6">
                       <b-input-group size="sm">
                         <b-input-group-prepend is-text>
@@ -71,11 +71,21 @@
                         </b-form-input>
                       </b-input-group>
                     </b-col>
+                </b-row>
+                <b-row class="mb-3">
+                  <b-col>
                     <b-col>
-                      <b-button type="button" variant="secondary" size="sm" @click="addnewsession">
-                        Adicionar
-                      </b-button>
+                      <toggle-button v-model="form.allowweb" :width="110" :color="{checked: '#b3ffb3', unchecked: '#ffb3b3', disabled: '#a6a6a6'}" :labels="{ checked: 'Vender Web', unchecked: 'Não vender Web' }"/>
                     </b-col>
+                    <b-col>
+                      <toggle-button v-model="form.allowticketoffice" :width="140" :color="{checked: '#b3ffb3', unchecked: '#ffb3b3', disabled: '#a6a6a6'}" :labels="{ checked: 'Vender Bilheteria', unchecked: 'Não vender Bilheteria' }"/>
+                    </b-col>
+                  </b-col>
+                  <b-col>
+                    <b-button type="button" variant="secondary" size="sm" @click="addnewsession">
+                      Adicionar
+                    </b-button>
+                  </b-col>
                 </b-row>
             </b-collapse>
           </b-col>
@@ -101,6 +111,15 @@
                           <template slot="ValPeca" slot-scope="data">
                               <span>R$ {{data.item.ValPeca}}</span>
                           </template>
+                          <template slot="allowweb" slot-scope="data">
+                              <span v-if="data.item.allowweb"><i class="fas fa-circle"></i></span>
+                              <span v-else><i class="far fa-circle"></i></span>
+                          </template>
+                          <template slot="allowticketoffice" slot-scope="data">
+                              <span v-if="data.item.allowticketoffice"><i class="fas fa-circle"></i></span>
+                              <span v-else><i class="far fa-circle"></i></span>
+                          </template>
+                          
                           <template slot="actions" slot-scope="data">
                               <span v-if="!mayI('ev-add')">-</span>
                               <b-button-group size="sm" v-if="mayI('ev-add')">
@@ -114,15 +133,20 @@
             </b-collapse>
           </b-col>
         </b-row>
+        <b-row class="mx-auto mb-3">
+          <b-collapse v-model="grids.added.loaded" id="collapse1" class="mt-2 mx-auto mb-3">
+              <b-row class="mx-auto mb-3">
+                  <b-button title="Incluir" variant="outline-success" v-if="mayI('ev-add')" @click.stop="savedays">Incluir</b-button>
+              </b-row>
+          </b-collapse>
+        </b-row>
       </b-container>
       <b-container v-if="!isAdd && !dummy">
-        <b-row>
-          <b-col>
-            <b-button-group size="sm">
-              <b-button variant="info" @click="add">Adicionar</b-button>
-              <b-button variant="info" @click="edit" :disabled="form.codApresentacao == ''">Alterar</b-button>
-            </b-button-group>
-          </b-col>
+        <b-row class="mx-auto mb-3">
+          <b-button-group size="sm" class="mx-auto mb-3">
+            <b-button variant="outline-info" @click="add">Adicionar</b-button>
+            <b-button variant="outline-dark" @click="edit" :disabled="form.codApresentacao == ''">Alterar</b-button>
+          </b-button-group>
         </b-row>
         <b-row>
           <b-col>
@@ -160,6 +184,7 @@ import config from "@/config";
 import Moment from 'moment';
 import VueTimepicker from 'vue2-timepicker';
 import HotelDatePicker from 'vue-hotel-datepicker';
+import ToggleButton from 'vue-js-toggle-button';
 import { VMoney } from 'v-money';
 import { extendMoment } from 'moment-range';
 import { func } from "@/functions";
@@ -171,7 +196,7 @@ import { defer } from 'q';
 const moment = extendMoment(Moment);
 
 Vue.use(VueTimepicker);
-
+Vue.use(ToggleButton);
 Vue.use(VueHead);
 
 export default {
@@ -204,6 +229,9 @@ export default {
     }
   },
   methods: {
+    savedays() {
+
+    },
     startchanged(date) {
       this.form.selectedDate.start = moment(date).isValid() ? moment(date).format("YYYY-MM-DD") : '';
       this.form.collapseWeekdays = true;
@@ -286,12 +314,13 @@ export default {
             HorSessao: `${this.form.sessionTime.HH}:${this.form.sessionTime.mm}`,
             dateStart: this.form.selectedDate.start,
             dateEnd: this.form.selectedDate.end,
+            allowweb: this.form.allowweb,
+            allowticketoffice: this.form.allowticketoffice,
           };
           if (this.grids.added.items.filter(function (data) {
             return data.codSala == obj.codSala && data.HorSessao == obj.HorSessao && data.weekday == obj.weekday;
           }).length == 0) {
             this.grids.added.items.push(obj);
-            this.form.amount = "0.00";
           }
         }
         this.grids.added.loaded = true;
@@ -301,8 +330,6 @@ export default {
       });
     },
     exclude(item) {
-      console.log(this.grids.added.items.filter(o => { return o.weekday == item.weekday && o.HorSessao === item.HorSessao; }));
-//      console.log("item:"+item.HorSessao+"/"+item.weekday);
       this.grids.added.items = this.grids.added.items.filter(data=> {
         return (data.weekday.toString()+"|"+data.HorSessao) != (item.weekday.toString()+"|"+item.HorSessao);
       });
@@ -510,6 +537,8 @@ export default {
             start: '',
             end: ''
           },
+          allowweb: false,
+          allowticketoffice: false,
           amount: '',
           sessionTime: {
             HH: "00",
@@ -549,6 +578,8 @@ export default {
                 weekdayName: { label: 'Dia da Semana', sortable: false },
                 HorSessao: { label: 'Hora', sortable: false },
                 ValPeca: { label: 'Valor', sortable: false },
+                allowweb: { label: 'Web', sortable: false },
+                allowticketoffice: { label: 'Bilheteria', sortable: false },
                 actions: { label: 'Ações', sortable: false }
             },
           }
@@ -560,6 +591,9 @@ export default {
 <style>
 .fontsizetimepicker {
   font-size:.875rem !important;
+}
+.v-switch-label {
+  color: #4d4d4d !important;
 }
 </style>
 

@@ -15,6 +15,48 @@ export const partnerService = {
   confdb,
   confdbuser,
   scaffolder,
+  resetgit,
+  videoupload,
+}
+
+function videoupload(form) {
+    // debugger;
+    let url = config.api + `/v1/admin/partner/scaffoldervideoupload`;
+
+    var ret = new Promise(
+        function (resolve, reject) {
+            // debugger;
+            Vue.http.post(url, form).then(res => {
+                // debugger;
+                resolve(res.body);
+            }, err => {
+                reject({
+                    error: true,
+                    msg: err
+                });
+            });    
+        }
+    );
+    return ret;
+}
+function resetgit(loggedId) {
+    let url = config.api + `/v1/admin/partner/scaffolderreset`;
+
+    let obj = { id_user: loggedId };
+
+    var ret = new Promise(
+        function (resolve, reject) {
+            Vue.http.post(url, obj, { emulateJSON: true }).then(res => {
+                resolve(res.body);
+            }, err => {
+                reject({
+                    error: true,
+                    msg: err
+                });
+            });    
+        }
+    );
+    return ret;
 }
 
 function scaffolder(loggedId, id_partner,json_meta_description, json_meta_keywords, json_template, json_info_title, json_info_cnpj, json_info_companyname, json_info_companyaddress, json_ga, scss_colors_primary, scss_colors_secondary, changedImage, imagebase64, generate) {

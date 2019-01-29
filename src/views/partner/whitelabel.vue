@@ -7,7 +7,7 @@
                 <b-card no-body>
                   <b-alert variant="success" show><h3>Parceiro: {{form.name}} - {{form.uniquename}}</h3></b-alert>
                   <b-tabs pills card vertical>
-                    <b-tab title="Base de dados" active>
+                    <b-tab title="Base de dados" >
                       <h4>Configuração da base de dados</h4>
                       <b-jumbotron header="" lead="Configuração referente a base de dados única do parceiro e as conexões." >
                         <b-button-group>
@@ -16,7 +16,7 @@
                         </b-button-group>
                       </b-jumbotron>
                     </b-tab>
-                    <b-tab title="Scaffolder">
+                    <b-tab title="Scaffolder" active>
                       <h4>Configuração dos JSON</h4>
                       <b-jumbotron header="" lead="Configuração referente ao site." >
                         <b-row class="mb-3">
@@ -76,6 +76,47 @@
                                   <option value="ticketHubSearchHeader">Modelo com busca no cabeçalho</option>
                                 </b-form-select>
                             </b-input-group>
+                        </b-row>
+                        <b-row class="mb-3" v-if="form.json_template=='ticketHubVideo'">
+                          <b-col>
+                            <file-pond
+                                name="mp4"
+                                ref="pond_mp4"
+                                :server="{ process: this.doVideoUpload, fetch: null, load: null }"
+                                :instantUpload="false"
+                                label-button-remove-item="Remover"
+                                label-idle="Adicionar video MP4"
+                                allow-multiple="false"
+                                accepted-file-types="video/mp4"
+                                
+                                v-on:init="handleFilePondInit"/>
+                          </b-col>
+                          <b-col>
+                            <file-pond
+                                name="webm"
+                                ref="pond_webm"
+                                :server="{ process: this.doVideoUpload, fetch: null, load: null }"
+                                :instantUpload="false"
+                                label-button-remove-item="Remover"
+                                label-idle="Adicionar video WEBM"
+                                allow-multiple="false"
+                                accepted-file-types="video/webm"
+                                @addfilestart="dumpmethod"
+                                v-bind:files="form.videos.webm.selected"
+                                v-on:init="handleFilePondInit"/>
+                          </b-col>
+                        </b-row>
+                        <b-row class="mb-3" v-if="form.json_template=='ticketHubVideo'">
+                          <b-col>
+                            <video v-if="form.videos.mp4.has" controls muted playsinline style="width: 191px;">
+                              <source :src="form.videos.mp4.uri" type="video/mp4">
+                            </video>
+                          </b-col>
+                          <b-col>
+                            <video v-if="form.videos.webm.has" controls muted playsinline style="width: 191px;">
+                              <source :src="form.videos.webm.uri" type="video/webm">
+                            </video>
+                          </b-col>
                         </b-row>
                         <b-row class="mb-3">
                             <b-input-group size="sm">
@@ -153,9 +194,8 @@
                                 <b-input-group-prepend is-text>
                                     Cor primária:
                                 </b-input-group-prepend>
-                            <swatches v-model="form.scss_colors_primary" colors="text-advanced">
-                              <input slot="trigger" :value="form.scss_colors_primary" class="form__input__element" readonly>
-                            </swatches>
+                                <input v-model="form.scss_colors_primary" class="form__input__element">
+                                <swatches colors="text-advanced" popover-to="left" v-model="form.scss_colors_primary"></swatches>
                             </b-input-group>
                         </b-row>
                         <b-row class="mb-3">
@@ -163,9 +203,8 @@
                                 <b-input-group-prepend is-text>
                                     Cor secundaria:
                                 </b-input-group-prepend>
-                            <swatches v-model="form.scss_colors_secondary" colors="text-advanced">
-                              <input slot="trigger" :value="form.scss_colors_secondary" class="form__input__element" readonly>
-                            </swatches>
+                                <input v-model="form.scss_colors_secondary" class="form__input__element">
+                                <swatches colors="text-advanced" popover-to="left" v-model="form.scss_colors_secondary"></swatches>
                             </b-input-group>
                         </b-row>
 
@@ -178,10 +217,11 @@
 
                         <b-dropdown v-if="!processing" id="ddown-split" variant="success" size="sm" split text="Salvar" @click="saveme(0);" class="m-2">
                           <b-dropdown-item href="#" @click="saveme(1)">Salvar e Criar</b-dropdown-item>
-                          <b-dropdown-item href="#" @click="saveme(2)">Salvar e Criar (apenas site)</b-dropdown-item>
-                          <b-dropdown-item href="#" @click="saveme(4)">Salvar e Criar (apenas legacy)</b-dropdown-item>
-                          <b-dropdown-item href="#" @click="saveme(3)">Salvar e Criar (apenas api)</b-dropdown-item>
-                          <b-dropdown-item href="#" @click="scaffolder_test">Preencher</b-dropdown-item>
+                          <b-dropdown-item href="#" v-if="isdeveloper" @click="saveme(2)">Salvar e Criar (apenas site)</b-dropdown-item>
+                          <b-dropdown-item href="#" v-if="isdeveloper" @click="saveme(4)">Salvar e Criar (apenas legacy)</b-dropdown-item>
+                          <b-dropdown-item href="#" v-if="isdeveloper" @click="saveme(3)">Salvar e Criar (apenas api)</b-dropdown-item>
+                          <b-dropdown-item href="#" v-if="isdeveloper" @click="scaffolder_test">Pump it up!</b-dropdown-item>
+                          <b-dropdown-item href="#" v-if="isdeveloper" @click="scaffolder_reset">Resetar git</b-dropdown-item>
                         </b-dropdown>
                       </b-jumbotron>
                     </b-tab>
@@ -217,6 +257,7 @@
 import Vue from "vue";
 import VueHead from 'vue-head';
 import VueMask from 'v-mask';
+import vueFilePond from 'vue-filepond';
 import PictureInput from 'vue-picture-input';
 import Swatches from 'vue-swatches';
 import config from "@/config";
@@ -225,6 +266,12 @@ import { partnerService } from '../../components/common/services/partner';
 import { deployService } from '../../components/common/services/deploy';
 
 import "vue-swatches/dist/vue-swatches.min.css";
+import 'filepond/dist/filepond.min.css';
+import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.min.css';
+import FilePondPluginFileValidateType from 'filepond-plugin-file-validate-type';
+import FilePondPluginImagePreview from 'filepond-plugin-image-preview';
+
+const FilePond = vueFilePond(FilePondPluginFileValidateType, FilePondPluginImagePreview);
 
 Vue.use(VueMask);
 Vue.use(VueHead);
@@ -233,7 +280,7 @@ export default {
   mixins: [func],
   props: ['id'],
   name: 'partner-wl',
-  components: { Swatches, PictureInput },
+  components: { Swatches, PictureInput, FilePond },
   head: {
     title: function () {
       return { 
@@ -242,6 +289,9 @@ export default {
         complement: `Parceiros - whitelabel`,
       }
     },
+  },
+  mounted() {
+    
   },
   created() {
     Vue.nextTick().then(response => {
@@ -293,6 +343,9 @@ export default {
       }
       return ret;
     },
+    isdeveloper() {
+      return this.mayI('developer');
+    },
     mayIsee() {
       return this.mayI('partner-wl', 'partner-wl');
     },
@@ -304,6 +357,134 @@ export default {
     },
   },
   methods: {
+    doVideoUpload(fieldName, file, metadata, load, error, progress, abort) {
+      if (fieldName == "mp4") {
+        // debugger;
+        this.uploadMP4(file, progress);
+      }
+      else {
+        this.uploadWEBM(file, progress);
+      }
+    },
+    dumpmethod(dd, dd2, dd3, dd4, dd5, dd6, dd7, dd8) { },
+    uploadvideo_intern(type, pond, progress, file) {
+      if (!this.form.candoanything) {
+        this.toastError("Aguarde a execução do job para executar outro.");
+        return;
+      }
+      if (this.processing) return;
+      this.processing = true;
+
+      this.$wait.start("inprocess");
+      this.showWaitAboveAll();
+
+      progress(true, .50, 1);
+
+      const formData = new FormData();
+      formData.append('uploadedvideo', file, "demo."+type);
+      formData.append('id_partner', this.id);
+      formData.append('id_user', this.getLoggedId());
+      formData.append("type", type);
+
+
+      partnerService.videoupload(formData).then(
+        response => {
+          this.processing = false;
+          this.hideWaitAboveAll();
+          this.$wait.end("inprocess");
+
+          this.form.videos.mp4.selected =  [];
+          this.form.videos.mp4.base64 =  '';
+          this.form.videos.mp4.name =  '';
+          this.form.videos.mp4.error =  '';
+          this.form.videos.mp4.success =  '';
+          this.form.videos.mp4.hasFile =  false;
+          this.form.videos.mp4.uploaded =  false;
+          this.form.videos.webm.selected =  [];
+          this.form.videos.webm.base64 =  '';
+          this.form.videos.webm.name =  '';
+          this.form.videos.webm.error =  '';
+          this.form.videos.webm.success =  '';
+          this.form.videos.webm.hasFile =  false;
+          this.form.videos.webm.uploaded =  false;
+
+          if (this.validateJSON(response))
+          {
+            if (response.success) {
+              this.toastSuccess("Upload realizado com sucesso.");
+              progress(true, 1, 1);
+              pond.removeFiles();
+              this.get();
+            }
+            else {
+              this.toastError("Falha ao realizar o upload do video.");
+              pond.removeFiles();
+            }
+          }
+        },
+        error => {
+          this.form.videos.mp4.selected =  [];
+          this.form.videos.mp4.base64 =  '';
+          this.form.videos.mp4.name =  '';
+          this.form.videos.mp4.error =  '';
+          this.form.videos.mp4.success =  '';
+          this.form.videos.mp4.hasFile =  false;
+          this.form.videos.mp4.uploaded =  false;
+          this.form.videos.webm.selected =  [];
+          this.form.videos.webm.base64 =  '';
+          this.form.videos.webm.name =  '';
+          this.form.videos.webm.error =  '';
+          this.form.videos.webm.success =  '';
+          this.form.videos.webm.hasFile =  false;
+          this.form.videos.webm.uploaded =  false;
+
+          this.processing = false;
+          this.hideWaitAboveAll();
+          this.$wait.end("inprocess");
+          this.toastError("Falha na execução.");
+        }
+      );      
+    },
+    uploadMP4: function (file, progress) {
+      // debugger;
+      //var f = this.$refs.pond_mp4.getFiles()[0].file;
+      //this.form.videos.mp4.name = file.name;
+      // var reader = new FileReader();
+      // const vueobj = this;
+      //reader.onload = (function(theFile) {
+      //  return function(e) {
+      //    var binaryData = e.target.result;
+      //    var base64String = window.btoa(binaryData);
+      //    vueobj.form.videos.mp4.base64 = base64String;
+      //    vueobj.form.videos.mp4.hasFile = true;
+      this.toastSuccess("Iniciando o processo de upload.");
+      this.uploadvideo_intern("mp4", this.$refs.pond_mp4, progress, file);
+      //  };
+      //})(f);
+      // Read in the image file as a data URL.
+      //reader.readAsBinaryString(f);
+    },
+    uploadWEBM: function (file, progress) {
+      // var f = this.$refs.pond_webm.getFiles()[0].file;
+      // this.form.videos.webm.name = file.name;
+      // var reader = new FileReader();
+      // const vueobj = this;
+      // reader.onload = (function(theFile) {
+      //   return function(e) {
+      //     var binaryData = e.target.result;
+      //     var base64String = window.btoa(binaryData);
+      //     vueobj.form.videos.webm.base64 = base64String;
+      //     vueobj.form.videos.webm.hasFile = true;
+      this.toastSuccess("Iniciando o processo de upload.");
+      this.uploadvideo_intern("webm", this.$refs.pond_webm, progress, file);
+      //   };
+      // })(f);
+      // // Read in the image file as a data URL.
+      // reader.readAsBinaryString(file);
+    },
+    handleFilePondInit: function() {
+      console.log('FilePond has initialized');
+    },
     deployAsk(who) {
       this.$swal({
         allowEscapeKey: false,
@@ -406,6 +587,41 @@ export default {
             }
             else {
               this.toastError(response.msg);
+            }
+          }
+        },
+        error => {
+          this.processing = false;
+          this.hideWaitAboveAll();
+          this.$wait.end("inprocess");
+          this.toastError("Falha na execução.");
+        }
+      );      
+    },
+    scaffolder_reset() {
+      if (!this.form.candoanything) {
+        this.toastError("Aguarde a execução do job para executar outro.");
+        return;
+      }
+      if (this.processing) return;
+
+      this.processing = true;
+
+      this.$wait.start("inprocess");
+      this.showWaitAboveAll();
+
+      partnerService.resetgit(this.getLoggedId()).then(
+        response => {
+          this.processing = false;
+          this.hideWaitAboveAll();
+          this.$wait.end("inprocess");
+
+          if (this.validateJSON(response))
+          {
+            if (response.success) {
+              this.toastSuccess("Executado com sucesso.");
+
+              this.get();
             }
           }
         },
@@ -568,6 +784,25 @@ export default {
               this.form.json_info_companyname = response.json_info_companyname;
               this.form.scss_colors_primary = response.scss_colors_primary;
               this.form.scss_colors_secondary = response.scss_colors_secondary;
+              this.form.videos.mp4.uri = '';
+              this.form.videos.mp4.has = false;
+              this.form.videos.webm.uri = '';
+              this.form.videos.webm.has = false;
+
+              for (let index = 0; index < response.videos.list.length; index++) {
+                const element = response.videos.list[index];
+                switch (element.type) {
+                  case "mp4":
+                    this.form.videos.mp4.uri = element.src;
+                    this.form.videos.mp4.has = true;
+                  break;
+                  case "webm":
+                    this.form.videos.webm.uri = element.src;
+                    this.form.videos.webm.has = true;
+                  break;
+                }                
+              }
+
               this.form.imageURI = "https://media.tixs.me/logos/logo-"+response.uniquename+".png?"+this.randomString();
 
               switch (response.databaseStatus) {
@@ -638,7 +873,30 @@ export default {
           changedImage: false,
           imageURI: '',
           imagebase64: "",
-
+          videos: { 
+            mp4: { 
+              uri: '',
+              has: false,
+              selected: [],
+              base64: '',
+              name: '',
+              error: '',
+              success: '',
+              hasFile: false,
+              uploaded: false,
+            },
+            webm: {
+              uri: '',
+              has: false,
+              selected: [],
+              base64: '',
+              name: '',
+              error: '',
+              success: '',
+              hasFile: false,
+              uploaded: false,
+            }
+          },
           json_ga: '',
           json_info_companyaddress: '',
           json_meta_description: '',
@@ -674,6 +932,20 @@ export default {
   }
 }
 </script>
+
+<style>
+.filepond--list-scroller {
+  color:black;
+}
+.vue-swatches {
+  top: 2px !important;
+  padding-left:5px !important;
+}
+.vue-swatches__trigger {
+  width: 26px !important;
+  height: 26px !important;
+}
+</style>
 
 <style scoped>
 .imgthumb {
