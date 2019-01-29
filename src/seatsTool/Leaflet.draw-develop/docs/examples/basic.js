@@ -571,5 +571,4 @@ realtime = L.realtime({
 		if(getMarkersSorted().length > 60 ) {
 			getMarkersSorted().map(x => x.remove());
 		}
-			insertSeats(pointsForJson);
 	});

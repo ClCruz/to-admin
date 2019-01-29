@@ -94,6 +94,17 @@ const adminPlaceAdd = resolve => {
     resolve(require('./views/place/add.vue'));
   }, 'admin-place');
 };
+// room
+const adminRoomList = resolve => {
+  require.ensure(['./views/room/list.vue'], () => {
+    resolve(require('./views/room/list.vue'));
+  }, 'admin-room');
+};
+const adminRoomAdd = resolve => {
+  require.ensure(['./views/room/add.vue'], () => {
+    resolve(require('./views/room/add.vue'));
+  }, 'admin-room');
+};
 
 // my
 const adminMyInfo = resolve => {
@@ -244,6 +255,18 @@ const obj = new Router({
       name: 'genre-edit',
       props: true,
       component: adminGenreAdd
+    },
+    //------
+    //ROOM
+    {
+      path: '/room/add',
+      name: 'room-add',
+      component: adminRoomAdd
+    },
+    {
+      path: '/room/list',
+      name: 'room-list',
+      component: adminRoomList
     },
     //------
     //MY
