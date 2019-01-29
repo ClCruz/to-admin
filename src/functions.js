@@ -28,6 +28,82 @@ export const func = {
         debugger() {
             debugger;
         },
+        //ticketoffice
+        isPurchasePages() {
+            if (this.$route.path.startsWith("/ticketoffice/operation/"))
+                return true;
+            
+            if (this.$route.path.startsWith("/ticketoffice/sell"))
+                return true;
+
+            return false;
+        },
+        gotoHomeTicketOffice() {
+            this.$router.push("/ticketoffice");
+            if (this.$parent.idHeader) this.$parent.idHeader++;
+        },
+        toffice_buttonNext(show, uri = "") {
+            for (let x in this.$parent.$children) {
+                if (!this.$parent.$children[x].isHeader) continue;
+
+                if (show) {
+                    this.$parent.$children[x].toNext = true;
+                    this.$parent.$children[x].toNextRoute = uri;
+                }
+                else {
+                    this.$parent.$children[x].toNext = false;
+                    this.$parent.$children[x].toNextRoute = "";        
+                }
+                break;
+            }
+        },
+        getHeader() {
+            for (let x in this.$parent.$children) {
+                if (!this.$parent.$children[x].isHeader) continue;
+                return this.$parent.$children[x];
+            }
+            for (let x in this.$children) {
+                if (!this.$parent.$children[x].isHeader) continue;
+                return this.$parent.$children[x];
+            }
+        },
+        getCashRegister() {
+            for (let x in this.$parent.$children) {
+                if (!this.$parent.$children[x].isCashRegister) continue;
+                return this.$parent.$children[x];
+            }
+            for (let x in this.$children) {
+                if (!this.$parent.$children[x].isCashRegister) continue;
+                return this.$parent.$children[x];
+            }
+        },
+        getMap() {
+            for (let x in this.$parent.$children) {
+                if (!this.$parent.$children[x].isMap) continue;
+                return this.$parent.$children[x];
+            }
+        },
+        getOperation() {
+            for (let x in this.$parent.$children) {
+                if (!this.$parent.$children[x].isOperation) continue;
+                return this.$parent.$children[x];
+            }
+            for (let x in this.$children) {
+                if (!this.$parent.$children[x].isOperation) continue;
+                return this.$parent.$children[x];
+            }
+        },
+        getClient() {
+            for (let x in this.$parent.$children) {
+                if (!this.$parent.$children[x].isClientAdd) continue;
+                return this.$parent.$children[x];
+            }
+            for (let x in this.$children) {
+                if (!this.$parent.$children[x].isClientAdd) continue;
+                return this.$parent.$children[x];
+            }
+        },
+        //admin
         validateLoginForMe() {
             let ret = false;
             if (this.getLoggedId()!='' && this.getLoggedId() != null) {
