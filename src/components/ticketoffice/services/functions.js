@@ -174,19 +174,21 @@ export const funcOperation = {
             let hourPresentation = op.step1.hourPresentation
             let roomName = op.step1.roomName;
             let type = op.step1.type;
-
+            
             this.clearOperation();
             this.ls_remove("purchaseProcessing");
             this.ls_remove("showCancel");
-
+            
             this.addStep1(codPeca, datePresentation, id_apresentacao, hourPresentation, roomName, type);
             this.$router.push(`/ticketoffice/operation/sell/seat`);
+            this.getHeader().$parent.reloadHeader();
         },
         backToBases() {
             this.clearOperation();
             this.ls_remove("purchaseProcessing");
             this.ls_remove("showCancel");
             this.$router.push(`/ticketoffice/operation/sell`);
+            this.getHeader().$parent.reloadHeader();
         },
         retrieve() {
             if (!this.ls_get("operation"))
