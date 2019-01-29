@@ -1,9 +1,9 @@
 const domains = require('./jsons/domains.json');
 
 let json = {};
-const domain = domains[window.location.hostname];
+let domain = domains[window.location.hostname];
 
-if (domain == undefined) {
+if (domain == undefined || domain == "") {
     domain = "localhost";
 }
 
