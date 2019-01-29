@@ -32,7 +32,7 @@ npm run build
 ### Docker
 ```bash
 sudo docker run -it -d -p 2000:80 --restart=always --name unique.admin \
--v /var/www/unique/admin:/var/www/html \
+-v /hd/www/unique/admin:/var/www/html \
 blcoccaro/phpwithsql:v1
 ```
 
