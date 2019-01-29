@@ -125,7 +125,7 @@ export default {
                                 text: "Caixa não encontra-se aberto.",
                                 showConfirmButton: true,
                             }).then((result) => {
-                                this.gotoHome();
+                                this.gotoHomeTicketOffice();
                             });
                             return false;
                         }
@@ -205,7 +205,7 @@ export default {
                                     title: 'Processo de fechamento de caixa',
                                     text: 'Caixa fechado com sucesso.',
                                 });
-                                this.gotoHome();
+                                this.gotoHomeTicketOffice();
                             }
                             else {
                                 this.$swal({

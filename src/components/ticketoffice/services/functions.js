@@ -25,7 +25,7 @@ export const funcOperation = {
                     text: "Escolha uma base.",
                     showConfirmButton: true,
                   }).then((result) => {
-                      this.gotoHome();
+                      this.gotoHomeTicketOffice();
                   });
                 return false;
             }
@@ -50,7 +50,7 @@ export const funcOperation = {
                                     text: msg,
                                     showConfirmButton: true,
                                 }).then((result) => {
-                                    this.gotoHome();
+                                    this.gotoHomeTicketOffice();
                                 });
                                 return false;
                             }

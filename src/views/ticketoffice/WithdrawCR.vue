@@ -122,7 +122,7 @@ export default {
                                 title: 'Fechamento de Caixa',
                                 text: 'O caixa não está aberto.',
                             });
-                            this.gotoHome();
+                            this.gotoHomeTicketOffice();
                         }
                         else {
                             if (parseFloat(response.Saldo)==0){
@@ -131,7 +131,7 @@ export default {
                                     title: 'Fechamento de Caixa',
                                     text: 'Não há saldo disponível para realizar saque.',
                                 });
-                                this.gotoHome();
+                                this.gotoHomeTicketOffice();
                             }
                             else {
                                 this.search();

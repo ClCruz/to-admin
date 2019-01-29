@@ -301,7 +301,7 @@ export default {
                 }
                 else if (result.dismiss === this.$swal.DismissReason.cancel) {
                     this.toffice_buttonNext(true, this.nextURI);
-                    this.gotoHome();
+                    this.gotoHomeTicketOffice();
                 }
             });
         },

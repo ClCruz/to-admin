@@ -1,6 +1,6 @@
 <template>
     <div>
-        <b-button-toolbar key-nav  aria-label="Toolbar with button groups" class="menuticketoffice">
+        <b-button-toolbar :key="idbuttons" key-nav  aria-label="Toolbar with button groups" class="menuticketoffice">
             <b-button-group class="mx-1">
                 <b-dropdown id="ddbase" ref="ddbase" v-if="isAuth && !purchaseProcessing" variant="warning" right :text="base">
                     <b-dropdown-item v-on:click="goto('base', { id_base: null, ds_nome_teatro: 'Escolha'})">Escolha</b-dropdown-item>
@@ -56,6 +56,7 @@ export default {
             breadcrumb: {
                 items: []
             },
+            idbuttons: 1,
             isHeader: true,
             processing: false,
             toNext: false,
@@ -309,26 +310,30 @@ export default {
             }
         },
         initiatingSalesProcess() {
+            this.$parent.reloadHeader();
             this.ls_add("purchaseProcessing", true);
             this.ls_add("showCancel", true);
         },
         initiatingReservationProcess() {
+            this.$parent.reloadHeader();
             this.ls_add("purchaseProcessing", true);
             this.ls_add("showCancel", false);
         },
         cancelingSalesProcess() {
+            this.$parent.reloadHeader();
             this.toNext = false;
             this.toNextRoute = '';
             this.ls_add("purchaseProcessing", false);
             this.ls_add("showCancel", false);
-            this.gotoHome();
+            this.gotoHomeTicketOffice();
         },
         cancelingReservationProcess() {
+            this.$parent.reloadHeader();
             this.toNext = false;
             this.toNextRoute = '';
             this.ls_add("purchaseProcessing", false);
             this.ls_add("showCancel", false);
-            this.gotoHome();
+            this.gotoHomeTicketOffice();
         },
         goto(to, item = null) {
             if (this.processing) return;
