@@ -181,7 +181,7 @@ export default {
                 loaded: false,
                 total: 0,
                 currentPage: 1,
-                perPage: 10,
+                perPage: 50,
                 items: [],
                 fields: {
                     isDemo: { label: 'Tipo', sortable: false },
