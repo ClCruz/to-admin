@@ -590,13 +590,13 @@ export default {
                     {
                         switch (type) {
                             case "add":
-                                this.toastSuccess(`Tipo do Bilhete definido com suceso.`);
+                                this.toastSuccess(`Tipo do Bilhete definido com sucesso.`);
                             break;
                             case "update":
-                                this.toastSuccess(`Tipo do Bilhete alterado com suceso.`);
+                                this.toastSuccess(`Tipo do Bilhete alterado com sucesso.`);
                             break;
                             case "delete":
-                                this.toastSuccess(`Tipo do Bilhete removido com suceso.`);
+                                this.toastSuccess(`Tipo do Bilhete removido com sucesso.`);
                             break;
                         }
                         this.loadShoppingCart();
