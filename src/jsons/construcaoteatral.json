@@ -10,7 +10,6 @@
   "ga": "",
   "scss": "./src/scss/themes/construcaoteatral/main.scss",
   "css": "/stylesheets/themes/www.construcaoteatral.tixs.me/main.css",
-  "newTemplate": false,
   "logo": "https://media.tixs.me/logos/logo-construcaoteatral.jpg",
   "favico": "/img/construcaoteatral/",
   "meta": {
@@ -32,6 +31,9 @@
     "print": {
       "voucher": "../comprar/templates/multi_construcaoteatral/impressaoComprador.html",
       "gift": "../comprar/templates/multi_construcaoteatral/impressaoPresente.html"
+    },
+    "emails": {
+      "folder": "/v1/template/email/default/"
     },
     "email": {
       "recover": "../comprar/templates/multi_construcaoteatral/solicitarSenha.html",

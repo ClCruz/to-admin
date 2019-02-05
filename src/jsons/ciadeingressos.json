@@ -8,8 +8,8 @@
   "apikey": "live_db039d6905d44d2689042e0a81fe30c200409f61fa6940c38fe807ad391b0400",
   "geokey": "AIzaSyCH0_IkJUiB8TLRuIJFvnI-JKLvuKx1zl8",
   "ga": "",
-  "template": "www.ciadeingressos.com",
-  "newTemplate": false,
+  "scss": "./src/scss/themes/ciadeingressos/main.scss",
+  "css": "/stylesheets/themes/ciadeingressos/main.css",
   "logo": "https://media.tixs.me/logos/logo-ciadeingressos.jpeg",
   "favico": "/img/ciadeingressos/",
   "meta": {
@@ -25,13 +25,15 @@
     "description": "Venda de Ingressos",
     "siteName": "ciadeingressos.com",
     "CNPJ": "",
-    "companyAddress": "",
     "companyName": ""
   },
   "templates": {
     "print": {
       "voucher": "../comprar/templates/multi_ciadeingressos/impressaoComprador.html",
       "gift": "../comprar/templates/multi_ciadeingressos/impressaoPresente.html"
+    },
+    "emails": {
+      "folder": "/v1/template/email/default/"
     },
     "email": {
       "recover": "../comprar/templates/multi_ciadeingressos/solicitarSenha.html",

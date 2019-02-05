@@ -10,7 +10,6 @@
   "ga": "",
   "scss": "./src/scss/themes/www.teatroumc.tk/main.scss",
   "css": "/stylesheets/themes/www.teatroumc.tk/main.css",
-  "newTemplate": false,
   "logo": "https://media.tixs.me/logos/teatroumc.png",
   "favico": "/img/teatroumc/",
   "meta": {
@@ -32,6 +31,9 @@
     "print": {
       "voucher": "../comprar/templates/multi_teatroumc/impressaoComprador.html",
       "gift": "../comprar/templates/multi_teatroumc/impressaoPresente.html"
+    },
+    "emails": {
+      "folder": "/v1/template/email/default/"
     },
     "email": {
       "recover": "../comprar/templates/multi_teatroumc/solicitarSenha.html",
