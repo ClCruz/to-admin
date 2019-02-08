@@ -16,6 +16,31 @@ export const cashregisterService =  {
     withdraw,
     list,
     isok,
+    sendemail
+}
+function sendemail(id_user, id_base, codVenda, email) {
+    let url = config.api + `/v1/email/purchase`;
+
+    let obj = {
+        id_user,
+        id_base,
+        codVenda,
+        email
+    };
+
+    var ret = new Promise(
+        function (resolve, reject) {
+            Vue.http.post(url, obj, { emulateJSON: true }).then(res => {
+                resolve(res.body);
+            }, err => {
+                reject({
+                    error: true,
+                    msg: err
+                });
+            });    
+        }
+    );
+    return ret;
 }
 function isok(id_base, id) {
     let url = config.api + `/v1/ticketoffice/cashregister/isok?id=${id}&id_base=${id_base}`;

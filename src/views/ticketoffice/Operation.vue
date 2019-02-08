@@ -46,27 +46,27 @@
                             </b-form-select>
                         </b-input-group>
                       </b-row>
+                      <b-row>
+                        <b-card :title="event.name"
+                                :img-src="event.image"
+                                :img-alt="event.name"
+                                img-top
+                                style="max-width: 20rem;"
+                                class="mb-2" v-if="event.loaded">
+                            <p class="card-text">
+                                <b-list-group flush>
+                                    <b-list-group-item>{{event.days}}</b-list-group-item>
+                                    <b-list-group-item>Valor Geral: {{event.cost | money}}
+                                      <span v-if="event.room.loaded">/ Valor: {{event.room.cost | money}}</span>
+                                    </b-list-group-item>
+                                    <b-list-group-item>Venda web: {{event.sellWeb | truefalse}} / {{event.duration | duration}} / {{event.genre}}</b-list-group-item>
+                                    <b-list-group-item v-if="event.room.loaded">Assento númerado: {{event.room.isNumbered | truefalse}}</b-list-group-item>
+                                </b-list-group>                    
+                            </p>
+                        </b-card>
+                      </b-row>
                     </b-container>
                 </b-form>
-            </b-col>
-            <b-col>
-                <b-card :title="event.name"
-                        :img-src="event.image"
-                        :img-alt="event.name"
-                        img-top
-                        style="max-width: 20rem;"
-                        class="mb-2" v-if="event.loaded">
-                    <p class="card-text">
-                        <b-list-group flush>
-                            <b-list-group-item>{{event.days}}</b-list-group-item>
-                            <b-list-group-item>Valor Geral: {{event.cost | money}}
-                              <span v-if="event.room.loaded">/ Valor: {{event.room.cost | money}}</span>
-                            </b-list-group-item>
-                            <b-list-group-item>Venda web: {{event.sellWeb | truefalse}} / {{event.duration | duration}} / {{event.genre}}</b-list-group-item>
-                            <b-list-group-item v-if="event.room.loaded">Assento númerado: {{event.room.isNumbered | truefalse}}</b-list-group-item>
-                        </b-list-group>                    
-                    </p>
-                </b-card>
             </b-col>
         </b-row>
     </b-container>

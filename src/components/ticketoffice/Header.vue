@@ -106,7 +106,9 @@ export default {
             this.cashRegisterStatus(this.statusCaixaCallBack);
         },
         statusCaixaCallBack(msg) {
-            this.toastSuccess(msg);
+            if (msg!='') {
+                this.toastSuccess(msg);
+            }
         },
         breadcrumbMount() {
             if (this.$router.currentRoute.path.startsWith('/ticketoffice/login')) {
