@@ -56,11 +56,15 @@
                             <p class="card-text">
                                 <b-list-group flush>
                                     <b-list-group-item>{{event.days}}</b-list-group-item>
-                                    <b-list-group-item>Valor Geral: {{event.cost | money}}
-                                      <span v-if="event.room.loaded">/ Valor: {{event.room.cost | money}}</span>
+                                    <b-list-group-item>Valor: 
+                                      <span v-if="event.room.loaded">{{event.room.cost | money}}</span>
+                                      <span v-else> - </span>
                                     </b-list-group-item>
                                     <b-list-group-item>Venda web: {{event.sellWeb | truefalse}} / {{event.duration | duration}} / {{event.genre}}</b-list-group-item>
-                                    <b-list-group-item v-if="event.room.loaded">Assento númerado: {{event.room.isNumbered | truefalse}}</b-list-group-item>
+                                    <b-list-group-item>Assento númerado: 
+                                      <span v-if="event.room.loaded">{{event.room.isNumbered | truefalse}}</span>
+                                      <span v-else> - </span>
+                                    </b-list-group-item>
                                 </b-list-group>                    
                             </p>
                         </b-card>
