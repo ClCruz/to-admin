@@ -95,7 +95,7 @@
                         <b-button type="button" variant="secondary" @click="lastsells">
                             <span>Últimas vendas</span>
                         </b-button>
-                        <b-button type="button" :disabled="!canRefund" variant="success" @click="refund">
+                        <b-button type="button" :disabled="!canRefund" variant="success" @click="checkrefundcando">
                             <span>Estornar</span>
                         </b-button>
                     </b-row>
@@ -334,6 +334,9 @@ export default {
                 ,error=> {
                     this.toastError("Falha na execução.");
             });
+        },
+        checkrefundcando() {
+            this.isCashRegisterOpenAndOk(this.refund, false);
         },
         refund() {
             this.$swal.queue([{
