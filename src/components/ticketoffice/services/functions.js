@@ -15,7 +15,10 @@ export const funcOperation = {
         }
     },
     methods: {
-        isCashRegisterOpenAndOk(execMe) {
+        isCashRegisterOpenAndOk(execMe, gotohome) {
+            if (gotohome ==undefined || gotohome == null)
+                gotohome = true;
+
             if (this.getLoggedId() == null || this.getLoggedId() == "")
                 return false;
 
@@ -25,7 +28,7 @@ export const funcOperation = {
                     text: "Escolha uma base.",
                     showConfirmButton: true,
                   }).then((result) => {
-                      this.gotoHomeTicketOffice();
+                    this.gotoHomeTicketOffice();
                   });
                 return false;
             }
@@ -50,7 +53,8 @@ export const funcOperation = {
                                     text: msg,
                                     showConfirmButton: true,
                                 }).then((result) => {
-                                    this.gotoHomeTicketOffice();
+                                    if (gotohome)
+                                        this.gotoHomeTicketOffice();
                                 });
                                 return false;
                             }

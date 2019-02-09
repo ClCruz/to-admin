@@ -232,6 +232,7 @@ export default {
             messagePinpad: null,
             form: {
                 clientCode: null,
+                sentbyemail: false,
                 cardBin: "",
                 payment: null,
                 ticket_type: null,
@@ -273,6 +274,7 @@ export default {
                 cost: null,
                 sellWeb: false,
                 days: null,
+                ticketoffice_askemail: 0,
                 duration: null,
                 genre: null,
                 room: {
@@ -368,8 +370,6 @@ export default {
                     {                        
                         let resetTimer = continuous;
                         if (response.all.length != this.form.currentPinpadMessageIndex) {
-                            //console.log(response);
-                            //debugger;
                             this.form.currentPinpadMessageIndex = response.all.length;
 
                             let message = "";
@@ -497,8 +497,38 @@ export default {
                     //this.toastError("Falha na execução.");
             });            
         },
+        askEmail() {
+            if (this.event.ticketoffice_askemail == 1) {
+                this.$swal({
+                    allowEscapeKey: false,
+                    allowOutsideClick: false,
+                    allowEnterKey: false,
+                    showCancelButton: true,
+                    confirmButtonText: 'Sim',
+                    cancelButtonText: 'Não',
+                    title: 'Enviar um e-mail com o bilhete?',
+                    text: "",
+                    input: 'email',
+                    preConfirm: (email) => {
+                        if (email!='')
+                        {
+                            this.form.sentbyemail=true;
+                            cashregisterService.sendemail(this.getLoggedId(), this.get_id_base(), this.form.codVenda, email).then(response=> { } ,error=> { });
+                            //this.$swal.clickConfirm();
+                        }
+                    }
+                }).then((result) => {
+                    this.askAfter();
+                });
+            }
+            else {
+                this.askAfter();
+            }
+        },
         askAfter() {
-            printService.ticket(this.get_id_base(), this.form.codVenda, '');
+            if (!this.form.sentbyemail)
+                printService.ticket(this.get_id_base(), this.form.codVenda, '');
+
             this.$swal({
                 allowEscapeKey: false,
                 allowOutsideClick: false,
@@ -509,7 +539,6 @@ export default {
                 title: 'Nova venda',
                 text: "Deseja realizar uma nova venda para essa mesma sala/evento?",
             }).then((result) => {
-                //debugger;
                 if (result.value) {
                     this.backToSquareOne();
                 }
@@ -545,7 +574,7 @@ export default {
             ]).then((result) => {
                 if (result.value) {
                     this.clearPinpadTimer();
-                    this.askAfter();
+                    this.askEmail();
                 }
                 else if (result.dismiss === this.$swal.DismissReason.cancel) {
                     this.clearPinpadTimer();
@@ -590,13 +619,13 @@ export default {
                     {
                         switch (type) {
                             case "add":
-                                this.toastSuccess(`Tipo do Bilhete definido com suceso.`);
+                                this.toastSuccess(`Tipo do Bilhete definido com sucesso.`);
                             break;
                             case "update":
-                                this.toastSuccess(`Tipo do Bilhete alterado com suceso.`);
+                                this.toastSuccess(`Tipo do Bilhete alterado com sucesso.`);
                             break;
                             case "delete":
-                                this.toastSuccess(`Tipo do Bilhete removido com suceso.`);
+                                this.toastSuccess(`Tipo do Bilhete removido com sucesso.`);
                             break;
                         }
                         this.loadShoppingCart();
@@ -611,7 +640,6 @@ export default {
 
         },
         checkIfCanSell() {
-            //debugger;
             let allvalidCheck = false;
             let paymentCheck = false;
             let valueCheck = false;
@@ -707,6 +735,7 @@ export default {
                         this.event.days = response.days;
                         this.event.duration = response.TemDurPeca;
                         this.event.genre = response.TipPeca;
+                        this.event.ticketoffice_askemail = response.ticketoffice_askemail;
                         
                         this.event.validations.needClient = response.needClient == "1";
                         this.event.validations.needCPF = response.needCPF == "1";

@@ -17,6 +17,44 @@ export const partnerService = {
   scaffolder,
   resetgit,
   videoupload,
+  listbase,
+  savebase,
+}
+function listbase(id_partner) {
+    let url = config.api + `/v1/admin/partner/base/list?id=${id_partner}`;
+
+    var ret = new Promise(
+    function (resolve, reject) {
+        Vue.http.get(url).then(res => {
+        resolve(res.body);
+        }, err => {
+        reject({
+            error: true,
+            msg: err
+        });
+        });
+    }
+  );
+  return ret;
+}
+function savebase(loggedId, id_partner, id_base) {
+    let url = config.api + `/v1/admin/partner/base/save`;
+
+    let obj = { loggedId, id_partner, id_base };
+
+    var ret = new Promise(
+        function (resolve, reject) {
+            Vue.http.post(url, obj, { emulateJSON: true }).then(res => {
+                resolve(res.body);
+            }, err => {
+                reject({
+                    error: true,
+                    msg: err
+                });
+            });    
+        }
+    );
+    return ret;
 }
 
 function videoupload(form) {

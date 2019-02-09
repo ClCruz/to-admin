@@ -95,7 +95,7 @@
                         <b-button type="button" variant="secondary" @click="lastsells">
                             <span>Últimas vendas</span>
                         </b-button>
-                        <b-button type="button" :disabled="!canRefund" variant="success" @click="refund">
+                        <b-button type="button" :disabled="!canRefund" variant="success" @click="checkrefundcando">
                             <span>Estornar</span>
                         </b-button>
                     </b-row>
@@ -127,8 +127,9 @@
 
                     <template slot="print" slot-scope="data">
                         <b-button-group size="sm">
-                            <b-button v-b-tooltip.hover title="Imprimir apenas esse bilhete." @click.stop="printOne(data.item,$event.target)">Bilhete</b-button>
-                            <b-button v-b-tooltip.hover title="Imprimir todos bilhetes do código de venda." @click.stop="printAll(data.item,$event.target)">Código de Venda</b-button>
+                            <b-button v-b-tooltip.hover class="btnsmallest" title="Imprimir apenas esse bilhete." @click.stop="printOne(data.item,$event.target)">Bilhete</b-button>
+                            <b-button v-b-tooltip.hover class="btnsmallest" title="Imprimir todos bilhetes do código de venda." @click.stop="printAll(data.item,$event.target)">Código de Venda</b-button>
+                            <b-button :disabled="data.item.purchaseType!='bilheteria'" class="btnsmallest" v-b-tooltip.hover title="Enviar por e-mail." @click.stop="askEmail(data.item,$event.target)">Enviar por email</b-button>
                         </b-button-group>
                     </template>
                 </b-table>
@@ -145,6 +146,8 @@ import { funcOperation } from '../../components/ticketoffice/services/functions'
 import { printService } from '../../components/ticketoffice/services/print';
 import { purchaseService } from "../../components/common/services/purchase";
 import { eventService } from "../../components/ticketoffice/services/event";
+import { cashregisterService } from '../../components/ticketoffice/services/cashregister';
+
 
 import {mask} from 'vue-the-mask'
 
@@ -223,6 +226,27 @@ export default {
         );
     },
     methods: {
+        askEmail(obj) {
+            this.$swal({
+                allowEscapeKey: false,
+                allowOutsideClick: false,
+                allowEnterKey: false,
+                showCancelButton: true,
+                confirmButtonText: 'Sim',
+                cancelButtonText: 'Não',
+                title: 'Enviar um e-mail com o bilhete?',
+                html: "<small>Atenção, serão enviados por e-mail todos os bilhetes que foram comprados no código venda "+obj.CodVenda+".</small>",
+                input: 'email',
+                preConfirm: (email) => {
+                    if (email!='')
+                    {
+                        cashregisterService.sendemail(this.getLoggedId(), this.get_id_base(), obj.CodVenda, email).then(response=> { } ,error=> { });
+                    }
+                }
+            }).then((result) => {
+                    this.toastSuccess("E-mail enviado com sucesso.");
+                });
+        },
         selectedEvent() {
             this.$nextTick(() => {
                 this.populateDays();
@@ -310,6 +334,9 @@ export default {
                 ,error=> {
                     this.toastError("Falha na execução.");
             });
+        },
+        checkrefundcando() {
+            this.isCashRegisterOpenAndOk(this.refund, false);
         },
         refund() {
             this.$swal.queue([{
@@ -443,5 +470,9 @@ export default {
 }
 .tableClicked tr {
     cursor: pointer;
+}
+.btnsmallest {
+    font-size: 10px !important;
+
 }
 </style>
