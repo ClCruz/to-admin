@@ -8,10 +8,8 @@
   "apikey": "live_0aeae6ff88784a9bb0a704359699051677c08991c03d46759ec943ec415a71e8",
   "geokey": "AIzaSyCH0_IkJUiB8TLRuIJFvnI-JKLvuKx1zl8",
   "ga": "",
-  "template": "www.sazarteingressos.com.br",
+  "scss": "./src/scss/themes/sazarte/main.scss",
   "css": "/stylesheets/themes/sazarte/main.css",
-  "newTemplate": false,
-
   "logo": "https://media.tixs.me/logos/logo-sazarte.jpeg",
   "favico": "/img/sazarte/",
   "meta": {
@@ -27,13 +25,15 @@
     "description": "Venda de Ingressos",
     "siteName": "sazarteingressos.com.br",
     "CNPJ": "",
-    "companyAddress": "",  
     "companyName": ""
   },
   "templates": {
     "print": {
       "voucher": "../comprar/templates/multi_sazarte/impressaoComprador.html",
       "gift": "../comprar/templates/multi_sazarte/impressaoPresente.html"
+    },
+    "emails": {
+      "folder": "/v1/template/email/default/"
     },
     "email": {
       "recover": "../comprar/templates/multi_sazarte/solicitarSenha.html",

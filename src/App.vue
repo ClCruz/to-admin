@@ -127,6 +127,12 @@ export default {
           ]
         },
         {
+          title: 'Bilheteria',
+          icon: 'fas fa-ticket-alt',
+          code: 'ticketoffice-login',
+          href: '/ticketoffice',
+        },
+        {
           title: 'Gênero',
           icon: 'fas fa-band-aid',
           code: 'genre-viewer',

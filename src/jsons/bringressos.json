@@ -8,8 +8,7 @@
   "apikey": "live_578abaf329f84119bb7c1e55dfdc7e0f4f20e693cd2c4bc7a5bc0a0965fae322",
   "geokey": "AIzaSyCH0_IkJUiB8TLRuIJFvnI-JKLvuKx1zl8",
   "ga": "",
-  "template": "www.bringressos.com.br",
-  "newTemplate": true,
+  "scss": "./src/scss/themes/bringressos/main.scss",
   "css": "/stylesheets/themes/bringressos/main.css",
   "logo": "https://media.tixs.me/logos/logo-bringressos.svg",
   "favico": "/img/bringressos/",
@@ -25,14 +24,16 @@
     "title": "bringressos.com.br | Venda de Ingressos",
     "description": "Venda de Ingressos",
     "siteName": "BR INGRESSOS.com.br",
-    "CNPJ": "", 
-    "companyAddress": "",
+    "CNPJ": "",
     "companyName": ""
   },
   "templates": {
     "print": {
       "voucher": "../comprar/templates/multi_bringressos/impressaoComprador.html",
       "gift": "../comprar/templates/multi_bringressos/impressaoPresente.html"
+    },
+    "emails": {
+      "folder": "/v1/template/email/default/"
     },
     "email": {
       "recover": "../comprar/templates/multi_bringressos/solicitarSenha.html",

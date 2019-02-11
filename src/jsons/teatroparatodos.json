@@ -5,13 +5,12 @@
   "api": "https://api.teatroparatodos.tk",
   "pinpad": "http://localhost:7001/api",
   "legacy": "https://compra.teatroparatodos.tk",
-  "apikey": "live_9ecd18599fd54d1f852dccc5599edbd0a6a593a0a97943c1aac0f2a7adb1f3de",
+  "apikey": "live_fe6854cf54b74e568f58cc7c531f4ea7bc0f1afffb5f4400846152d735ceaa05",
   "geokey": "AIzaSyCH0_IkJUiB8TLRuIJFvnI-JKLvuKx1zl8",
   "ga": "",
-  "scss": "./src/scss/themes/www.teatroparatodos.tk/main.scss",
+  "scss": "./src/scss/themes/teatroparatodos/main.scss",
   "css": "/stylesheets/themes/www.teatroparatodos.tk/main.css",
   "logo": "https://media.tixs.me/logos/logo-teatroparatodos.png",
-  "newTemplate": false,
   "favico": "/img/teatroparatodos/",
   "meta": {
     "description": "Venda de Ingressos",
@@ -32,6 +31,9 @@
     "print": {
       "voucher": "../comprar/templates/multi_teatroparatodos/impressaoComprador.html",
       "gift": "../comprar/templates/multi_teatroparatodos/impressaoPresente.html"
+    },
+    "emails": {
+      "folder": "/v1/template/email/default/"
     },
     "email": {
       "recover": "../comprar/templates/multi_teatroparatodos/solicitarSenha.html",

@@ -805,6 +805,8 @@ export default {
 
               this.form.imageURI = "https://media.tixs.me/logos/logo-"+response.uniquename+".png?"+this.randomString();
 
+              debugger;
+
               switch (response.databaseStatus) {
                 case "not_init":
                   this.form.candoanything = true;

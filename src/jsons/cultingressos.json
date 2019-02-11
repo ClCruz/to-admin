@@ -11,7 +11,6 @@
   "scss": "./src/scss/themes/www.cultingressos.tixs.me/main.scss",
   "css": "/stylesheets/themes/www.cultingressos.tixs.me/main.css",
   "logo": "https://media.tixs.me/logos/logo-cultingressos.png",
-  "newTemplate": false,
   "favico": "/img/cultingressos/",
   "meta": {
     "description": "Venda de Ingressos",
@@ -32,6 +31,9 @@
     "print": {
       "voucher": "../comprar/templates/multi_cultingressos/impressaoComprador.html",
       "gift": "../comprar/templates/multi_cultingressos/impressaoPresente.html"
+    },
+    "emails": {
+      "folder": "/v1/template/email/default/"
     },
     "email": {
       "recover": "../comprar/templates/multi_cultingressos/solicitarSenha.html",

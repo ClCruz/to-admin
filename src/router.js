@@ -5,6 +5,66 @@ import { func } from './functions';
 
 Vue.use(Router);
 
+//ticketoffice
+const TicketOfficeIndex = resolve => {
+  require.ensure(['./views/ticketoffice/Index.vue'], () => {
+    resolve(require('./views/ticketoffice/Index.vue'));
+  }, 'ticketoffice');
+};
+const TicketOfficeOperationCashRegister = resolve => {
+  require.ensure(['./views/ticketoffice/operation/CashRegister.vue'], () => {
+    resolve(require('./views/ticketoffice/operation/CashRegister.vue'));
+  }, 'ticketoffice');
+};
+const TicketOfficePinpadConf = resolve => {
+  require.ensure(['./views/ticketoffice/PinpadConf.vue'], () => {
+    resolve(require('./views/ticketoffice/PinpadConf.vue'));
+  }, 'ticketoffice');
+};
+const TicketOfficeOperation = resolve => {
+  require.ensure(['./views/ticketoffice/Operation.vue'], () => {
+    resolve(require('./views/ticketoffice/Operation.vue'));
+  }, 'ticketoffice');
+};
+const TicketOfficeOperationMap = resolve => {
+  require.ensure(['./views/ticketoffice/operation/Map.vue'], () => {
+    resolve(require('./views/ticketoffice/operation/Map.vue'));
+  }, 'ticketoffice');
+};
+const TicketOfficeClient = resolve => {
+  require.ensure(['./views/ticketoffice/Client.vue'], () => {
+      resolve(require('./views/ticketoffice/Client.vue'));
+  }, 'ticketoffice');
+};
+const TicketOfficePurchase = resolve => {
+  require.ensure(['./views/ticketoffice/Purchase.vue'], () => {
+      resolve(require('./views/ticketoffice/Purchase.vue'));
+  }, 'ticketoffice');
+};
+const TicketOfficeReservation = resolve => {
+  require.ensure(['./views/ticketoffice/Reservation.vue'], () => {
+      resolve(require('./views/ticketoffice/Reservation.vue'));
+  }, 'ticketoffice');
+};
+const TicketOfficeMoviment = resolve => {
+  require.ensure(['./views/ticketoffice/Moviment.vue'], () => {
+      resolve(require('./views/ticketoffice/Moviment.vue'));
+  }, 'ticketoffice');
+};
+const TicketOfficeCloseCR = resolve => {
+  require.ensure(['./views/ticketoffice/CloseCR.vue'], () => {
+      resolve(require('./views/ticketoffice/CloseCR.vue'));
+  }, 'ticketoffice');
+};
+const TicketOfficeWithdrawCR = resolve => {
+  require.ensure(['./views/ticketoffice/WithdrawCR.vue'], () => {
+      resolve(require('./views/ticketoffice/WithdrawCR.vue'));
+  }, 'ticketoffice');
+};
+//---------------------------------
+
+
+//admin
 const adminLogin = resolve => {
   require.ensure(['./views/Login.vue'], () => {
     resolve(require('./views/Login.vue'));
@@ -279,6 +339,75 @@ const obj = new Router({
       path: '/my/pass',
       name: 'my-pass',
       component: adminMyPass
+    },
+    //------
+    //ticketoffice
+    {
+      path: '/ticketoffice',
+      name: 'ticketoffice',
+      component: () => import('./views/TicketOffice.vue'),
+      children: [
+        {
+          path: '/ticketoffice/pinpadconf',
+          components: {
+            routerView_ticketoffice: TicketOfficePinpadConf
+          }
+        },
+        {
+          path: '/ticketoffice/operation/:type',
+          components: {
+            routerView_ticketoffice: TicketOfficeOperation
+          }
+        },
+        {
+          path: '/ticketoffice/operation/:type/seat',
+          components: {
+            routerView_ticketoffice: TicketOfficeOperationMap
+          }
+        },
+        {
+          path: '/ticketoffice/sell',
+          components: {
+            routerView_ticketoffice: TicketOfficeOperationCashRegister
+          }
+        },
+        {
+          path: '/ticketoffice/client',
+          components: {
+            routerView_ticketoffice: TicketOfficeClient
+          }
+        },
+        {
+          path: '/ticketoffice/purchase/search',
+          components: {
+            routerView_ticketoffice: TicketOfficePurchase
+          }
+        },
+        {
+          path: '/ticketoffice/reservation/search',
+          components: {
+            routerView_ticketoffice: TicketOfficeReservation
+          }
+        },
+        {
+          path: '/ticketoffice/cashregister/moviments',
+          components: {
+            routerView_ticketoffice: TicketOfficeMoviment
+          }
+        },
+        {
+          path: '/ticketoffice/cashregister/close',
+          components: {
+            routerView_ticketoffice: TicketOfficeCloseCR
+          }
+        },
+        {
+          path: '/ticketoffice/cashregister/withdraw',
+          components: {
+            routerView_ticketoffice: TicketOfficeWithdrawCR
+          }
+        },
+      ]
     },
     //------
     {path: '*', redirect: '/'}

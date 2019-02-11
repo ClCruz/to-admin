@@ -351,7 +351,7 @@
                   </b-row>
                 </b-col>
               </b-row>
-              <b-row class="mx-auto mb-3" style="width: 556px;">
+              <b-row class="mx-auto mb-3">
                 <b-form-group label="">
                   <b-form-checkbox-group v-model="checkboxs"
                                         buttons
@@ -457,13 +457,18 @@ export default {
         if (this.form.in_obriga_cpf == '1' || this.form.in_obriga_cpf == 1) {
           ret.push("in_obriga_cpf");
         } 
+        if (this.form.ticketoffice_askemail == '1' || this.form.ticketoffice_askemail == 1) {
+          ret.push("ticketoffice_askemail");
+        } 
         return ret;
       },
       set: function (newValue) {
         let index_showInBanner = newValue.map(function(e) { return e; }).indexOf("showInBanner");
         let index_in_obriga_cpf = newValue.map(function(e) { return e; }).indexOf("in_obriga_cpf");
+        let index_ticketoffice_askemail = newValue.map(function(e) { return e; }).indexOf("ticketoffice_askemail");
         this.form.showInBanner = index_showInBanner == -1 ? '' : '1';
         this.form.in_obriga_cpf = index_in_obriga_cpf == -1 ? '' : '1';
+        this.form.ticketoffice_askemail = index_ticketoffice_askemail == -1 ? '' : '1';
       }
     },
     mayIsee() {
@@ -567,6 +572,7 @@ export default {
                 this.form.QtIngrPorPedido = response.QtIngrPorPedido;
                 this.form.qt_ingressos_por_cpf = response.qt_ingressos_por_cpf;
                 this.form.in_obriga_cpf = response.in_obriga_cpf;
+                this.form.ticketoffice_askemail = response.ticketoffice_askemail;
                 this.form.DatIniPeca = response.DatIniPeca;
                 this.form.DatFinPeca = response.DatFinPeca;
                 this.form.hasPresentantion = response.hasPresentantion;
@@ -615,7 +621,7 @@ export default {
       if (this.processing) return;
 
       if (this.validate()) {
-        let id_produtor = "", CodPeca = "", NomPeca = "", CodTipPeca = "", TemDurPeca = "", CenPeca = "", id_local_evento = "", ValIngresso = "", description = "", meta_description = "", meta_keyword = "", opening_time = "", insurance_policy = "", showInBanner = "", bannerDescription = "", QtIngrPorPedido = "", in_obriga_cpf = "", qt_ingressos_por_cpf = "", id_base = "", imagechanged = false, imagebase64 = "";
+        let id_produtor = "", CodPeca = "", NomPeca = "", CodTipPeca = "", TemDurPeca = "", CenPeca = "", id_local_evento = "", ValIngresso = "", description = "", meta_description = "", meta_keyword = "", opening_time = "", insurance_policy = "", showInBanner = "", bannerDescription = "", QtIngrPorPedido = "", in_obriga_cpf = "", qt_ingressos_por_cpf = "", ticketoffice_askemail = "", id_base = "", imagechanged = false, imagebase64 = "";
 
         id_base = this.form.id_base;
         id_produtor = this.form.id_produtor;
@@ -635,6 +641,7 @@ export default {
         bannerDescription = this.form.bannerDescription;
         QtIngrPorPedido = this.form.QtIngrPorPedido;
         in_obriga_cpf = this.form.in_obriga_cpf;
+        ticketoffice_askemail = this.form.ticketoffice_askemail;
         qt_ingressos_por_cpf = this.form.qt_ingressos_por_cpf;
 
         imagechanged = this.form.changedImage;
@@ -649,7 +656,7 @@ export default {
                           ,ValIngresso,description,meta_description
                           ,meta_keyword,opening_time,insurance_policy
                           ,showInBanner,bannerDescription,QtIngrPorPedido
-                          ,in_obriga_cpf,qt_ingressos_por_cpf
+                          ,in_obriga_cpf,qt_ingressos_por_cpf, ticketoffice_askemail
                           ,imagechanged,imagebase64).then(
           response => {
             this.processing = false;
@@ -860,6 +867,7 @@ export default {
           options: [
             { text: "Mostrar no banner", value:"showInBanner" },
             { text: "Obrigar CPF e Nome na compra da bilheteria", value:"in_obriga_cpf" },
+            { text: "Perguntar para enviar o bilhete por email na compra da bilheteria", value:"ticketoffice_askemail" },
           ]
         },
         selects: {
@@ -900,6 +908,7 @@ export default {
           QtIngrPorPedido: '4',
           qt_ingressos_por_cpf: '4',
           in_obriga_cpf: '',
+          ticketoffice_askemail: '',
           DatIniPeca: '',
           DatFinPeca: '',
           hasPresentantion: '',

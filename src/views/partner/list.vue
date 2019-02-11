@@ -1,5 +1,32 @@
 <template>
     <div v-if="mayIsee">
+      <b-modal ref="baseModal" hide-footer title="Usuário x Base">
+        <div class="d-block text-center">
+          <h4>Permissão nas bases para {{popups.base.name}}</h4>
+        </div>
+        <b-table striped="striped"
+                  outlined="outlined"
+                  class="fontSize tableClicked bg-white"
+                  small="small"
+                  hover="hover"
+                  responsive
+                  show-empty
+                  empty-text="Não foram encontrados registros."
+                  v-if="this.popups.base.grids.base.loaded"
+                  :items="this.popups.base.grids.base.items"
+                  :fields="this.popups.base.grids.base.fields">
+
+              <template slot="active" slot-scope="data">
+                <b-button size="sm" @click="changeBase('add', data.item)" title="Adicionar base" variant="outline-success" v-if="data.item.active != 1">
+                    Adicionar
+                </b-button>
+                <b-button size="sm" @click="changeBase('del', data.item)" title="Remover base" variant="danger" v-if="data.item.active == 1">
+                    Remover
+                </b-button>
+              </template>
+        </b-table>
+        <b-btn class="mt-3" variant="outline-info" block @click="baseClose">Fechar</b-btn>
+      </b-modal>
       <b-container>
         <b-row class="mb-3">
           <b-col>
@@ -77,6 +104,7 @@
               <template slot="actions" slot-scope="data">
                   <span v-if="!mayI('partner-add', 'partner-wl')">-</span>
                   <b-button-group size="sm" v-if="mayI('partner-add', 'partner-wl')">
+                      <b-button title="Bases" v-if="mayI('partner-add')" @click.stop="base(data.item,$event.target)">Bases</b-button>
                       <b-button title="Editar" v-if="mayI('partner-add')" @click.stop="edit(data.item,$event.target)">Editar</b-button>
                       <b-button title="Criação whitelabel" variant="danger" v-if="mayI('partner-wl')" @click.stop="whitelabel(data.item,$event.target)">Whitelabel</b-button>
                   </b-button-group>
@@ -119,6 +147,78 @@ export default {
     }
   },
   methods: {
+    baseClose() {
+      this.$refs.baseModal.hide();
+    },
+    base(item) {
+      if (this.processing) return;
+
+      this.popups.base.name = item.name;
+      this.popups.base.id = item.id;
+
+      this.popups.base.grids.base.processing = true;
+      this.processing = true;
+
+      //this.$wait.start("inprocess");
+      this.showWaitAboveAll();
+      partnerService.listbase(item.id).then(
+        response => {
+          this.processing = false;
+          this.popups.base.grids.base.processing = false;
+          this.hideWaitAboveAll();
+          //this.$wait.end("inprocess");
+
+          if (this.validateJSON(response))
+          {
+              this.popups.base.grids.base.loaded = true;
+              this.popups.base.grids.base.items = response;
+              this.$refs.baseModal.show();
+          }
+        },
+        error => {
+          this.popups.base.grids.base.processing = false;
+          this.processing = false;
+          this.hideWaitAboveAll();
+          //this.$wait.end("inprocess");
+          this.toastError("Falha na execução.");
+        }
+      );      
+    },
+    refreshBase() {
+      this.base({ name: this.popups.base.name, id: this.popups.base.id });
+    },
+    changeBase(type, item) {
+      if (this.processing) return;
+
+      this.processing = true;
+
+      this.showWaitAboveAll();
+      partnerService.savebase(this.getLoggedId(), this.popups.base.id, item.id_base).then(
+        response => {
+          this.processing = false;
+
+          this.hideWaitAboveAll();
+          //this.$wait.end("inprocess");
+
+          if (this.validateJSON(response))
+          {
+            if (response.success) {
+              this.toastSuccess("Salvo com sucesso.");
+              this.refreshBase();
+            }
+            else {
+              this.toastError(response.msg);
+            }
+          }
+        },
+        error => {
+          this.processing = false;
+          this.hideWaitAboveAll();
+          //this.$wait.end("inprocess");
+          this.toastError("Falha na execução.");
+        }
+      );      
+    },
     clipboardSuccess() {
       this.toastSuccess("Copiado com sucesso.");
     },
@@ -175,13 +275,31 @@ export default {
         form: {
           search: '',
         },
+        popups: {
+          base: {
+            loaded: false,
+            name: '',
+            id: '',
+            grids: {
+              base: {
+                processing: false,
+                loaded: false,
+                items: [],
+                fields: {
+                  ds_nome_teatro: { label: 'Nome', sortable: false },
+                  active: { label: '', sortable: false },
+                },
+              }
+            }
+          }
+        },
         grids: {
             partners: {
                 processing: false,
                 loaded: false,
                 total: 0,
                 currentPage: 1,
-                perPage: 10,
+                perPage: 50,
                 items: [],
                 fields: {
                     isDemo: { label: 'Tipo', sortable: false },
