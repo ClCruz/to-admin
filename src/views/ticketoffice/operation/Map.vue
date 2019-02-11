@@ -15,9 +15,9 @@
                 </span>
             </b-tooltip>
             <div id="mapa_de_plateia" :style="{
-                'max-width': ( map.width - 10 )+ 'px', 'min-height': map.height + 'px', 'margin' : '0 0 20px'
+                'width': ( map.width)+ 'px', 'max-width': ( map.width)+ 'px', 'min-height': map.height + 'px', 'margin' : '0 0 20px'
             }" class="mapa_de_plateia" v-if="hasSeatNumber">
-                <img :src="map.img" :height="map.height" :width="map.width" style="max-width: 880px; margin: 0 0 20px;"/>
+                <img :src="map.img" :height="map.height" :width="map.width" style="margin: 0 0 20px;" />
             </div>
         </span>
     </div>
