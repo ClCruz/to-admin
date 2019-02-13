@@ -178,6 +178,13 @@ const adminMyPass = resolve => {
   }, 'admin-my');
 };
 
+// mobile map
+const mobileMap = resolve => {
+  require.ensure(['./views/ticketoffice/operation/MobileMap.vue'], () => {
+    resolve(require('./views/ticketoffice/operation/MobileMap.vue'));
+  }, 'admin-my');
+};
+
 const obj = new Router({
   mode: 'history',
   base: process.env.BASE_URL,
@@ -339,6 +346,13 @@ const obj = new Router({
       path: '/my/pass',
       name: 'my-pass',
       component: adminMyPass
+    },
+    //------
+    //mobile pages
+    {
+      path: '/mobile/seat',
+      name: 'mobile-seat',
+      component: mobileMap
     },
     //------
     //ticketoffice
