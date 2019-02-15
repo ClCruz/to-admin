@@ -56,7 +56,7 @@ function save(id_to_admin_user, id_base,id_produtor
     ,meta_keyword,opening_time,insurance_policy
     ,showInBanner,bannerDescription,QtIngrPorPedido
     ,in_obriga_cpf,qt_ingressos_por_cpf,ticketoffice_askemail
-    ,imagechanged,imagebase64) {
+    ,imagechanged,imagebase64,free_installments,max_installments,interest_rate) {
 
     let url = config.api + `/v1/admin/event/save`;
 
@@ -68,7 +68,7 @@ function save(id_to_admin_user, id_base,id_produtor
         ,meta_keyword,opening_time,insurance_policy
         ,showInBanner,bannerDescription,QtIngrPorPedido
         ,in_obriga_cpf,qt_ingressos_por_cpf,ticketoffice_askemail
-        ,imagechanged,imagebase64
+        ,imagechanged,imagebase64,free_installments,max_installments,interest_rate
     };
 
     console.log(obj);
@@ -77,12 +77,13 @@ function save(id_to_admin_user, id_base,id_produtor
         function (resolve, reject) {
             Vue.http.post(url, obj, { emulateJSON: true }).then(res => {
                 resolve(res.body);
-            }, err => {
-                reject({
-                    error: true,
-                    msg: err
-                });
-            });    
+            },
+            (err) => {
+                console.log("Err", err);
+              })
+            .catch((e) => {
+              console.log("Caught", e);
+            })
         }
     );
     return ret;

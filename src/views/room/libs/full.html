@@ -1,0 +1,30 @@
+<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.1/leaflet.css" />
+<!--[if lte IE 8]>
+ <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.1/leaflet.ie.css" />
+<![endif]-->
+<script src="http://cdn.leafletjs.com/leaflet-0.7.1/leaflet.js"></script>
+
+<div id="map" style="width: 600px; height: 600px;"></div>
+
+<script>
+
+	var osm;
+	var map = L.map('map', {
+    center: [40.75, -74.2],
+    zoom: 13
+});
+
+function onMapClick(e) {
+  marker = new L.marker(e.latlng, {draggable:'true'});
+  marker.on('dragend', function(event){
+    var marker = event.target;
+    var position = marker.getLatLng();
+    marker.setLatLng(new L.LatLng(position.lat, position.lng),{draggable:'true'});
+    map.panTo(new L.LatLng(position.lat, position.lng))
+  });
+  map.addLayer(marker);
+};
+
+map.on('click', onMapClick);
+
+</script>

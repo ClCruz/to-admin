@@ -154,6 +154,17 @@ const adminPlaceAdd = resolve => {
     resolve(require('./views/place/add.vue'));
   }, 'admin-place');
 };
+// room
+const adminRoomList = resolve => {
+  require.ensure(['./views/room/list.vue'], () => {
+    resolve(require('./views/room/list.vue'));
+  }, 'admin-room');
+};
+const adminRoomAdd = resolve => {
+  require.ensure(['./views/room/add.vue'], () => {
+    resolve(require('./views/room/add.vue'));
+  }, 'admin-room');
+};
 
 // my
 const adminMyInfo = resolve => {
@@ -164,6 +175,13 @@ const adminMyInfo = resolve => {
 const adminMyPass = resolve => {
   require.ensure(['./views/my/pass.vue'], () => {
     resolve(require('./views/my/pass.vue'));
+  }, 'admin-my');
+};
+
+// mobile map
+const mobileMap = resolve => {
+  require.ensure(['./views/ticketoffice/operation/MobileMap.vue'], () => {
+    resolve(require('./views/ticketoffice/operation/MobileMap.vue'));
   }, 'admin-my');
 };
 
@@ -306,6 +324,18 @@ const obj = new Router({
       component: adminGenreAdd
     },
     //------
+    //ROOM
+    {
+      path: '/room/add',
+      name: 'room-add',
+      component: adminRoomAdd
+    },
+    {
+      path: '/room/list',
+      name: 'room-list',
+      component: adminRoomList
+    },
+    //------
     //MY
     {
       path: '/my/info',
@@ -316,6 +346,13 @@ const obj = new Router({
       path: '/my/pass',
       name: 'my-pass',
       component: adminMyPass
+    },
+    //------
+    //mobile pages
+    {
+      path: '/mobile/seat',
+      name: 'mobile-seat',
+      component: mobileMap
     },
     //------
     //ticketoffice

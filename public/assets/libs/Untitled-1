@@ -1,0 +1,7 @@
+sudo docker run -it -d -p 2002:80 --restart=always --name tixsme.api \
+-v /Users/intuiti/Documents/Projetos/tixs/to-api/:/var/www/html \
+-v /Users/intuiti/Documents/Projetos/tixs/to-media/:/var/www/media \
+-v /Users/intuiti/Documents/Projetos/tixs/to-site/:/var/www/site \
+-v /Users/intuiti/Documents/Projetos/tixs/to-legacy:/var/www/legacy \
+-v /Users/intuiti/Documents/Projetos/tixs/to-gitauto/:/var/www/gitauto \
+blcoccaro/phpwithsql:v1

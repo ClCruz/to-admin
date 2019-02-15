@@ -1,5 +1,5 @@
 @mixin content {
-	.fdb-box {
+	.to-box {
 		cursor: pointer;
 	}
 
@@ -453,7 +453,7 @@
 		width: auto;
 	}
 
-	.fdb-block {
+	.to-block {
 		overflow: unset !important;
 		padding: 0 !important;
 		padding-bottom: 30px !important;
@@ -479,7 +479,7 @@
 		padding-top: 0 !important;
 	}
 
-	.fdb-block .fdb-box {
+	.to-block .to-box {
 		height: 100%;
 		transition: 0.5s;
 
@@ -577,9 +577,15 @@
 		background-position-x: 5px;
 		background-position-y: center;
 	}
-	.v-suggestions input::placeholder {
-		color: #ccc;
-		font-size: 85%;
+	INPUT::-webkit-input-placeholder,
+	INPUT:-moz-placeholder {
+		color: red;
+	}
+	input[placeholder],
+	[placeholder],
+	*[placeholder] {
+		color: green !important;
+		visibility: unset !important;
 	}
 
 	.v-suggestions {
@@ -727,7 +733,7 @@
 		background: #444;
 	}
 
-	.fdb-viewport {
+	.to-viewport {
 		padding-bottom: 150px !important;
 	}
 
@@ -766,10 +772,6 @@
 
 	.btn-secondary {
 		border-color: 0px solid black !important;
-	}
-
-	.content__show {
-		margin-top: -150px;
 	}
 }
 

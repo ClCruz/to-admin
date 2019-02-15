@@ -236,9 +236,11 @@ var pointsForJson = [
  * 
  */
 
+ markers = []
+
 function insertSeats(list) {
 	list.forEach(function(value) {
-		L.marker(value.xy, {
+		var marker = L.marker(value.xy, {
 			icon: markerIcon,
 			customClass: value.customClass,
 			available: value.available,
@@ -247,8 +249,9 @@ function insertSeats(list) {
 			rowname: value.rowname,
 			clickable: true,
 			draggable: true
-		})
-			.on('click', onClick)
+		});
+
+		marker.on('click', onClick)
 			.addTo(map)
 			.bindPopup(value.title)
 			.on('mouseover', function(e) {
@@ -263,7 +266,9 @@ function insertSeats(list) {
 			})
 			.on('dragend', function(e) {
 				console.log('marker dragend event');
-			})
+			});
+
+			this.markers.push(marker);
 
 	});
 }
@@ -392,7 +397,7 @@ function apply() {
 	span = markersExample;
 }
 
-insertSeats(pointsForJson);
+// insertSeats(pointsForJson);
 
 L.easyButton( 'fa fa-edit', function(){
   sidebarEdit.toggle();
@@ -551,3 +556,19 @@ document.getElementById('update_first_seat').onclick = function() {
 	updateFirstName();
 };
 
+/**
+ * https://github.com/perliedman/leaflet-realtime
+ */
+realtime = L.realtime({
+	url: 'https://wanderdrone.appspot.com/',
+	crossOrigin: true,
+	type: 'json'
+}, {
+	interval: 3 * 1000
+}).addTo(map);	
+
+	realtime.on('update', function() {
+		if(getMarkersSorted().length > 60 ) {
+			getMarkersSorted().map(x => x.remove());
+		}
+	});

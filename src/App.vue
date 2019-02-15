@@ -232,13 +232,13 @@ export default {
               href: '/room/add',
               title: 'Adicionar sala',
               icon: 'fas fa-person-booth',
-              code: 'ro-viewer'
+              code: 'room-viewer'
             },
             {
               href: '/room/list',
               title: 'Listar sala',
               icon: 'fas fa-th-list',
-              code: 'ro-viewer'
+              code: 'room-viewer'
             },
           ]
         }
@@ -308,6 +308,8 @@ export default {
 </script>
 
 <style lang="scss">
+
+
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -327,5 +329,6 @@ export default {
 }
 .v-sidebar-menu {
   z-index: 50000;
+  display:block !important;
 }
 </style>
