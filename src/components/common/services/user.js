@@ -15,6 +15,28 @@ export const userService = {
   baseList,
   baseSave,
   baseSelect,
+  pair,
+}
+function pair(loggedId) {
+    let url = config.api + `/v1/admin/user/pair/generate`;
+
+    let obj = {
+        id: loggedId,
+    };
+
+    var ret = new Promise(
+        function (resolve, reject) {
+            Vue.http.post(url, obj, { emulateJSON: true }).then(res => {
+                resolve(res.body);
+            }, err => {
+                reject({
+                    error: true,
+                    msg: err
+                });
+            });    
+        }
+    );
+    return ret;
 }
 function baseSelect(id_user) {
     let url = config.api + `/v1/admin/base/select?id_user=${id_user}`;

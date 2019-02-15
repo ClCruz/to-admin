@@ -308,6 +308,8 @@ export default {
 </script>
 
 <style lang="scss">
+
+
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -327,5 +329,6 @@ export default {
 }
 .v-sidebar-menu {
   z-index: 50000;
+  display:block !important;
 }
 </style>
