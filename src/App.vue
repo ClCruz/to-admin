@@ -309,6 +309,9 @@ export default {
 
 <style lang="scss">
 
+.ql-editor {
+  max-height: 140px !important;
+}
 
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
