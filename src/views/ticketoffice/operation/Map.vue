@@ -427,7 +427,7 @@ export default {
             $.each(this, function(key, val) {
                 element.data(key, val);
             });
-            element.attr('title', element.data('Indice') + element.data('NomObjeto') + ' | ' + element.data('NomSetor'));
+            element.attr('title', element.data('NomObjeto') + ' (' + element.data('Indice') + ")");
             if (element.data('img')) element.attr('data-img', element.data('img'));
             //if (top > containerHeight) element.hide();
         });
