@@ -42,6 +42,17 @@
             <div class="errorFormValidate" v-if="!$v.form.NomPeca.required">Campo é obrigatório</div>
             <div class="errorFormValidate" v-if="!$v.form.NomPeca.minLength">Deve ter pelo menos {{$v.form.NomPeca.$params.minLength.min}} caracteres.</div>
           </b-row>
+          <b-row class="mb-3" v-if="!isAdd">
+            <b-input-group size="sm">
+              <b-input-group-prepend is-text>
+                URL: 
+                <span v-b-tooltip.hover title="Clique para abrir" 
+                style="cursor:pointer;padding-left: 4px;" @click="gotoFarFromHome(form.urifull)"><i class="fab fa-chrome"></i></span>
+              </b-input-group-prepend>
+              <b-form-input :disabled="true" id="uri" type="text"  name="uri" maxlength="90" v-model="form.uri" placeholder="URL">
+              </b-form-input>
+            </b-input-group>
+          </b-row>
           <b-row class="mb-3">
             <b-col cols="6" class="ml-0 pl-0">
               <b-row>
@@ -311,7 +322,7 @@
               </v-wait>
               <span v-if="!processing">Salvar</span>
             </b-button>
-            <b-button :disabled="id == 0 || id == null || id == undefined" type="button" variant="info" size="sm" @click="addPresentation">
+            <b-button :disabled="id == 0 || id == null || id == undefined" v-if="mayI('presentation-add')" type="button" variant="info" size="sm" @click="addPresentation">
               <span>Ver datas</span>
             </b-button>
 
@@ -517,6 +528,8 @@ export default {
               this.form.CodPeca = response.CodPeca;
               this.form.id_produtor = response.id_produtor;
               this.form.id_base = response.id_base;
+              this.form.uri = response.uri;
+              this.form.urifull = response.urifull;
               this.form.NomPeca = response.NomPeca;
               this.form.CodTipPeca = response.CodTipPeca;
               this.form.id_genre = response.id_genre;

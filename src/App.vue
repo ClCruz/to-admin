@@ -110,19 +110,19 @@ export default {
           title: 'Usuários',
           icon: 'fas fa-users',
           code: 'all',
-          //code: 'usr-viewer',
+          code: 'user-viewer',
           child: [
             {
               href: '/user/add',
               title: 'Adicionar',
               icon: 'fas fa-plus',
-              code: 'usr-add'
+              code: 'user-add'
             },
             {
               href: '/user/list',
               title: 'Listar',
               icon: 'fas fa-th-list',
-              code: 'all',//'usr-viewer'
+              code: 'user-viewer'//'all',//'user-viewer'
             },
           ]
         },
@@ -136,7 +136,7 @@ export default {
           title: 'Gênero',
           icon: 'fas fa-band-aid',
           code: 'genre-viewer',
-          //code: 'usr-viewer',
+          //code: 'user-viewer',
           child: [
             {
               href: '/genre/add',
@@ -148,7 +148,7 @@ export default {
               href: '/genre/list',
               title: 'Listar',
               icon: 'fas fa-th-list',
-              code: 'genre-viewer',//'usr-viewer'
+              code: 'genre-viewer',//'user-viewer'
             },
           ]
         },
@@ -156,7 +156,7 @@ export default {
           title: 'Local',
           icon: 'fas fa-map-marked-alt',
           code: 'place-viewer',
-          //code: 'usr-viewer',
+          //code: 'user-viewer',
           child: [
             {
               href: '/place/add',
@@ -168,7 +168,7 @@ export default {
               href: '/place/list',
               title: 'Listar',
               icon: 'fas fa-th-list',
-              code: 'place-viewer',//'usr-viewer'
+              code: 'place-viewer',//'user-viewer'
             },
           ]
         },
@@ -176,7 +176,7 @@ export default {
           title: 'Produtores',
           icon: 'fas fa-people-carry',
           code: 'producer-viewer',
-          //code: 'usr-viewer',
+          //code: 'user-viewer',
           child: [
             {
               href: '/producer/add',
@@ -188,7 +188,7 @@ export default {
               href: '/producer/list',
               title: 'Listar',
               icon: 'fas fa-th-list',
-              code: 'producer-viewer',//'usr-viewer'
+              code: 'producer-viewer',//'user-viewer'
             },
           ]
         },
@@ -207,14 +207,14 @@ export default {
               href: '/partner/list',
               title: 'Listar',
               icon: 'fas fa-th-list',
-              code: 'partner-viewer',//'usr-viewer'
+              code: 'partner-viewer',//'user-viewer'
             },
           ]
         },
         {
           title: 'Eventos',
           icon: 'fas fa-puzzle-piece',
-          code: 'all',
+          code: 'ev-viewer',
           child: [
             {
               href: '/event/add',
