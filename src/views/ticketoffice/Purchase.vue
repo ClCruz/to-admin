@@ -151,17 +151,18 @@ import { cashregisterService } from '../../components/ticketoffice/services/cash
 
 import {mask} from 'vue-the-mask'
 
-Vue.filter('money', function (value) {
-    if (!value) return ''
-    //let help = parseFloat(value)/parseFloat(100);
-    //let ret = help.toFixed(2);
-    return `R$ ${value}`;
-});
-
 export default {
     name: 'purchases',
     mixins: [func, funcOperation],
     directives: {mask},
+    filters: {
+        money: function (value) {
+            if (!value) return ''
+            //let help = parseFloat(value)/parseFloat(100);
+            //let ret = help.toFixed(2);
+            return `R$ ${value}`;
+        }
+    },
     data () {
         return {
             processing: false,

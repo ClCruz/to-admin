@@ -65,18 +65,19 @@ import { cashregisterService } from "../../components/ticketoffice/services/cash
 import { VMoney } from 'v-money';
 import {mask} from 'vue-the-mask';
 
-Vue.filter('money', function (value) {
-    //if (!value) return ''
-    return `R$ ${value}`;
-});
-Vue.filter('truefalse', function (value) {
-    return value == 1 || value == "1" || value == true ? "Sim" : "Não";
-});
-
 export default {
     name: 'closeCR',
     mixins: [func, funcOperation],
     directives: {mask,money: VMoney},
+    filters: {
+        money: function (value) {
+            //if (!value) return ''
+            return `R$ ${value}`;
+        },
+        truefalse: function (value) {
+            return value == 1 || value == "1" || value == true ? "Sim" : "Não";
+        }
+    },
     data () {
         return {
             money: {

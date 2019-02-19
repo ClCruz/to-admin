@@ -16,6 +16,7 @@ export const userService = {
   baseSave,
   baseSelect,
   pair,
+  ticketofficeuserwithpermission
 }
 function pair(loggedId) {
     let url = config.api + `/v1/admin/user/pair/generate`;
@@ -37,6 +38,23 @@ function pair(loggedId) {
         }
     );
     return ret;
+}
+function ticketofficeuserwithpermission(id_base) {
+    let url = config.api + `/v1/admin/user/ticketoffice/list?id_base=${id_base}`;
+
+    var ret = new Promise(
+    function (resolve, reject) {
+        Vue.http.get(url).then(res => {
+        resolve(res.body);
+        }, err => {
+        reject({
+            error: true,
+            msg: err
+        });
+        });
+    }
+  );
+  return ret;
 }
 function baseSelect(id_user) {
     let url = config.api + `/v1/admin/base/select?id_user=${id_user}`;
