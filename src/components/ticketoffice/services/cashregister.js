@@ -16,7 +16,10 @@ export const cashregisterService =  {
     withdraw,
     list,
     isok,
-    sendemail
+    sendemail,
+    movimentlist,
+    movimentlistbyevent,
+    movimentlistbybase
 }
 function sendemail(id_user, id_base, codVenda, email) {
     let url = config.api + `/v1/email/purchase`;
@@ -114,8 +117,11 @@ function current(id_base, id) {
     );
     return ret;
 }
-function movimentsInDay(id, id_base, date) {
-    let url = config.api + `/v1/ticketoffice/cashregister/moviment/inday?id=${id}&id_base=${id_base}&date=${date}`;
+function movimentlist(id, date) {
+    if (date == null || date == "") {
+        date = "open";
+    }
+    let url = config.api + `/v1/ticketoffice/cashregister/moviment/list?id_user=${id}&date=${date}&result=resultbyall`;
 
     var ret = new Promise(
         function (resolve, reject) {
@@ -131,6 +137,64 @@ function movimentsInDay(id, id_base, date) {
     );
     return ret;
 }
+function movimentlistbyevent(id, date) {
+    if (date == null || date == "") {
+        date = "open";
+    }
+    let url = config.api + `/v1/ticketoffice/cashregister/moviment/listbyevent?id_user=${id}&date=${date}&result=resultbyevent`;
+
+    var ret = new Promise(
+        function (resolve, reject) {
+            Vue.http.get(url).then(res => {
+                resolve(res.body);
+            }, err => {
+                reject({
+                    error: true,
+                    msg: err
+                });
+            });    
+        }
+    );
+    return ret;
+}
+function movimentlistbybase(id, date) {
+    if (date == null || date == "") {
+        date = "open";
+    }
+    let url = config.api + `/v1/ticketoffice/cashregister/moviment/listbybase?id_user=${id}&date=${date}&result=resultbybase`;
+
+    var ret = new Promise(
+        function (resolve, reject) {
+            Vue.http.get(url).then(res => {
+                resolve(res.body);
+            }, err => {
+                reject({
+                    error: true,
+                    msg: err
+                });
+            });    
+        }
+    );
+    return ret;
+}
+function movimentsInDay(id, id_base, date) {
+    let url = config.api + `/v1/ticketoffice/cashregister/moviment/list?id=${id}&id_base=${id_base}&date=${date}`;
+
+    var ret = new Promise(
+        function (resolve, reject) {
+            Vue.http.get(url).then(res => {
+                resolve(res.body);
+            }, err => {
+                reject({
+                    error: true,
+                    msg: err
+                });
+            });    
+        }
+    );
+    return ret;
+}
+
 function close(id_base, id, amount, justificative) {
     let url = config.api + `/v1/ticketoffice/cashregister/close?id_base=${id_base}`;
 

@@ -157,49 +157,7 @@ import { pinpadService } from '../../../components/ticketoffice/services/pinpad'
 import { purchaseService } from '../../../components/common/services/purchase';
 import { printService } from '../../../components/ticketoffice/services/print';
 import clientAdd from '../Client';
-import { VMoney } from 'v-money'
-
-Vue.filter('money', function (value) {
-    if (!value) return ''
-    let help = parseFloat(value)/parseFloat(100);
-    let ret = help.toFixed(2);
-    return `R$ ${ret}`;
-});
-
-Vue.filter('percentage', function (value) {
-    if (!value) return ''
-    //let ret = value.toFixed(2);
-    return `${value}%`;
-});
-Vue.filter('subTotalSector', function (value, data) {
-    if (!data.item.PerDesconto) return "-";
-    let valueAux = parseFloat(value)/parseFloat(100);
-    let per = data.item.PerDesconto/100;
-    let amountPer = valueAux*per;
-    let ret = (valueAux-amountPer).toFixed(2);
-    return `R$ ${ret}`;
-});
-Vue.filter('subTotal', function (value, data) {
-    let amount = parseFloat(value)/parseFloat(100);
-
-    if (data.item.PerDesconto)
-    {
-        let perS = data.item.PerDesconto/100;
-        let amountPerS = amount*perS;
-        amount = amount-amountPerS;
-    }
-
-    if (data.item.PerDescontoTipBilhete)
-    {
-        let perTB = data.item.PerDescontoTipBilhete/100;
-        let amountPerTB = amount*perTB;
-        amount = amount-amountPerTB;
-    }
-
-    let ret = amount.toFixed(2);
-    return `R$ ${ret}`;
-});
-
+import { VMoney } from 'v-money';
 
 export default {
     name: 'cashRegister',
@@ -208,6 +166,47 @@ export default {
         clientAdd: clientAdd
     },
     directives: {money: VMoney},
+    filters: {
+        money: function (value) {
+            if (!value) return ''
+            let help = parseFloat(value)/parseFloat(100);
+            let ret = help.toFixed(2);
+            return `R$ ${ret}`;
+        },
+        percentage: function (value) {
+            if (!value) return ''
+            //let ret = value.toFixed(2);
+            return `${value}%`;
+        },
+        subTotalSector: function (value, data) {
+            if (!data.item.PerDesconto) return "-";
+            let valueAux = parseFloat(value)/parseFloat(100);
+            let per = data.item.PerDesconto/100;
+            let amountPer = valueAux*per;
+            let ret = (valueAux-amountPer).toFixed(2);
+            return `R$ ${ret}`;
+        },
+        subTotal: function (value, data) {
+            let amount = parseFloat(value)/parseFloat(100);
+
+            if (data.item.PerDesconto)
+            {
+                let perS = data.item.PerDesconto/100;
+                let amountPerS = amount*perS;
+                amount = amount-amountPerS;
+            }
+
+            if (data.item.PerDescontoTipBilhete)
+            {
+                let perTB = data.item.PerDescontoTipBilhete/100;
+                let amountPerTB = amount*perTB;
+                amount = amount-amountPerTB;
+            }
+
+            let ret = amount.toFixed(2);
+            return `R$ ${ret}`;
+        }
+    },
     data () {
         return {
             money: {

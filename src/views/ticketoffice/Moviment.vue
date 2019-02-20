@@ -1,10 +1,22 @@
 <template>
         <b-container>
             <b-col>
-                <b-row class="my-1">
+                <b-row v-if="mayI('to-cashregister-closeother')" class="my-1 mb-3">
                     <b-input-group size="sm">
                         <b-input-group-prepend is-text class="firstLabel">
-                            Data:
+                            Operadores:
+                        </b-input-group-prepend>
+                        <b-form-select id="operators" v-model="form.id_operator" :options="operators">
+                            <template slot="first">
+                                <option :value="null" disabled>-- Selecione --</option>
+                            </template>
+                        </b-form-select>
+                    </b-input-group>
+                </b-row>
+                <b-row class="my-1 mb-3">
+                    <b-input-group size="sm">
+                        <b-input-group-prepend is-text class="firstLabel">
+                            Data de fechamento:
                         </b-input-group-prepend>
                         <datetime v-model="form.date"
                             id="date"
@@ -16,123 +28,65 @@
                         ></datetime>
                     </b-input-group>
                 </b-row>
-                <b-row class="my-1">
-                    <b-input-group size="sm">
-                        <b-input-group-prepend is-text class="firstLabel">
-                            Movimentações:
-                        </b-input-group-prepend>
-                        <b-form-select id="mov" v-model="form.codMovimentacao" :options="movsDay" @change="movChange">
-                            <template slot="first">
-                                <option :value="null" disabled>-- Selecione --</option>
+                <b-row class="mb-3">
+                    <b-button type="button" variant="success" size="sm" @click="searchOpened">
+                        <v-wait for="inprocess">
+                            <template slot="waiting">
+                            Carregando...
                             </template>
-                        </b-form-select>
-                        <b-button size="sm" @click="print" variant="secondary" v-if="false">
-                            Imprimir
-                        </b-button>
-                    </b-input-group>
+                        </v-wait>
+                        <span v-if="!processing">Consultar abertos</span>
+                    </b-button>
+                    <b-button type="button" variant="success" size="sm" @click="searchByDate">
+                        <v-wait for="inprocess">
+                            <template slot="waiting">
+                            Carregando...
+                            </template>
+                        </v-wait>
+                        <span v-if="!processing">Consultar por fechamento</span>
+                    </b-button>
                 </b-row>
-                <br />
                 <b-form-row>
-                    <table class="table table-sm table-bordered table-hover" style="background-color: #fff;" v-if="grids.movs.items.length>0">
+                    <table class="table table-sm table-bordered table-hover" style="background-color: #fff;" v-if="grids.movs.loaded">
                         <thead>
                             <tr>
-                                <th scope="col">Operação</th>
-                                <th scope="col">Nome</th>
-                                <th scope="col">Detalhe</th>
+                                <th scope="col">Parceiro</th>
+                                <th scope="col">Evento</th>
+                                <th scope="col">Tipo</th>
+                                <th scope="col">Forma</th>
                                 <th scope="col">Qtde.</th>
                                 <th scope="col">Valor</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr v-for="(item, index) in sells" v-bind:key="item.id">
-                                <td v-if="index==0" :rowspan="sells.length">{{item.Operacao}}</td>
-                                <td v-if="!isEqualLastName(index, sells)" :rowspan="howManyNomPeca(item.NomPeca, sells)">{{item.NomPeca}}</td>
-                                <td>{{item.Tipo}}</td>
-                                <td>{{item.Qtde}}</td>
-                                <td>{{item.ValorInt | money}}</td>
+                        <tbody v-if="grids.movs.loaded && grids.movs.items.length == 0">
+                            <tr>
+                                <td colspan="6">Nenhum registro encontrado.</td>
                             </tr>
-                            <tr v-if="sells.length > 0">
-                                <td colspan="3">Total Parcial</td>
-                                <td>{{sumQtde(sells)}}</td>
-                                <td :class="sumValor(sells)<0 ? 'red' : 'green'">{{sumValor(sells) | money}}</td>
-                            </tr>
-                            <tr v-for="(item, index) in sells_reservation" v-bind:key="item.id">
-                                <td v-if="index==0" :rowspan="sells_reservation.length">{{item.Operacao}}</td>
-                                <td v-if="!isEqualLastName(index, sells_reservation)" :rowspan="howManyNomPeca(item.NomPeca, sells_reservation)">{{item.NomPeca}}</td>
-                                <td>{{item.Tipo}}</td>
-                                <td>{{item.Qtde}}</td>
-                                <td>{{item.ValorInt | money}}</td>
-                            </tr>
-                            <tr v-if="sells_reservation.length > 0">
-                                <td colspan="3">Total Parcial</td>
-                                <td>{{sumQtde(sells_reservation)}}</td>
-                                <td :class="sumValor(sells_reservation)<0 ? 'red' : 'green'">{{sumValor(sells_reservation) | money}}</td>
-                            </tr>
-                            <tr v-for="(item, index) in sells_halfComplement" v-bind:key="item.id">
-                                <td v-if="index==0" :rowspan="sells_halfComplement.length">{{item.Operacao}}</td>
-                                <td v-if="!isEqualLastName(index, sells_halfComplement)" :rowspan="howManyNomPeca(item.NomPeca, sells_halfComplement)">{{item.NomPeca}}</td>
-                                <td>{{item.Tipo}}</td>
-                                <td>{{item.Qtde}}</td>
-                                <td>{{item.ValorInt | money}}</td>
-                            </tr>
-                            <tr v-if="sells_halfComplement.length > 0">
-                                <td colspan="3">Total Parcial</td>
-                                <td>{{sumQtde(sells_halfComplement)}}</td>
-                                <td :class="sumValor(sells_halfComplement)<0 ? 'red' : 'green'">{{sumValor(sells_halfComplement) | money}}</td>
-                            </tr>
-                            <tr v-for="(item, index) in sells_refund" v-bind:key="item.id">
-                                <td v-if="index==0" :rowspan="sells_refund.length">{{item.Operacao}}</td>
-                                <td v-if="!isEqualLastName(index, sells_refund)" :rowspan="howManyNomPeca(item.NomPeca, sells_refund)">{{item.NomPeca}}</td>
-                                <td>{{item.Tipo}}</td>
-                                <td>{{item.Qtde}}</td>
-                                <td>{{item.ValorInt | money}}</td>
-                            </tr>
-                            <tr v-if="sells_refund.length > 0">
-                                <td colspan="3">Total Parcial</td>
-                                <td>{{sumQtde(sells_refund)}}</td>
-                                <td :class="sumValor(sells_refund)<0 ? 'red' : 'green'">{{sumValor(sells_refund) | money}}</td>
-                            </tr>
-                            <tr v-for="(item, index) in withdraw" v-bind:key="item.id">
-                                <td v-if="index==0" :rowspan="withdraw.length">{{item.Operacao}}</td>
-                                <td v-if="index==0" :rowspan="withdraw.length"></td>
-                                <td>{{item.Tipo}}</td>
-                                <td>{{item.Qtde}}</td>
-                                <td>{{item.ValorInt | money}}</td>
-                            </tr>
-                            <tr v-if="withdraw.length > 0">
-                                <td colspan="3">Total Parcial</td>
-                                <td>{{sumQtde(withdraw)}}</td>
-                                <td :class="sumValor(withdraw)<0 ? 'red' : 'green'">{{sumValor(withdraw) | money}}</td>
-                            </tr>
-                            <tr v-for="(item, index) in crClose" v-bind:key="item.id">
-                                <td v-if="index==0" :rowspan="crClose.length">{{item.Operacao}}</td>
-                                <td v-if="index==0" :rowspan="crClose.length"></td>
-                                <td>{{item.Tipo}}</td>
-                                <td>{{item.Qtde}}</td>
-                                <td>{{item.ValorInt | money}}</td>
-                            </tr>
-                            <tr v-if="crClose.length > 0">
-                                <td colspan="3">Total Parcial</td>
-                                <td>{{sumQtde(crClose)}}</td>
-                                <td :class="sumValor(crClose)<0 ? 'red' : 'green'">{{sumValor(crClose) | money}}</td>
-                            </tr>
-                            <tr v-for="(item, index) in diff" v-bind:key="item.id">
-                                <td v-if="index==0" :rowspan="diff.length">{{item.Operacao}}</td>
-                                <td v-if="index==0" :rowspan="diff.length"></td>
-                                <td>{{item.Tipo}}</td>
-                                <td>{{item.Qtde}}</td>
-                                <td>{{item.ValorInt | money}}</td>
-                            </tr>
-                            <tr v-if="diff.length > 0">
-                                <td colspan="3">Total Parcial</td>
-                                <td>{{sumQtde(diff)}}</td>
-                                <td :class="sumValor(diff)<0 ? 'red' : 'green'">{{sumValor(diff) | money}}</td>
-                            </tr>
-                            <tr v-if="grids.movs.items.length > 0">
-                                <td colspan="3">Total Geral</td>
-                                <td>{{sumQtde(grids.movs.items)}}</td>
-                                <td :class="sumValor(grids.movs.items)<0 ? 'red' : 'green'">{{sumValor(grids.movs.items) | money}}</td>
-                            </tr>
+
+                        </tbody>
+                        <tbody v-if="grids.movs.loaded && grids.movs.items.length > 0">
+                            <template v-for="(itembase) in grids.movsbybase.items">
+                                <tr v-bind:key="'base_'+itembase.id">
+                                    <td :rowspan="(itembase.rowspan)">{{itembase.ds_nome_teatro}}</td>
+                                    <td :colspan="4"></td>
+                                    <td>{{itembase.amountbybase | money}}
+                                    </td>
+                                </tr>
+                                <template v-for="(itemevent) in grids.movsbyevent.items.filter(o=>o.id_base==itembase.id_base)">
+                                    <tr v-bind:key="'event_'+itemevent.id">
+                                        <td :rowspan="(itemevent.rowspan)">{{itemevent.ds_evento}}</td>
+                                        <td :colspan="2"></td>
+                                        <td>{{itemevent.qtdbyevent}}</td>
+                                        <td>{{itemevent.amountbyevent | money}}</td>
+                                    </tr>
+                                    <tr v-for="(item) in grids.movs.items.filter(o=>o.id_evento==itemevent.id_evento)" v-bind:key="'all_'+item.id">
+                                        <td>{{item.type | typeofpayment}}</td>
+                                        <td>{{item.desc}}</td>
+                                        <td>{{item.qtd}}</td>
+                                        <td>{{item.amount | money}}</td>                     
+                                    </tr>
+                                </template>
+                            </template>
                         </tbody>
                     </table>
                 </b-form-row>
@@ -148,6 +102,7 @@ import { func } from '@/functions';
 import { funcOperation } from '../../components/ticketoffice/services/functions';
 import { cashregisterService } from "../../components/ticketoffice/services/cashregister";
 import { printService } from '../../components/ticketoffice/services/print';
+import { userService } from '../../components/common/services/user';
 
 import {mask} from 'vue-the-mask';
 import { Datetime } from 'vue-datetime';
@@ -158,105 +113,109 @@ Vue.use(moment);
 
 import 'vue-datetime/dist/vue-datetime.css';
 
-
-Vue.filter('money', function (value) {
-    let v = parseFloat(value)/100;
-    return `R$ ${v.toFixed(2)}`;
-});
-Vue.filter('truefalse', function (value) {
-    return value == 1 || value == "1" || value == true ? "Sim" : "Não";
-});
-
 export default {
     name: 'movs',
     mixins: [func, funcOperation],
     directives: {mask},
     components: { Datetime },
+    computed: {
+        sells () {
+            return this.grids.movs.items.filter(o => o.Operacao == 'Venda');
+        },
+    },
+    filters: {
+        typeofpayment: function (value) {
+            let ret = value;
+            switch (value) { 
+                case "add":
+                    ret = "Venda";
+                break;
+                case "refund":
+                    ret = "Estorno";
+                break;
+                case "withdraw":
+                    ret = "Saque";
+                break;
+                case "cashdeposit":
+                    ret = "Abertura de caixa";
+                break
+            }
+            return ret;
+        },
+        truefalse: function (value) {
+            return value == 1 || value == "1" || value == true ? "Sim" : "Não";
+        },
+        money: function (value) {
+            let v = parseFloat(value)/100;
+            return `R$ ${v.toFixed(2)}`;
+        }
+    },
     data () {
         return {
             processing: false,
             loading: false,
             result: null,
             movsDay: [],
+            operators: [],
             form: {
+                id_operator: 0,
                 date: null,
+                datePTBR: null,
                 codMovimentacao: '',
             },
-            grids: {
-                helper: {
-                    movs: {
-                        lastNomPeca: null,
-                    }
-                },
-                movs : {
+            grids: { 
+                movs: {
                     loaded: false,
                     items: [],
-                    fields: {
-                        Operacao: { label: 'Operação', sortable: false },
-                        NomPeca: { label: 'Nome', sortable: false },
-                        Tipo: { label: 'Detalhe', sortable: false },
-                        Qtde: { label: 'Qtde.', sortable: false },
-                        Valor: { label: 'Valor', sortable: false },
-                    },
+                },
+                movsbyevent : {
+                    loaded: false,
+                    items: [],
+                },
+                movsbybase : {
+                    loaded: false,
+                    items: [],
                 }
             }
         }
     },
     created() {
-        //this.search();
+        if (this.mayI('to-cashregister-closeother')) {
+            this.populateOperators();
+        }
     },
     computed: {
-        sells () {
-            return this.grids.movs.items.filter(o => o.Operacao == 'Venda');
-        },
-        sells_reservation () {
-            return this.grids.movs.items.filter(o => o.Operacao == 'Reserva');
-        },
-        sells_halfComplement () {
-            return this.grids.movs.items.filter(o => o.Operacao == 'Complemento de Meia');
-        },
-        sells_refund () {
-            return this.grids.movs.items.filter(o => o.Operacao == 'Estorno');
-        },
-        withdraw () {
-            return this.grids.movs.items.filter(o => o.Operacao == 'Saque');
-        },
-        crClose () {
-            return this.grids.movs.items.filter(o => o.Operacao == 'Fechamento');
-        },
-        diff () {
-            return this.grids.movs.items.filter(o => o.Operacao == 'Diferença');
-        },
+      
     },
     methods: {
-        sumQtde(loop) {
-            return loop.reduce( function(a, b){ return a + b["Qtde"]; }, 0);
+        searchOpened() {
+            this.loadme("");
         },
-        sumValor(loop) {
-            return loop.reduce( function(a, b){ return a + b["ValorInt"]; }, 0);
-        },
-        howManyNomPeca(name, loop) {
-            let ret = 0;
-
-            for (let x in loop) {
-                if (loop[x].NomPeca == name) {
-                    ret = ret+1;
-                }
+        searchByDate() {
+            if (this.form.datePTBR == "" || this.form.datePTBR == null) {
+                this.toastError("Preencha a data de fechamento");
+                return;
             }
-            ret = ret == 0 ? 1 : ret;
-            //console.log("howManyNomPeca: " + name + " --- " + ret);
-            return ret;
+            this.loadme(this.form.datePTBR);
         },
-        isEqualLastName(index, loop) {
-            let ret = true;
+        populateOperators() {
+            this.showWaitAboveAll();
 
-            let currentName = loop[index].NomPeca;
-            let lastName = index == 0 ? "" : loop[index-1].NomPeca;
-            
-            ret = currentName == lastName ? true : false;
-            //this.grids.helper.movs.lastNomPeca = name;
-            //console.log("lastNomPeca: " + currentName + " --- " + ret);
-            return ret;
+            Vue.nextTick().then(response => {
+                userService.ticketofficeuserwithpermission(this.get_id_base()).then(
+                response => {
+                    this.hideWaitAboveAll();
+                    if (this.validateJSON(response)) {
+                        this.operators = response;
+
+                    }
+                },
+                error => {
+                    this.hideWaitAboveAll();
+                    this.toastError("Falha na execução.");        
+                }
+                );
+            });
         },
         dateChange() {
             Vue.nextTick().then(response => {
@@ -264,7 +223,10 @@ export default {
                 if (ok != "Invalid date")
                 {
                     this.form.date = ok;
-                    this.loadMovsInDay();
+                    this.form.datePTBR = moment(this.form.date).format("DD/MM/YYYY");
+                }
+                else {
+                    this.form.datePTBR = null;
                 }
             });
         },
@@ -273,22 +235,32 @@ export default {
                 this.search();
             });
         },
-        loadMovsInDay() {
-            this.processing = true;
+        loadme(date) {
             this.showWaitAboveAll();
-            cashregisterService.movimentsInDay(this.getLoggedId(), this.get_id_base(), this.form.date).then(
-                    response => {
-                        this.hideWaitAboveAll();
-                        this.processing = false;
-                        if (this.validateJSON(response)) {
-                            this.movsDay = response;
-                        }
-                },
-                error => {
-                    this.processing = false;
-                    this.hideWaitAboveAll();
-                    this.toastError("Falha na execução.");        
+            let id = this.getLoggedId();
+            if (this.mayI('to-cashregister-closeother')) {
+                if (this.form.id_operator!=null && this.form.id_operator!=0) {
+                    id = this.form.id_operator;
                 }
+            }
+            cashregisterService.movimentlist(id, date).then(response => { 
+                this.hideWaitAboveAll(); if (this.validateJSON(response)) { this.grids.movs.items = response; this.grids.movs.loaded = true; }
+                },
+                error => { this.hideWaitAboveAll(); this.toastError("Falha na execução.");}
+            );
+
+            this.showWaitAboveAll();
+            cashregisterService.movimentlistbyevent(id, date).then(response => { 
+                    this.hideWaitAboveAll(); if (this.validateJSON(response)) { this.grids.movsbyevent.items = response; this.grids.movsbyevent.loaded = true; }
+                },
+                error => { this.hideWaitAboveAll(); this.toastError("Falha na execução."); }
+            );
+
+            this.showWaitAboveAll();
+            cashregisterService.movimentlistbybase(id, date).then(response => { 
+                    this.hideWaitAboveAll(); if (this.validateJSON(response)) { this.grids.movsbybase.items = response; this.grids.movsbybase.loaded = true; }
+                },
+                error => { this.hideWaitAboveAll(); this.toastError("Falha na execução."); }
             );
         },
         print() {
