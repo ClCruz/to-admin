@@ -71,16 +71,21 @@
                         </v-wait>
                         <span v-if="!processing">Consultar abertos</span>
                     </b-button>
-                    <b-button type="button" variant="success" size="sm" @click="searchByDate">
-                        <v-wait for="inprocess">
-                            <template slot="waiting">
-                            Carregando...
-                            </template>
-                        </v-wait>
-                        <span v-if="!processing">Consultar por fechamento</span>
-                    </b-button>
                 </b-row>
                 <b-form-row>
+                    <b-alert show v-if="closedinfo.loaded">
+                        Informações de fechamento
+                        <br />
+                        Data Criação: {{closedinfo.created}}
+                        <br />
+                        Data Fechamento: {{closedinfo.closed}} 
+                        <br /> 
+                        Fechamento realizado por: {{closedinfo.name}} ({{closedinfo.login}})
+                        <br />
+                        Teve diferença? <span v-if="hasDiff">Sim</span> <span v-else>Não</span>
+                        <br v-if="closedinfo.justification_closed!='' && closedinfo.justification_closed != null" />
+                        <span v-if="closedinfo.justification_closed!='' && closedinfo.justification_closed != null">Justificativa: {{closedinfo.justification_closed}} </span> 
+                    </b-alert>
                     <table class="table table-sm table-bordered table-hover" style="background-color: #fff;" v-if="grids.movs.loaded">
                         <thead>
                             <tr>
@@ -199,6 +204,7 @@ export default {
             operators: [],
             closeds: [],
             closedinfo: {
+                loaded: false,
                 id: '',
                 name: '',
                 login: '',
@@ -206,6 +212,7 @@ export default {
                 justification: '',
                 created: '',
                 closed: '',
+                hasDiff: false,
             },
             form: {
                 id_operator: 0,
@@ -260,6 +267,36 @@ export default {
     methods: {
         selectedCR() {
             Vue.nextTick().then(response => {
+                this.closedinfo.loaded = false;
+                this.closedinfo.id = '';
+                this.closedinfo.name = '';
+                this.closedinfo.login = '';
+                this.closedinfo.email = '';
+                this.closedinfo.justification_closed = '';
+                this.closedinfo.created = '';
+                this.closedinfo.closed = '';
+                this.closedinfo.hasDiff = false;
+
+
+                for (let index = 0; index < this.closeds.length; index++) {
+                    const element = this.closeds[index];
+                    if (element.id == this.form.id_ticketoffice_cashregister) {
+                        this.closedinfo.loaded = true;
+                        this.closedinfo.id = element.id;
+                        this.closedinfo.name = element.name;
+                        this.closedinfo.login = element.login;
+                        this.closedinfo.email = element.email;
+                        this.closedinfo.justification_closed = element.justification_closed;
+                        this.closedinfo.created = element.created;
+                        this.closedinfo.closed = element.closed;
+                        this.closedinfo.hasDiff = element.hasDiff;
+
+                        //console.log(this.closedinfo);
+
+                        break;
+                    }
+                }
+
                 this.loadme(this.form.datePTBR);
             });
 
