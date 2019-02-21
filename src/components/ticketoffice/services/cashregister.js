@@ -268,11 +268,11 @@ function close(id_base, id, amount, justificative) {
     return ret;
 }
 
-function listclosed(id_base, id_ticketoffice_user, date) {
+function listclosed(id_base, id_ticketoffice_user, date, id) {
     let url = config.api + `/v1/ticketoffice/cashregister/listclosed`;
 
     let obj = {
-        id_base, id_ticketoffice_user, date
+        id_base, id_ticketoffice_user, date, id
     };
 
     var ret = new Promise(
