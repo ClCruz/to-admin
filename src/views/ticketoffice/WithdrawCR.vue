@@ -1,56 +1,28 @@
 <template>
         <b-container>
-            <b-form-row>
-                <b-col>
-                    <b-input-group size="sm" :prepend="form.payment">
-                        <b-input-group-prepend is-text>
-                            <span>R$</span>
-                        </b-input-group-prepend>
-                        <b-form-input prepend="R$" :disabled="form.payment==''" id="amount" type="text" 
-                                        @keyup.enter="withdraw"
-                                        v-model.lazy="form.amountInput" v-money="money">
-                        </b-form-input>
-                        <b-input-group-append>
-                            <b-btn variant="success" :disabled="form.payment==''" @click="withdraw">
-                                <v-wait for="inprocess">
-                                    <template slot="waiting">
-                                    Realizando o saque...
-                                    </template>
-                                </v-wait>
-                                <span v-if="!processing">Sacar</span>
-                            </b-btn>
-                        </b-input-group-append>
-                    </b-input-group>
-                </b-col>
-            </b-form-row>
-            <b-form-row>
-                    <b-table striped="striped"
-                            outlined="outlined"
-                            small="small"
-                            hover="hover"
-                            responsive
-                            show-empty
-                            foot-clone 
-                            empty-text="Não foram encontrados registros."
-                            @row-clicked="rowClick"
-                            v-if="grids.movs.loaded"
-                            :items="grids.movs.items"
-                            :fields="grids.movs.fields">
-
-                        <template slot="opened" slot-scope="data">
-                            <span>{{data.item.opened | truefalse}}</span>
-                        </template>
-
-                        <template slot="amount" slot-scope="data">
-                            <span>{{data.item.amount | money}}</span>
-                        </template>
-
-                        <template slot="FOOT_TipForPagto" slot-scope="data">
-                        </template>
-                        <template slot="FOOT_amount" slot-scope="data">
-                            <strong>{{sum(data.column) | money}}</strong>
-                        </template>
-                    </b-table>
+            <b-form-row class="mb-3">
+                <b-input-group size="sm">
+                    <b-input-group-prepend is-text style="height: 31px">
+                        <span>R$</span>
+                    </b-input-group-prepend>
+                    <b-form-input prepend="R$" id="amount" type="text" style="max-width:96px"
+                                    v-model.lazy="form.amountInput" v-money="money">
+                    </b-form-input>
+                    <b-form-select v-model="form.selected" :options="selects.types" size="sm" style="max-width:190px" v-on:change="sel" />
+                    <b-form-input id="justification" type="text" placeholder="Escreva a justificativa"
+                                    v-model="form.justificative" maxlength="250" :disabled="form.selected == 'cashdepositopen'">
+                    </b-form-input>
+                    <b-input-group-append>
+                        <b-btn variant="success" @click="dofunction">
+                            <v-wait for="inprocess">
+                                <template slot="waiting">
+                                Realizando operação...
+                                </template>
+                            </v-wait>
+                            <span v-if="!processing">Realizar</span>
+                        </b-btn>
+                    </b-input-group-append>
+                </b-input-group>
             </b-form-row>
         </b-container>
 </template>
@@ -88,12 +60,21 @@ export default {
                 precision: 2,
                 masked: false /* doesn't work with directive */
             },
+            selects: {
+                types: [
+                    { value: "select", text: 'Selecione a operação...' },
+                    { value: 'cashdepositopen', text: 'Inclusão de abertura de caixa' },
+                    { value: 'cashdeposit', text: 'Inclusão de valor manual' },
+                    { value: 'withdraw', text: 'Saque de valor' },
+                ],
+            },
             processing: false,
             loading: false,
             result: null,
             form: {
-                justificative:null,
+                justificative:'',
                 payment:'',
+                selected: "select",
                 code: null,
                 currentAmount: null,
                 amountInput: null,
@@ -117,26 +98,13 @@ export default {
                     this.hideWaitAboveAll();
                     this.processing = false;
                     if (this.validateJSON(response)) {
-                        if (!response.opened) {
+                        if (!response.isopen) {
                             this.$swal({
                                 type: 'error',
                                 title: 'Fechamento de Caixa',
                                 text: 'O caixa não está aberto.',
                             });
                             this.gotoHomeTicketOffice();
-                        }
-                        else {
-                            if (parseFloat(response.Saldo)==0){
-                                this.$swal({
-                                    type: 'error',
-                                    title: 'Fechamento de Caixa',
-                                    text: 'Não há saldo disponível para realizar saque.',
-                                });
-                                this.gotoHomeTicketOffice();
-                            }
-                            else {
-                                this.search();
-                            }
                         }
                     }
             },
@@ -148,41 +116,26 @@ export default {
         );
     },
     methods: {
-        calc(amount, input) {
-            //debugger;
-            return parseFloat(input)-parseFloat(amount);
+        sel() {
+            Vue.nextTick().then(response => {
+
+            });
         },
-        sum(what) {
-            let ret = 0;
-            for (let x in this.grids.movs.items) {
-                switch (what) {
-                    case "amount":
-                        ret+=parseFloat(this.grids.movs.items[x].amount);
-                    break;
-                    case "amountInput":
-                        ret+=parseFloat(this.grids.movs.items[x].amountInput);
-                    break;
-                    case "diff":
-                        ret+=parseFloat(this.calc(this.grids.movs.items[x].amount,this.grids.movs.items[x].amountInput));
-                    break;
-                }
-            }
-            return ret;
-        },
-        withdraw() {
+        dofunction() {
             if (this.form.amountInput == null || parseFloat(this.form.amountInput) <= 0) {
                 this.popupError("Valor de saque tem que ser acima de zero");
                 return;
             }
-            if (parseFloat(this.form.amountInput) >= parseFloat(this.form.currentAmount)) {
-                this.popupError("Valor de saque tem que ser abaixo do valor que tem em caixa para o tipo especifico de pagamento.");
+
+            if (this.form.selected != 'cashdepositopen' && this.form.justificative.length<25 || this.form.justificative.length>250) {
+                this.popupError("Justificativa inválida.");
                 return;
             }
 
             this.processing = true;
             this.$wait.start("inprocess");
 
-            let msg = "Continuar com o saque?";
+            let msg = "Continuar com a operação?";
 
             this.$swal({
                 allowEscapeKey: false,
@@ -191,11 +144,11 @@ export default {
                 showCancelButton: true,
                 confirmButtonText: 'Sim',
                 cancelButtonText: 'Não',
-                title: 'Processo de saque',
+                title: 'Processo de lançamento',
                 text: msg,
             }).then((result) => {
                 if (result.value) {
-                    this.withdrawIntern();
+                    this.dofunctionIntern();
                 }
                 else if (result.dismiss === this.$swal.DismissReason.cancel) {
                     this.processing = false;
@@ -203,55 +156,25 @@ export default {
                 }
             });
         },
-        rowClick(record, index) {
-            this.form.payment = record.TipForPagto;
-            this.form.code = record.CodTipForPagto;
-            this.form.currentAmount = record.amount;
-        },
-        search() {
-            this.processing = true;
+        dofunctionIntern() {
             this.showWaitAboveAll();
-            cashregisterService.listToClose(this.getLoggedId(), this.get_id_base()).then(
-                    response => {
-                        this.hideWaitAboveAll();
-                        this.processing = false;
-                        if (this.validateJSON(response)) {
-                            this.grids.movs.items = response;
-                            this.grids.movs.loaded = true;
-                        }
-                },
-                error => {
-                    this.processing = false;
-                    this.hideWaitAboveAll();
-                    this.toastError("Falha na execução.");        
-                }
-            );
-        },
-        withdrawIntern() {
-            this.showWaitAboveAll();
-            cashregisterService.withdraw(this.get_id_base(), this.getLoggedId(), this.form.code,this.form.amountInput, this.form.justificative).then(
+            let amounthelper = parseInt(parseFloat(this.form.amountInput)*100);
+
+            cashregisterService.entry(this.get_id_base(), this.getLoggedId(), this.form.selected,amounthelper, this.form.justificative).then(
                     response => {
                         this.hideWaitAboveAll();
                         this.processing = false;
                         this.$wait.end("inprocess");
                         if (this.validateJSON(response)) {
                             if (response.success) {
-                                this.$swal({
-                                    type: 'success',
-                                    title: 'Processo de saque',
-                                    text: 'Saque realizado com sucesso.',
-                                });
-                                this.search();
-                                this.form.payment="";
-                                this.form.code = null;
-                                this.form.amountInput = 0;
+                                this.toastSuccess(response.msg);
+                                this.form.justificative = '';
+                                this.form.selected =  "select";
+                                this.form.currentAmount =  null;
+                                this.form.amountInput =  0;
                             }
                             else {
-                                this.$swal({
-                                    type: 'error',
-                                    title: 'Processo de saque',
-                                    text: 'Ocorreu uma falha para realizar o saque.',
-                                });
+                                this.toastError(response.msg);
                             }
                         }
                 },

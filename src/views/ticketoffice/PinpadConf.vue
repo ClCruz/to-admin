@@ -265,7 +265,7 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style>
 .list-group-item_pinpad {
     padding: 3px 10px;
     font-size: 13px;

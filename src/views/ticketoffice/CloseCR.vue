@@ -1,81 +1,215 @@
 <template>
-        <b-container>
-            <b-form-row>
-                    <b-alert variant="success" show v-if="date!=''">Data de abertura do caixa: {{date}}</b-alert>
+        <b-container>            
+            <b-modal ref="detailModal" hide-footer title="Detalhes" class="movimentmodal">
+                <div class="d-block text-center">
+                    <h4>{{popups.detail.name}}</h4>
+                </div>
+                <b-table striped="striped"
+                            outlined="outlined"
+                            class="fontSize tableClicked bg-white"
+                            small="small"
+                            hover="hover"
+                            responsive
+                            show-empty
+                            empty-text="Não foram encontrados registros."
+                            v-if="this.popups.detail.grids.detail.loaded"
+                            :items="this.popups.detail.grids.detail.items"
+                            :fields="this.popups.detail.grids.detail.fields">
+
+                    <template slot="amount" slot-scope="data">
+                        {{data.item.amount | money }}
+                    </template>
+                </b-table>
+                <b-btn class="mt-3" variant="outline-info" block @click="detailClose">Fechar</b-btn>
+            </b-modal>
+            <b-col>
+                <b-row v-if="mayI('to-cashregister-closeother')" class="my-1 mb-3">
+                    <b-input-group size="sm">
+                        <b-input-group-prepend is-text class="firstLabel">
+                            Operadores:
+                        </b-input-group-prepend>
+                        <b-form-select id="operators" v-model="form.id_operator" :options="operators" v-on:change="selected">
+                            <template slot="first">
+                                <option :value="null">-- Selecione --</option>
+                            </template>
+                        </b-form-select>
+                    </b-input-group>
+                </b-row>
+                <b-row class="my-1 mb-3">
+                    <b-input-group size="sm">
+                        <b-input-group-prepend is-text class="firstLabel">
+                            Data de abertura do caixa:
+                        </b-input-group-prepend>
+                        <b-input-group-prepend is-text class="firstLabel">
+                            {{dateOpen}}
+                        </b-input-group-prepend>
+                    </b-input-group>
+                </b-row>
+                <b-row class="mb-3">
+                    <b-button type="button" variant="success" size="sm" @click="closeCR">
+                        <v-wait for="inprocess">
+                            <template slot="waiting">
+                            Fechando...
+                            </template>
+                        </v-wait>
+                        <span v-if="!processing">Fechar Caixa</span>
+                    </b-button>
+                </b-row>
+                <b-form-row>
+                    <table class="table table-sm table-bordered table-hover" style="background-color: #fff;" v-if="grids.movs.loaded">
+                        <thead>
+                            <tr>
+                                <th scope="col">Parceiro</th>
+                                <th scope="col">Evento</th>
+                                <th scope="col">Tipo</th>
+                                <th scope="col">Forma</th>
+                                <th scope="col">Qtde.</th>
+                                <th scope="col">Valor</th>
+                            </tr>
+                        </thead>
+                        <tbody v-if="grids.movs.loaded && grids.movs.items.length == 0">
+                            <tr>
+                                <td colspan="6">Nenhum registro encontrado.</td>
+                            </tr>
+
+                        </tbody>
+                        <tbody v-if="grids.movs.loaded && grids.movs.items.length > 0">
+                            <template v-for="(itembase) in grids.movsbybase.items">
+                                <tr v-bind:key="'base_'+itembase.id">
+                                    <td :rowspan="(itembase.rowspan)">{{itembase.ds_nome_teatro}}</td>
+                                    <td :colspan="4"></td>
+                                    <td>{{itembase.amountbybase | money}}
+                                    </td>
+                                </tr>
+                                <template v-for="(itemevent) in grids.movsbyevent.items.filter(o=>o.id_base==itembase.id_base)">
+                                    <tr v-bind:key="'event_'+itemevent.id" @click="detailOpen(itemevent.id_evento, itemevent.ds_evento)" v-bind:class="{ clickable: (itemevent.id_evento<0) }" :title="(itemevent.id_evento<0 ?'Clique para ver detalhes' : '')">
+                                        <td :rowspan="(itemevent.rowspan)">{{itemevent.ds_evento}}</td>
+                                        <td :colspan="2"></td>
+                                        <td>{{itemevent.qtdbyevent}}</td>
+                                        <td>{{itemevent.amountbyevent | money}}</td>
+                                    </tr>
+                                    <tr v-for="(item) in grids.movs.items.filter(o=>o.id_evento==itemevent.id_evento)" v-bind:key="'all_'+item.id">
+                                        <td>{{item.type | typeofpayment}}</td>
+                                        <td>{{item.desc}}</td>
+                                        <td>{{item.qtd}}</td>
+                                        <td>{{item.amount | money}}</td>                     
+                                    </tr>
+                                </template>
+                            </template>
+                        </tbody>
+                    </table>
+                </b-form-row>
+            </b-col>
+            <b-col>
+                <b-row>
                     <b-table striped="striped"
                             outlined="outlined"
                             small="small"
                             hover="hover"
                             responsive
                             show-empty
-                            foot-clone 
                             empty-text="Não foram encontrados registros."
-                            v-if="grids.movs.loaded"
-                            :items="grids.movs.items"
-                            :fields="grids.movs.fields">
+                            v-if="grids.movsbypayment.loaded"
+                            :items="grids.movsbypayment.items"
+                            :fields="grids.movsbypayment.fields">
 
-                        <template slot="opened" slot-scope="data">
-                            <span>{{data.item.opened | truefalse}}</span>
+                        <template slot="amountbypayment" slot-scope="data">
+                            <span>{{data.item.amountbypayment | money}}</span>
                         </template>
 
-                        <template slot="amount" slot-scope="data">
-                            <span>{{data.item.amount | money}}</span>
-                        </template>
-
-                        <template slot="amountInput" slot-scope="data">
-                            <b-input-group size="sm" prepend="R$"><b-form-input prepend="R$" type="text" v-model.lazy="data.item.amountInput" v-money="money"></b-form-input></b-input-group>
+                        <template slot="amountbypaymentinput" slot-scope="data">
+                            <b-input-group size="sm" prepend="R$"><b-form-input prepend="R$" type="text" v-on:change="inputValChange" v-model.lazy="data.item.amountbypaymentinput" v-money="money"></b-form-input></b-input-group>
                         </template>
 
                         <template slot="diff" slot-scope="data">
-                            <span>{{calc(data.item.amount, data.item.amountInput) | money}}</span>
+                            <span>{{calc(data) | money}}</span>
                         </template>
-
-                        <template slot="FOOT_amount" slot-scope="data">
-                            <strong>{{sum(data.column) | money}}</strong>
+                        
+                        <template slot="FOOT" slot-scope="data">
                         </template>
-                        <template slot="FOOT_amountInput" slot-scope="data">
-                            <strong>{{sum(data.column) | money}}</strong>
-                        </template>
-                        <template slot="FOOT_diff" slot-scope="data">
-                            <strong>{{sum(data.column) | money}}</strong>
-                        </template>
-
                     </b-table>
-            </b-form-row>
-            <b-form-row>
-                <b-button type="button" variant="primary" @click="save">
-                    <v-wait for="inprocess">
-                        <template slot="waiting">
-                        Fechando caixa...
-                        </template>
-                    </v-wait>
-                    <span v-if="!processing">Fechar Caixa</span>
-                </b-button>
-            </b-form-row>
+                </b-row>
+                <b-row>
+                    <b-input-group size="sm">
+                        <b-input-group-prepend is-text style="height: 31px">
+                            <span>Justificativa</span>
+                        </b-input-group-prepend>
+                        <b-form-input :disabled="!hasDiff" id="justification" type="text" placeholder="Escreva a justificativa" v-model="form.justification" maxlength="250"></b-form-input>
+                        <b-input-group-append>
+                            <b-btn variant="success" @click="closeCR">
+                                <v-wait for="inprocess">
+                                    <template slot="waiting">
+                                    Realizando operação...
+                                    </template>
+                                </v-wait>
+                                <span v-if="!processing">Fechar Caixa</span>
+                            </b-btn>
+                        </b-input-group-append>
+                    </b-input-group>
+
+                </b-row>
+            </b-col>
         </b-container>
 </template>
 
 <script>
+// :disabled="form.selected == 'cashdepositopen'"
 import Vue from 'vue';
 import VueResource from "vue-resource";
 import config from '@/config';
 import { func } from '@/functions';
 import { funcOperation } from '../../components/ticketoffice/services/functions';
 import { cashregisterService } from "../../components/ticketoffice/services/cashregister";
+import { printService } from '../../components/ticketoffice/services/print';
+import { userService } from '../../components/common/services/user';
 import { VMoney } from 'v-money';
-import {mask} from 'vue-the-mask';
+import { mask } from 'vue-the-mask';
+import { Datetime } from 'vue-datetime';
+
+import moment from 'moment';
+
+Vue.use(moment);
+
+import 'vue-datetime/dist/vue-datetime.css';
 
 export default {
-    name: 'closeCR',
+    name: 'movs',
     mixins: [func, funcOperation],
-    directives: {mask,money: VMoney},
+    directives: { mask, money: VMoney},
+    components: { Datetime },
+    computed: {
+        sells () {
+            return this.grids.movs.items.filter(o => o.Operacao == 'Venda');
+        },
+    },
     filters: {
-        money: function (value) {
-            //if (!value) return ''
-            return `R$ ${value}`;
+        typeofpayment: function (value) {
+            let ret = value;
+            switch (value) { 
+                case "add":
+                    ret = "Venda";
+                break;
+                case "refund":
+                    ret = "Estorno";
+                break;
+                case "withdraw":
+                    ret = "Saque";
+                break;
+                case "cashdepositopen":
+                    ret = "-";
+                break
+                case "cashdeposit":
+                    ret = "-";
+                break
+            }
+            return ret;
         },
         truefalse: function (value) {
             return value == 1 || value == "1" || value == true ? "Sim" : "Não";
+        },
+        money: function (value) {
+            let v = parseFloat(value)/100;
+            return `R$ ${v.toFixed(2)}`;
         }
     },
     data () {
@@ -88,21 +222,59 @@ export default {
                 precision: 2,
                 masked: false /* doesn't work with directive */
             },
+            hasDiff: false,
             processing: false,
             loading: false,
             result: null,
-            date: '',
+            movsDay: [],
+            operators: [],
+            dateOpen: '',
             form: {
-                justificative:null,
+                id_operator: 0,
+                date: null,
+                datePTBR: null,
+                justification: ''
             },
-            grids: {
-                movs : {
+            popups: {  
+                detail: {
+                    loaded: false,
+                    name: '',
+                    id: '',
+                    grids: {
+                        detail: {
+                        processing: false,
+                        loaded: false,
+                        items: [],
+                        fields: {
+                                created: { label: 'Data', sortable: false },
+                                nameMoviment: { label: 'Operador', sortable: false },
+                                amount: { label: 'Valor', sortable: false },
+                                justification: { label: 'Justificativa', sortable: false },
+                            },
+                        }
+                    }
+                },
+            },    
+            grids: { 
+                movs: {
+                    loaded: false,
+                    items: [],
+                },
+                movsbyevent: {
+                    loaded: false,
+                    items: [],
+                },
+                movsbybase: {
+                    loaded: false,
+                    items: [],
+                },
+                movsbypayment: {
                     loaded: false,
                     items: [],
                     fields: {
-                        TipForPagto: { label: 'Forma de Pagamento', sortable: false },
-                        amount: { label: 'Valor Recebido', sortable: false },
-                        amountInput: { label: 'Valor em Caixa', sortable: false },
+                        desc: { label: 'Forma de Pagamento', sortable: false },
+                        amountbypayment: { label: 'Valor Recebido', sortable: false },
+                        amountbypaymentinput: { label: 'Valor em Caixa', sortable: false },
                         diff: { label: 'Diferença', sortable: false },
                     },
                 }
@@ -110,91 +282,100 @@ export default {
         }
     },
     created() {
-        if (this.getLoggedId() && this.get_id_base()) {
-            this.showWaitAboveAll();
-            cashregisterService.isok(this.get_id_base(), this.getLoggedId()).then(
-                response => {
-                    this.hideWaitAboveAll();
-                    if (this.validateJSON(response)) {
-                        if (response.isopen)
-                        {
-                            this.search();
-                        }
-                        else {
-                            this.$swal({
-                                type: 'error',
-                                text: "Caixa não encontra-se aberto.",
-                                showConfirmButton: true,
-                            }).then((result) => {
-                                this.gotoHomeTicketOffice();
-                            });
-                            return false;
-                        }
-                    }
-                },
-                error => {
-                    this.hideWaitAboveAll();
-                    this.toastError("Falha na execução.");        
-                }
-            );
+        if (this.mayI('to-cashregister-closeother')) {
+            this.populateOperators();
         }
+        //this.isCashRegisterOpenAndOk(this.initMe);
+        this.initMe();
+    },
+    computed: {
     },
     methods: {
-        calc(amount, input) {
-            //debugger;
-            return parseFloat(input)-parseFloat(amount);
+        inputValChange() {
+            Vue.nextTick().then(response => {
+                this.calcDiff();
+            });
         },
-        sum(what) {
-            let ret = 0;
-            for (let x in this.grids.movs.items) {
-                switch (what) {
-                    case "amount":
-                        ret+=parseFloat(this.grids.movs.items[x].amount);
-                    break;
-                    case "amountInput":
-                        ret+=parseFloat(this.grids.movs.items[x].amountInput);
-                    break;
-                    case "diff":
-                        ret+=parseFloat(this.calc(this.grids.movs.items[x].amount,this.grids.movs.items[x].amountInput));
-                    break;
+        calcDiff() {
+            let ret = false;
+            
+            for (let index = 0; index < this.grids.movsbypayment.items.length; index++) {
+                const element = this.grids.movsbypayment.items[index];
+                let input = parseInt(parseFloat(element.amountbypaymentinput)*100);
+                let amount = element.amountbypayment;
+
+                if (input == undefined || input == NaN)
+                    input = 0;
+
+                let diff = parseInt(input)-parseInt(amount);
+
+                if (diff!=0) {
+                    ret = true;
                 }
+                
             }
-            return ret;
+            this.hasDiff = ret;
+        },
+        calc(data) {
+            let input = parseInt(parseFloat(data.item.amountbypaymentinput)*100);
+            let amount = data.item.amountbypayment;
+
+            if (input == undefined)
+                input = 0;
+
+            return parseInt(input)-parseInt(amount);
+        },
+        initMe() {
+            if (this.getLoggedId() && this.get_id_base()) {
+                this.showWaitAboveAll();
+                cashregisterService.isok(this.get_id_base(), this.getLoggedId()).then(
+                    response => {
+                        this.hideWaitAboveAll();
+                        if (this.validateJSON(response)) {
+                            if (response.isopen)
+                            {
+                                this.getdate();
+                            }
+                            else {
+                                this.$swal({
+                                    type: 'error',
+                                    text: "Caixa não encontra-se aberto.",
+                                    showConfirmButton: true,
+                                }).then((result) => {
+                                    this.gotoHomeTicketOffice();
+                                });
+                                return false;
+                            }
+                        }
+                    },
+                    error => {
+                        this.hideWaitAboveAll();
+                        this.toastError("Falha na execução.");        
+                    }
+                );
+            }
         },
         getInput() {
             let ret = "";
-            for (let x in this.grids.movs.items) {
-                let currentLine = "" + this.grids.movs.items[x].CodTipForPagto + "#";
-                currentLine += parseInt(parseFloat(this.grids.movs.items[x].amountInput)*100);
+            for (let x in this.grids.movsbypayment.items) {  
+                let currentLine = "" + this.grids.movsbypayment.items[x].codForPagto + "#";
+
+                let input = parseInt(parseFloat(this.grids.movsbypayment.items[x].amountbypaymentinput)*100);
+                let amount = this.grids.movsbypayment.items[x].amountbypayment;
+
+                if (input == undefined)
+                    input = 0;
+
+                let diff = parseInt(input)-parseInt(amount);
+
+                currentLine += diff;
                 ret+= (ret == "" ? "" : "|") + currentLine;
             }
             return ret;
         },
-        search() {
-            this.processing = true;
+        closeCRIntern() {
             this.showWaitAboveAll();
-            cashregisterService.listToClose(this.getLoggedId(), this.get_id_base()).then(
-                    response => {
-                        this.hideWaitAboveAll();
-                        this.processing = false;
-                        if (this.validateJSON(response)) {
-                            this.grids.movs.items = response;
-                            this.grids.movs.loaded = true;
-                            if (response.length > 0) {
-                                this.date = response[0].date;
-                            }
-                        }
-                },
-                error => {
-                    this.processing = false;
-                    this.hideWaitAboveAll();
-                    this.toastError("Falha na execução.");        
-                }
-            );
-        },
-        closeCashRegister() {
-            this.showWaitAboveAll();
-            cashregisterService.close(this.get_id_base(), this.getLoggedId(), this.getInput(), this.form.justificative).then(
+            cashregisterService.close(this.get_id_base(), this.getLoggedId(), this.getInput(), this.form.justification).then(
                     response => {
                         this.hideWaitAboveAll();
                         this.processing = false;
@@ -224,16 +405,26 @@ export default {
                 }
             );
         },
-        save() {
-            this.processing = true;
-            this.$wait.start("inprocess");
-            let diff = this.sum("diff");
-
+        closeCR() {
+            
             let msg = "Continuar com o fechamento do caixa?";
 
-            if (diff!=0) {
+            if (this.hasDiff) {
                 msg = "Continuar com o fechamento do caixa mesmo com diferença?";
+
+                if (this.form.justification == '' || this.form.justification == undefined) {
+                    this.toastError("Obrigatório o preenchimento da justificativa.");
+                    return;
+                }
+                else {
+                    if (this.form.justification.length < 25) {
+                        this.toastError("Justificativa inválida.");
+                        return;
+                    }
+                }
             }
+            this.processing = true;
+            this.$wait.start("inprocess");
 
             this.$swal({
                 allowEscapeKey: false,
@@ -246,34 +437,7 @@ export default {
                 text: msg,
             }).then((result) => {
                 if (result.value) {
-                    if (diff!=0) {
-                        this.$swal({
-                            allowEscapeKey: false,
-                            allowOutsideClick: false,
-                            allowEnterKey: false,
-                            showCancelButton: true,
-                            confirmButtonText: 'Fechar',
-                            cancelButtonText: 'Cancelar',
-                            title: 'Processo de fechamento de caixa',
-                            text: "Escreva a justificativa.",
-                            input: 'text',
-                            inputValidator: (value) => {
-                                return !value && 'Escreva a justificativa!'
-                            }
-                        }).then((result) => {
-                            if (result.value) {
-                                this.form.justificative = result.value;
-                                this.closeCashRegister();
-                            }
-                            else if (result.dismiss === this.$swal.DismissReason.cancel) {
-                                this.processing = false;
-                                this.$wait.end("inprocess");
-                            }
-                        });
-                    }
-                    else {
-                        this.closeCashRegister();
-                    }
+                    this.closeCRIntern();
                 }
                 else if (result.dismiss === this.$swal.DismissReason.cancel) {
                     this.processing = false;
@@ -281,10 +445,181 @@ export default {
                 }
             });
         },
+        selected() {
+            Vue.nextTick().then(response => {
+                this.getdate();
+            });
+        },
+        detailOpen(type, desc) {
+            this.popups.detail.name = desc;
+            if (type<0) {
+                this.detail(type);
+            }
+        },
+        detailClose() {
+            this.$refs.detailModal.hide();
+        },
+        searchOpened() {
+            this.loadme("");
+        },
+        searchByDate() {
+            if (this.form.datePTBR == "" || this.form.datePTBR == null) {
+                this.toastError("Preencha a data de fechamento");
+                return;
+            }
+            this.loadme(this.form.datePTBR);
+        },
+        populateOperators() {
+            this.showWaitAboveAll();
+
+            Vue.nextTick().then(response => {
+                userService.ticketofficeuserwithpermission(this.get_id_base()).then(
+                response => {
+                    this.hideWaitAboveAll();
+                    if (this.validateJSON(response)) {
+                        this.operators = response;
+
+                    }
+                },
+                error => {
+                    this.hideWaitAboveAll();
+                    this.toastError("Falha na execução.");        
+                }
+                );
+            });
+        },
+        dateChange() {
+            Vue.nextTick().then(response => {
+                let ok = moment(this.form.date).format("YYYY-MM-DD");
+                if (ok != "Invalid date")
+                {
+                    this.form.date = ok;
+                    this.form.datePTBR = moment(this.form.date).format("DD/MM/YYYY");
+                }
+                else {
+                    this.form.datePTBR = null;
+                }
+            });
+        },
+        movChange() {
+            Vue.nextTick().then(response => {
+                this.search();
+            });
+        },
+        getdate() {
+            let id = this.getLoggedId();
+            if (this.mayI('to-cashregister-closeother')) {
+                if (this.form.id_operator!=null && this.form.id_operator!=0) {
+                    id = this.form.id_operator;
+                }
+            }
+
+            cashregisterService.opendate(id, this.get_id_base()).then(response => { 
+                this.hideWaitAboveAll(); 
+                    this.dateOpen = response.opendate;
+                    this.searchOpened();
+                },
+                error => { this.hideWaitAboveAll(); this.toastError("Falha na execução.");}
+            );
+        },
+        loadme(date) {
+            this.showWaitAboveAll();
+            let id = this.getLoggedId();
+            if (this.mayI('to-cashregister-closeother')) {
+                if (this.form.id_operator!=null && this.form.id_operator!=0) {
+                    id = this.form.id_operator;
+                }
+            }
+            cashregisterService.movimentlist(id, date, this.get_id_base(), '00000000-0000-0000-0000-000000000000').then(response => { 
+                this.hideWaitAboveAll(); if (this.validateJSON(response)) { this.grids.movs.items = response; this.grids.movs.loaded = true; }
+                },
+                error => { this.hideWaitAboveAll(); this.toastError("Falha na execução.");}
+            );
+
+            this.showWaitAboveAll();
+            cashregisterService.movimentlistbyevent(id, date, this.get_id_base(), '00000000-0000-0000-0000-000000000000').then(response => { 
+                    this.hideWaitAboveAll(); if (this.validateJSON(response)) { this.grids.movsbyevent.items = response; this.grids.movsbyevent.loaded = true; }
+                },
+                error => { this.hideWaitAboveAll(); this.toastError("Falha na execução."); }
+            );
+
+            this.showWaitAboveAll();
+            cashregisterService.movimentlistbybase(id, date, this.get_id_base(), '00000000-0000-0000-0000-000000000000').then(response => { 
+                    this.hideWaitAboveAll(); if (this.validateJSON(response)) { this.grids.movsbybase.items = response; this.grids.movsbybase.loaded = true; }
+                },
+                error => { this.hideWaitAboveAll(); this.toastError("Falha na execução."); }
+            );
+
+            this.showWaitAboveAll();
+            cashregisterService.movimentlistbypayment(id, date, this.get_id_base(), '00000000-0000-0000-0000-000000000000').then(response => { 
+                    this.hideWaitAboveAll(); if (this.validateJSON(response)) { this.grids.movsbypayment.items = response; this.grids.movsbypayment.loaded = true; }
+                    this.calcDiff();
+                },
+                error => { this.hideWaitAboveAll(); this.toastError("Falha na execução."); }
+            );
+        },
+        print() {
+            printService.moviment(this.get_id_base(),this.getLoggedId(), this.form.date, this.form.codMovimentacao);
+        },
+        detail(type) {
+            let typeAux = "";
+            switch (type) {
+                case -1:
+                    typeAux = "cashdepositopen";
+                break;
+                case -2:
+                    typeAux = "cashdeposit";
+                break;
+                case -3:
+                    typeAux = "withdraw";
+                break;
+            }
+            let id = this.getLoggedId();
+            if (this.mayI('to-cashregister-closeother')) {
+                if (this.form.id_operator!=null && this.form.id_operator!=0) {
+                    id = this.form.id_operator;
+                }
+            }
+
+            let date = "open";
+
+            if (this.form.datePTBR != "" && this.form.datePTBR != null) {
+                date = this.form.datePTBR;
+            }
+
+            this.showWaitAboveAll();
+            cashregisterService.movimentlistdetail(id, date, typeAux).then(response => { 
+                    this.hideWaitAboveAll(); if (this.validateJSON(response)) { 
+                            this.popups.detail.grids.detail.items = response;
+                            this.popups.detail.grids.detail.loaded = true; 
+                            this.$refs.detailModal.show();
+                    }
+                },
+                error => { this.hideWaitAboveAll(); this.toastError("Falha na execução."); }
+            );
+        },
     }
 }
 </script>
 
 <style>
-
+    .green {
+        color: green;
+    }
+    .red {
+        color: red;
+    }
+    .movimentmodal .modal-content {
+        min-width: 620px;
+    }
+    .clickable {
+        cursor: pointer;
+    }
+    .fakebs {
+        height: calc(1.8125rem + 2px);
+        padding: 0.25rem 0.5rem;
+        font-size: 0.875rem;
+        line-height: 1.5;
+        border-radius: 0.2rem;
+    }
 </style>

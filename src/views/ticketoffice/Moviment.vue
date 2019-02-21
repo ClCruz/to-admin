@@ -1,5 +1,27 @@
 <template>
-        <b-container>
+        <b-container>            
+            <b-modal ref="detailModal" hide-footer title="Detalhes" class="movimentmodal">
+                <div class="d-block text-center">
+                    <h4>{{popups.detail.name}}</h4>
+                </div>
+                <b-table striped="striped"
+                            outlined="outlined"
+                            class="fontSize tableClicked bg-white"
+                            small="small"
+                            hover="hover"
+                            responsive
+                            show-empty
+                            empty-text="Não foram encontrados registros."
+                            v-if="this.popups.detail.grids.detail.loaded"
+                            :items="this.popups.detail.grids.detail.items"
+                            :fields="this.popups.detail.grids.detail.fields">
+
+                    <template slot="amount" slot-scope="data">
+                        {{data.item.amount | money }}
+                    </template>
+                </b-table>
+                <b-btn class="mt-3" variant="outline-info" block @click="detailClose">Fechar</b-btn>
+            </b-modal>
             <b-col>
                 <b-row v-if="mayI('to-cashregister-closeother')" class="my-1 mb-3">
                     <b-input-group size="sm">
@@ -26,6 +48,18 @@
                             input-class="form-control fakebs"
                             @close="dateChange"
                         ></datetime>
+                    </b-input-group>
+                </b-row>
+                <b-row v-if="mayI('to-cashregister-closeother')" class="my-1 mb-3">
+                    <b-input-group size="sm">
+                        <b-input-group-prepend is-text class="firstLabel">
+                            Fechamentos:
+                        </b-input-group-prepend>
+                        <b-form-select id="closeds" v-model="form.id_ticketoffice_cashregister" :options="closeds" v-on:change="selectedCR">
+                            <template slot="first">
+                                <option :value="null" disabled>-- Selecione --</option>
+                            </template>
+                        </b-form-select>
                     </b-input-group>
                 </b-row>
                 <b-row class="mb-3">
@@ -73,7 +107,7 @@
                                     </td>
                                 </tr>
                                 <template v-for="(itemevent) in grids.movsbyevent.items.filter(o=>o.id_base==itembase.id_base)">
-                                    <tr v-bind:key="'event_'+itemevent.id">
+                                    <tr v-bind:key="'event_'+itemevent.id" @click="detailOpen(itemevent.id_evento, itemevent.ds_evento)" v-bind:class="{ clickable: (itemevent.id_evento<0) }" :title="(itemevent.id_evento<0 ?'Clique para ver detalhes' : '')">
                                         <td :rowspan="(itemevent.rowspan)">{{itemevent.ds_evento}}</td>
                                         <td :colspan="2"></td>
                                         <td>{{itemevent.qtdbyevent}}</td>
@@ -136,8 +170,14 @@ export default {
                 case "withdraw":
                     ret = "Saque";
                 break;
+                case "diff":
+                    ret = "Diferença cadastrada";
+                break;
+                case "cashdepositopen":
+                    ret = "-";
+                break
                 case "cashdeposit":
-                    ret = "Abertura de caixa";
+                    ret = "-";
                 break
             }
             return ret;
@@ -157,12 +197,42 @@ export default {
             result: null,
             movsDay: [],
             operators: [],
+            closeds: [],
+            closedinfo: {
+                id: '',
+                name: '',
+                login: '',
+                email: '',
+                justification: '',
+                created: '',
+                closed: '',
+            },
             form: {
                 id_operator: 0,
                 date: null,
                 datePTBR: null,
-                codMovimentacao: '',
+                id_ticketoffice_cashregister: '00000000-0000-0000-0000-000000000000'
             },
+            popups: {  
+                detail: {
+                    loaded: false,
+                    name: '',
+                    id: '',
+                    grids: {
+                        detail: {
+                        processing: false,
+                        loaded: false,
+                        items: [],
+                        fields: {
+                                created: { label: 'Data', sortable: false },
+                                nameMoviment: { label: 'Operador', sortable: false },
+                                amount: { label: 'Valor', sortable: false },
+                                justification: { label: 'Justificativa', sortable: false },
+                            },
+                        }
+                    }
+            },
+            },    
             grids: { 
                 movs: {
                     loaded: false,
@@ -188,6 +258,21 @@ export default {
       
     },
     methods: {
+        selectedCR() {
+            Vue.nextTick().then(response => {
+                this.loadme(this.form.datePTBR);
+            });
+
+        },
+        detailOpen(type, desc) {
+            this.popups.detail.name = desc;
+            if (type<0) {
+                this.detail(type);
+            }
+        },
+        detailClose() {
+            this.$refs.detailModal.hide();
+        },
         searchOpened() {
             this.loadme("");
         },
@@ -224,9 +309,11 @@ export default {
                 {
                     this.form.date = ok;
                     this.form.datePTBR = moment(this.form.date).format("DD/MM/YYYY");
+                    this.loadCloseds();
                 }
                 else {
                     this.form.datePTBR = null;
+                    this.closeds = [];
                 }
             });
         },
@@ -235,29 +322,44 @@ export default {
                 this.search();
             });
         },
-        loadme(date) {
-            this.showWaitAboveAll();
+        loadCloseds() {
             let id = this.getLoggedId();
             if (this.mayI('to-cashregister-closeother')) {
                 if (this.form.id_operator!=null && this.form.id_operator!=0) {
                     id = this.form.id_operator;
                 }
             }
-            cashregisterService.movimentlist(id, date).then(response => { 
+
+            this.showWaitAboveAll();
+            cashregisterService.listclosed(this.get_id_base(), id, this.form.datePTBR).then(response => { 
+                    this.hideWaitAboveAll(); if (this.validateJSON(response)) { this.closeds = response; }
+                },
+                error => { this.hideWaitAboveAll(); this.toastError("Falha na execução.");}
+            );
+        },
+        loadme(date) {
+            let id = this.getLoggedId();
+            if (this.mayI('to-cashregister-closeother')) {
+                if (this.form.id_operator!=null && this.form.id_operator!=0) {
+                    id = this.form.id_operator;
+                }
+            }
+            this.showWaitAboveAll();
+            cashregisterService.movimentlist(id, date, 0, this.form.id_ticketoffice_cashregister).then(response => { 
                 this.hideWaitAboveAll(); if (this.validateJSON(response)) { this.grids.movs.items = response; this.grids.movs.loaded = true; }
                 },
                 error => { this.hideWaitAboveAll(); this.toastError("Falha na execução.");}
             );
 
             this.showWaitAboveAll();
-            cashregisterService.movimentlistbyevent(id, date).then(response => { 
+            cashregisterService.movimentlistbyevent(id, date, 0, this.form.id_ticketoffice_cashregister).then(response => { 
                     this.hideWaitAboveAll(); if (this.validateJSON(response)) { this.grids.movsbyevent.items = response; this.grids.movsbyevent.loaded = true; }
                 },
                 error => { this.hideWaitAboveAll(); this.toastError("Falha na execução."); }
             );
 
             this.showWaitAboveAll();
-            cashregisterService.movimentlistbybase(id, date).then(response => { 
+            cashregisterService.movimentlistbybase(id, date, 0, this.form.id_ticketoffice_cashregister).then(response => { 
                     this.hideWaitAboveAll(); if (this.validateJSON(response)) { this.grids.movsbybase.items = response; this.grids.movsbybase.loaded = true; }
                 },
                 error => { this.hideWaitAboveAll(); this.toastError("Falha na execução."); }
@@ -266,25 +368,43 @@ export default {
         print() {
             printService.moviment(this.get_id_base(),this.getLoggedId(), this.form.date, this.form.codMovimentacao);
         },
-        search() {
-            this.processing = true;
-            this.showWaitAboveAll();
-            cashregisterService.list(this.get_id_base(),this.getLoggedId(), this.form.date, this.form.codMovimentacao).then(
-                    response => {
-                        this.hideWaitAboveAll();
-                        this.processing = false;
-                        if (this.validateJSON(response)) {
-                            this.grids.movs.items = response;
-                            this.grids.movs.loaded = true;
-                        }
-                },
-                error => {
-                    this.processing = false;
-                    this.hideWaitAboveAll();
-                    this.toastError("Falha na execução.");        
+        detail(type) {
+            let typeAux = "";
+            switch (type) {
+                case -1:
+                    typeAux = "cashdepositopen";
+                break;
+                case -2:
+                    typeAux = "cashdeposit";
+                break;
+                case -3:
+                    typeAux = "withdraw";
+                break;
+            }
+            let id = this.getLoggedId();
+            if (this.mayI('to-cashregister-closeother')) {
+                if (this.form.id_operator!=null && this.form.id_operator!=0) {
+                    id = this.form.id_operator;
                 }
+            }
+
+            let date = "open";
+
+            if (this.form.datePTBR != "" && this.form.datePTBR != null) {
+                date = this.form.datePTBR;
+            }
+
+            this.showWaitAboveAll();
+            cashregisterService.movimentlistdetail(id, date, typeAux).then(response => { 
+                    this.hideWaitAboveAll(); if (this.validateJSON(response)) { 
+                            this.popups.detail.grids.detail.items = response;
+                            this.popups.detail.grids.detail.loaded = true; 
+                            this.$refs.detailModal.show();
+                    }
+                },
+                error => { this.hideWaitAboveAll(); this.toastError("Falha na execução."); }
             );
-        }
+        },
     }
 }
 </script>
@@ -295,6 +415,12 @@ export default {
     }
     .red {
         color: red;
+    }
+    .movimentmodal .modal-content {
+        min-width: 620px;
+    }
+    .clickable {
+        cursor: pointer;
     }
     .fakebs {
         height: calc(1.8125rem + 2px);

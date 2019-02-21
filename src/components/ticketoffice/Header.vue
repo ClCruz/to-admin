@@ -16,7 +16,7 @@
                     <b-dropdown-item v-on:click="goto('cashregister:open')">Abrir</b-dropdown-item>
                     <b-dropdown-item v-on:click="goto('cashregister:close')">Fechar</b-dropdown-item>
                     <b-dropdown-item v-on:click="goto('cashregister:moviment')">Movimentação</b-dropdown-item>
-                    <b-dropdown-item v-on:click="goto('cashregister:withdraw')">Saque</b-dropdown-item>
+                    <b-dropdown-item v-on:click="goto('cashregister:withdraw')">Lançamentos</b-dropdown-item>
                 </b-dropdown>
                 <b-button-group class="mx-1">
                     <b-dropdown v-if="isAuth && !purchaseProcessing" right text="Operação">
@@ -393,7 +393,7 @@ export default {
                             if (this.validateJSON(response))
                             {
                                 if (response.success) {
-                                    if (response.alreadyOpen) {
+                                    if (response.alreadyopened == 1) {
                                         this.toastInfo("Caixa já está aberto.");
                                     }
                                     else {
@@ -401,9 +401,7 @@ export default {
                                     }
                                 }
                                 else {
-                                    if (response.error) {
-                                        this.toastError(response.message);
-                                    }
+                                    this.toastError(response.msg);
                                 }
                             }
                             this.processing=false;
