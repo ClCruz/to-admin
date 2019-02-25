@@ -294,7 +294,7 @@
                   <b-input-group-prepend is-text>
                     Valor do Juros:
                   </b-input-group-prepend>
-                  <b-form-input id="interest_rate" type="text" name="interest_rate" maxlength="20" v-mask="'##.##%'" v-model="form.interest_rate" placeholder="00.00 %">
+                  <b-form-input id="interest_rate" type="text" name="interest_rate" maxlength="8" v-money="money" v-model="form.interest_rate" placeholder="00.00 %">
                   </b-form-input>
                 </b-input-group>
               </b-row>
@@ -370,6 +370,9 @@ import {
 import {
   eventService
 } from '../../components/common/services/event';
+import {
+  VMoney
+} from 'v-money';
 
 import 'quill/dist/quill.core.css';
 import 'quill/dist/quill.snow.css';
@@ -414,6 +417,10 @@ export default {
       this.get();
     }
   },
+  directives: {
+    money: VMoney
+  },
+
   computed: {
     checkboxs: {
       get: function () {
@@ -623,10 +630,9 @@ export default {
           id_base = "",
           imagechanged = false,
           imagebase64 = "",
-          free_installments = "", 
-        max_installments = "", 
-        interest_rate = "";
-       
+          free_installments = "",
+          max_installments = "",
+          interest_rate = "";
 
         id_base = this.form.id_base;
         id_produtor = this.form.id_produtor;
@@ -658,39 +664,29 @@ export default {
         // this.$wait.start("inprocessSave");
         // this.processing = true;
 
-        
+        eventService.save(this.getLoggedId(), id_base, id_produtor, CodPeca, NomPeca, CodTipPeca, TemDurPeca, CenPeca, id_local_evento, ValIngresso, description, meta_description, meta_keyword, opening_time, insurance_policy, showInBanner, bannerDescription, QtIngrPorPedido, in_obriga_cpf, qt_ingressos_por_cpf, ticketoffice_askemail, imagechanged, imagebase64, free_installments, max_installments, interest_rate).then(
 
-        eventService.save(this.getLoggedId(), id_base, id_produtor
-                           ,CodPeca,NomPeca,CodTipPeca
-                           ,TemDurPeca,CenPeca,id_local_evento
-                           ,ValIngresso,description,meta_description
-                           ,meta_keyword,opening_time,insurance_policy
-                           ,showInBanner,bannerDescription,QtIngrPorPedido
-                           ,in_obriga_cpf,qt_ingressos_por_cpf, ticketoffice_askemail
-                           ,imagechanged,imagebase64,free_installments,max_installments,interest_rate).then(
-                           
-           response => {
-             this.processing = false;
-             console.log("Event Service: " + response);
-             this.hideWaitAboveAll();
-             this.$wait.end("inprocessSave");
+          response => {
+            this.processing = false;
+            console.log("Event Service: " + response);
+            this.hideWaitAboveAll();
+            this.$wait.end("inprocessSave");
 
-              if (response.success) {
-                this.toastSuccess("Salvo com sucesso");
-                //this.$router.push(`/event/list`);
-              }
-              else {
-                this.toastError(response.msg);
-              }
-           },
-           error => {
-             this.grids.event.processing = false;
-             this.processing = false;
-             this.hideWaitAboveAll();
-             this.$wait.end("inprocessSave");
-             this.toastError("Falha na execução.");
-           }
-         ); 
+            if (response.success) {
+              this.toastSuccess("Salvo com sucesso");
+              //this.$router.push(`/event/list`);
+            } else {
+              this.toastError(response.msg);
+            }
+          },
+          error => {
+            this.grids.event.processing = false;
+            this.processing = false;
+            this.hideWaitAboveAll();
+            this.$wait.end("inprocessSave");
+            this.toastError("Falha na execução.");
+          }
+        );
       } else {
         this.toastError("Preencha os campos obrigatórios.");
       }
@@ -858,6 +854,14 @@ export default {
     return {
       processing: false,
       loading: false,
+      money: {
+        decimal: '.',
+        thousands: '',
+        //prefix: 'R$ ',
+        suffix: ' %',
+        precision: 2,
+        masked: false /* doesn't work with directive */
+      },
       components: {
         quillOptions: {
           modules: {
@@ -932,7 +936,7 @@ export default {
           },
           {
             value: '1',
-            text: '1 parcela'
+            text: '1 parcela à vista'
           },
           {
             value: '2',
