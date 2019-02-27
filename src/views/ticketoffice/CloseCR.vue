@@ -212,10 +212,13 @@ export default {
                 break;
                 case "cashdepositopen":
                     ret = "-";
-                break
+                break;
                 case "cashdeposit":
                     ret = "-";
-                break
+                break;
+                case "diff":
+                    ret = "-";
+                break;
             }
             return ret;
         },
@@ -325,6 +328,9 @@ export default {
     computed: {
     },
     methods: {
+        teste() {
+            this.printfinal();
+        },
         inputValChange() {
             Vue.nextTick().then(response => {
                 this.calcDiff();
@@ -421,8 +427,9 @@ export default {
                                     title: 'Processo de fechamento de caixa',
                                     text: 'Caixa fechado com sucesso.',
                                 });
-                                this.loadclosed(response.id);
-                                //this.gotoHomeTicketOffice();
+                                printService.crclose(response.id);
+                                //this.loadclosed(response.id);
+                                this.gotoHomeTicketOffice();
                             }
                             else {
                                 this.$swal({
@@ -652,13 +659,8 @@ export default {
                 let myobj = this;
                 Vue.nextTick().then(response => {
                     printJS({printable:'toprint', type:'html', css: `/assets/css/localhost/main.css`});
-                    this.gotoHomeTicketOffice();
-                    //this.printmode = false;
-                    //this.calcDiff();
+                    //this.gotoHomeTicketOffice();
                 });
-
-                //alert("oi")
-                // });
             }
         },
         detail(type) {
