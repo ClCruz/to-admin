@@ -80,6 +80,7 @@ import config from '@/config';
 import { func } from '@/functions';
 import { funcOperation } from '../../components/ticketoffice/services/functions';
 import { cashregisterService } from "../../components/ticketoffice/services/cashregister";
+import { printService } from '../../components/ticketoffice/services/print';
 import { VMoney } from 'v-money';
 import {mask} from 'vue-the-mask';
 
@@ -233,23 +234,20 @@ export default {
 
                             if (response.success) {
                                 this.toastSuccess(response.msg);
-                                this.printInfo.id = response.id;
-                                this.printInfo.created = response.created;
-                                this.printInfo.justificative = this.form.justificative;
-                                this.printInfo.currentAmount =  amounthelper;
-
-
+                                // debugger;
                                 
+                                switch (this.form.selected) {
+                                    case "withdraw":
+                                        printService.moviment(response.id);
+                                    break;
+                                }                        
+                                            
                                 this.form.justificative = '';
                                 this.form.selected =  "select";
                                 this.form.currentAmount =  null;
-                                this.form.amountInput =  0;
+                                this.form.amountInput = "";
 
-                                Vue.nextTick().then(response => {
-                                    printJS({printable: 'print', type: 'html', css: 'http://tixs.me/assets/css/localhost/main.css'});
-
-                                    this.printInfo.id = '';
-                                });
+                                this.gotoHomeTicketOffice();
                             }
                             else {
                                 this.toastError(response.msg);

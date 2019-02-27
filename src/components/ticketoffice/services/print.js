@@ -9,8 +9,8 @@ config.setapikey();
 export const printService =  {
     ticket,
     booking,
-    moviment,
     crclose,
+    moviment,
 }
 
 function ticket(id_base, codVenda, indice) {
@@ -22,11 +22,11 @@ function booking(id_base, codReserva, indice) {
     let url = config.api + `/v1/print/reservation?id_base=${id_base}&id=${codReserva}&indice=${indice}`;
     window.open(url);
 }
-function moviment(id_base, id, date, codMovimento) {
-    let url = config.api + `/v1/print/cashregister/moviment?id_base=${id_base}&id=${id}&date=${date}&codMovimento=${codMovimento}`;
-    window.open(url);
-}
 function crclose(id) {
     let url = config.api + `/v1/print/cashregister/signature_close.php?id=${id}`;
+    window.open(url);
+}
+function moviment(id) {
+    let url = config.api + `/v1/print/cashregister/signature_moviment.php?id=${id}`;
     window.open(url);
 }
