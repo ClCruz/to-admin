@@ -211,6 +211,7 @@ export default {
                 text: msg,
             }).then((result) => {
                 if (result.value) {
+                    
                     this.dofunctionIntern();
                 }
                 else if (result.dismiss === this.$swal.DismissReason.cancel) {

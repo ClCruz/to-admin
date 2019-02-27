@@ -23,7 +23,7 @@
                 <b-btn class="mt-3" variant="outline-info" block @click="detailClose">Fechar</b-btn>
             </b-modal>
             <b-col>
-                <b-row v-if="mayI('to-cashregister-closeother')" class="my-1 mb-3">
+                <b-row v-if="mayI('to-cashregister-closeother') && !printmode" class="my-1 mb-3">
                     <b-input-group size="sm">
                         <b-input-group-prepend is-text class="firstLabel">
                             Operadores:
@@ -35,7 +35,7 @@
                         </b-form-select>
                     </b-input-group>
                 </b-row>
-                <b-row class="my-1 mb-3">
+                <b-row class="my-1 mb-3" v-if="!printmode">
                     <b-input-group size="sm">
                         <b-input-group-prepend is-text class="firstLabel">
                             Data de abertura do caixa:
@@ -45,63 +45,77 @@
                         </b-input-group-prepend>
                     </b-input-group>
                 </b-row>
-                <b-row class="mb-3">
-                    <b-button type="button" variant="success" size="sm" @click="closeCR">
-                        <v-wait for="inprocess">
-                            <template slot="waiting">
-                            Fechando...
-                            </template>
-                        </v-wait>
-                        <span v-if="!processing">Fechar Caixa</span>
-                    </b-button>
-                </b-row>
-                <b-form-row>
-                    <table class="table table-sm table-bordered table-hover" style="background-color: #fff;" v-if="grids.movs.loaded">
-                        <thead>
-                            <tr>
-                                <th scope="col">Parceiro</th>
-                                <th scope="col">Evento</th>
-                                <th scope="col">Tipo</th>
-                                <th scope="col">Forma</th>
-                                <th scope="col">Qtde.</th>
-                                <th scope="col">Valor</th>
-                            </tr>
-                        </thead>
-                        <tbody v-if="grids.movs.loaded && grids.movs.items.length == 0">
-                            <tr>
-                                <td colspan="6">Nenhum registro encontrado.</td>
-                            </tr>
-
-                        </tbody>
-                        <tbody v-if="grids.movs.loaded && grids.movs.items.length > 0">
-                            <template v-for="(itembase) in grids.movsbybase.items">
-                                <tr v-bind:key="'base_'+itembase.id">
-                                    <td :rowspan="(itembase.rowspan)">{{itembase.ds_nome_teatro}}</td>
-                                    <td :colspan="4"></td>
-                                    <td>{{itembase.amountbybase | money}}
-                                    </td>
+                <b-container id="toprint">
+                    <b-form-row>
+                        <b-alert show v-if="printinfo.loaded && printmode">
+                            Informações de fechamento
+                            <br />
+                            Data de abertura: {{printinfo.created}}
+                            <br />
+                            Data de fechamento: {{printinfo.closed}} 
+                            <br /> 
+                            Fechamento realizado por: {{printinfo.name}} ({{printinfo.login}})
+                            <br />
+                            Teve diferença? <span v-if="hasDiff">Sim</span> <span v-else>Não</span>
+                            <br v-if="printinfo.justification_closed!='' && printinfo.justification_closed != null" />
+                            <span v-if="printinfo.justification_closed!='' && printinfo.justification_closed != null">Justificativa: {{printinfo.justification_closed}} </span> 
+                        </b-alert>
+                        <table class="table table-sm table-bordered table-hover" style="background-color: #fff;" v-if="grids.movs.loaded">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Parceiro</th>
+                                    <th scope="col">Evento</th>
+                                    <th scope="col">Tipo</th>
+                                    <th scope="col">Forma</th>
+                                    <th scope="col">Qtde.</th>
+                                    <th scope="col">Valor</th>
                                 </tr>
-                                <template v-for="(itemevent) in grids.movsbyevent.items.filter(o=>o.id_base==itembase.id_base)">
-                                    <tr v-bind:key="'event_'+itemevent.id" @click="detailOpen(itemevent.id_evento, itemevent.ds_evento)" v-bind:class="{ clickable: (itemevent.id_evento<0) }" :title="(itemevent.id_evento<0 ?'Clique para ver detalhes' : '')">
-                                        <td :rowspan="(itemevent.rowspan)">{{itemevent.ds_evento}}</td>
-                                        <td :colspan="2"></td>
-                                        <td>{{itemevent.qtdbyevent}}</td>
-                                        <td>{{itemevent.amountbyevent | money}}</td>
+                            </thead>
+                            <tbody v-if="grids.movs.loaded && grids.movs.items.length == 0">
+                                <tr>
+                                    <td colspan="6">Nenhum registro encontrado.</td>
+                                </tr>
+
+                            </tbody>
+                            <tbody v-if="grids.movs.loaded && grids.movs.items.length > 0">
+                                <template v-for="(itembase) in grids.movsbybase.items">
+                                    <tr v-bind:key="'base_'+itembase.id">
+                                        <td :rowspan="(itembase.rowspan)">{{itembase.ds_nome_teatro}}</td>
+                                        <td :colspan="4"></td>
+                                        <td>{{itembase.amountbybase | money}}
+                                        </td>
                                     </tr>
-                                    <tr v-for="(item) in grids.movs.items.filter(o=>o.id_evento==itemevent.id_evento)" v-bind:key="'all_'+item.id">
-                                        <td>{{item.type | typeofpayment}}</td>
-                                        <td>{{item.desc}}</td>
-                                        <td>{{item.qtd}}</td>
-                                        <td>{{item.amount | money}}</td>                     
-                                    </tr>
+                                    <template v-for="(itemevent) in grids.movsbyevent.items.filter(o=>o.id_base==itembase.id_base)">
+                                        <tr v-bind:key="'event_'+itemevent.id" @click="detailOpen(itemevent.id_evento, itemevent.ds_evento)" v-bind:class="{ clickable: (itemevent.id_evento<0) }" :title="(itemevent.id_evento<0 ?'Clique para ver detalhes' : '')">
+                                            <td :rowspan="(itemevent.rowspan)">{{itemevent.ds_evento}}</td>
+                                            <td :colspan="2"></td>
+                                            <td>{{itemevent.qtdbyevent}}</td>
+                                            <td>{{itemevent.amountbyevent | money}}</td>
+                                        </tr>
+                                        <tr v-for="(item) in grids.movs.items.filter(o=>o.id_evento==itemevent.id_evento)" v-bind:key="'all_'+item.id">
+                                            <td>{{item.type | typeofpayment}}</td>
+                                            <td>{{item.desc}}</td>
+                                            <td>{{item.qtd}}</td>
+                                            <td>{{item.amount | money}}</td>                     
+                                        </tr>
+                                    </template>
                                 </template>
-                            </template>
-                        </tbody>
-                    </table>
-                </b-form-row>
+                            </tbody>
+                        </table>
+                        <span v-if="printmode">
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        __________________________________
+                        <br />
+                        Assinatura
+                        </span>
+                    </b-form-row>
+                </b-container>
             </b-col>
             <b-col>
-                <b-row>
+                <b-row v-if="!printmode">
                     <b-table striped="striped"
                             outlined="outlined"
                             small="small"
@@ -129,7 +143,7 @@
                         </template>
                     </b-table>
                 </b-row>
-                <b-row>
+                <b-row v-if="!printmode">
                     <b-input-group size="sm">
                         <b-input-group-prepend is-text style="height: 31px">
                             <span>Justificativa</span>
@@ -165,6 +179,7 @@ import { userService } from '../../components/common/services/user';
 import { VMoney } from 'v-money';
 import { mask } from 'vue-the-mask';
 import { Datetime } from 'vue-datetime';
+import print from 'print-js';
 
 import moment from 'moment';
 
@@ -222,6 +237,13 @@ export default {
                 precision: 2,
                 masked: false /* doesn't work with directive */
             },
+            printmode: false,
+            printcheck: {
+                info: false,
+                bybase: false,
+                byevent: false,
+                byall: false,
+            },
             hasDiff: false,
             processing: false,
             loading: false,
@@ -229,11 +251,23 @@ export default {
             movsDay: [],
             operators: [],
             dateOpen: '',
+            printinfo: {
+                loaded: false,
+                id: '',
+                name: '',
+                login: '',
+                email: '',
+                justification: '',
+                created: '',
+                closed: '',
+                hasDiff: false,
+            },
             form: {
                 id_operator: 0,
                 date: null,
                 datePTBR: null,
-                justification: ''
+                justification: '',
+                id: '00000000-0000-0000-0000-000000000000'
             },
             popups: {  
                 detail: {
@@ -387,7 +421,8 @@ export default {
                                     title: 'Processo de fechamento de caixa',
                                     text: 'Caixa fechado com sucesso.',
                                 });
-                                this.gotoHomeTicketOffice();
+                                this.loadclosed(response.id);
+                                //this.gotoHomeTicketOffice();
                             }
                             else {
                                 this.$swal({
@@ -460,14 +495,14 @@ export default {
             this.$refs.detailModal.hide();
         },
         searchOpened() {
-            this.loadme("");
+            this.loadme("", '00000000-0000-0000-0000-000000000000', false);
         },
         searchByDate() {
             if (this.form.datePTBR == "" || this.form.datePTBR == null) {
                 this.toastError("Preencha a data de fechamento");
                 return;
             }
-            this.loadme(this.form.datePTBR);
+            this.loadme(this.form.datePTBR, '00000000-0000-0000-0000-000000000000', false);
         },
         populateOperators() {
             this.showWaitAboveAll();
@@ -522,44 +557,109 @@ export default {
                 error => { this.hideWaitAboveAll(); this.toastError("Falha na execução.");}
             );
         },
-        loadme(date) {
-            this.showWaitAboveAll();
+        loadclosed(id_ticketoffice_cashregister) {
             let id = this.getLoggedId();
             if (this.mayI('to-cashregister-closeother')) {
                 if (this.form.id_operator!=null && this.form.id_operator!=0) {
                     id = this.form.id_operator;
                 }
             }
-            cashregisterService.movimentlist(id, date, this.get_id_base(), '00000000-0000-0000-0000-000000000000').then(response => { 
-                this.hideWaitAboveAll(); if (this.validateJSON(response)) { this.grids.movs.items = response; this.grids.movs.loaded = true; }
+
+            this.showWaitAboveAll();
+            cashregisterService.listclosed(this.get_id_base(), id, this.form.datePTBR, id_ticketoffice_cashregister).then(response => { 
+                    this.hideWaitAboveAll(); 
+                    if (this.validateJSON(response)) 
+                    { 
+                        this.printcheck.info = true;
+                        this.printmode = true;
+                        this.printinfo.loaded = true;
+                        this.printinfo.id = response[0].id;
+                        this.printinfo.name = response[0].name;
+                        this.printinfo.login = response[0].login;
+                        this.printinfo.email = response[0].email;
+                        this.printinfo.justification_closed = response[0].justification_closed;
+                        this.printinfo.created = response[0].created;
+                        this.printinfo.closed = response[0].closed;
+                        this.printinfo.hasDiff = response[0].hasDiff;         
+                        this.loadme(response[0].closed, response[0].id, true);
+                    }
+                },
+                error => { this.hideWaitAboveAll(); this.toastError("Falha na execução.");}
+            );
+        },        
+        loadme(date, id_ticketoffice_cashregister, print) {
+            this.showWaitAboveAll();
+            let id = this.getLoggedId();
+            if (this.mayI('to-cashregister-closeother')) {
+                if (this.form.id_operator!=null && this.form.id_operator!=0) {
+                    id = this.form.id_operator;
+                }
+                
+            }
+            cashregisterService.movimentlist(id, date, this.get_id_base(), id_ticketoffice_cashregister).then(response => { 
+                this.hideWaitAboveAll(); if (this.validateJSON(response)) { 
+                        this.grids.movs.items = response; 
+                        this.grids.movs.loaded = true; 
+                        if (print) {
+                            this.printcheck.byall = true;
+                            this.printfinal();
+                        }
+                    }
                 },
                 error => { this.hideWaitAboveAll(); this.toastError("Falha na execução.");}
             );
 
+
             this.showWaitAboveAll();
-            cashregisterService.movimentlistbyevent(id, date, this.get_id_base(), '00000000-0000-0000-0000-000000000000').then(response => { 
-                    this.hideWaitAboveAll(); if (this.validateJSON(response)) { this.grids.movsbyevent.items = response; this.grids.movsbyevent.loaded = true; }
+            cashregisterService.movimentlistbyevent(id, date, this.get_id_base(), id_ticketoffice_cashregister).then(response => { 
+                    this.hideWaitAboveAll(); if (this.validateJSON(response)) { 
+                            this.grids.movsbyevent.items = response; 
+                            this.grids.movsbyevent.loaded = true; 
+                            if (print) {
+                                this.printcheck.byevent = true;
+                                this.printfinal();
+                            }
+                        }
+                },
+                error => { this.hideWaitAboveAll(); this.toastError("Falha na execução."); }
+            );
+
+
+            this.showWaitAboveAll();
+            cashregisterService.movimentlistbybase(id, date, this.get_id_base(), id_ticketoffice_cashregister).then(response => { 
+                    this.hideWaitAboveAll(); if (this.validateJSON(response)) { 
+                            this.grids.movsbybase.items = response; 
+                            this.grids.movsbybase.loaded = true; 
+                            if (print) {
+                                this.printcheck.bybase = true;
+                                this.printfinal();
+                            }
+                        }
                 },
                 error => { this.hideWaitAboveAll(); this.toastError("Falha na execução."); }
             );
 
             this.showWaitAboveAll();
-            cashregisterService.movimentlistbybase(id, date, this.get_id_base(), '00000000-0000-0000-0000-000000000000').then(response => { 
-                    this.hideWaitAboveAll(); if (this.validateJSON(response)) { this.grids.movsbybase.items = response; this.grids.movsbybase.loaded = true; }
-                },
-                error => { this.hideWaitAboveAll(); this.toastError("Falha na execução."); }
-            );
-
-            this.showWaitAboveAll();
-            cashregisterService.movimentlistbypayment(id, date, this.get_id_base(), '00000000-0000-0000-0000-000000000000').then(response => { 
+            cashregisterService.movimentlistbypayment(id, date, this.get_id_base(), id_ticketoffice_cashregister).then(response => { 
                     this.hideWaitAboveAll(); if (this.validateJSON(response)) { this.grids.movsbypayment.items = response; this.grids.movsbypayment.loaded = true; }
                     this.calcDiff();
                 },
                 error => { this.hideWaitAboveAll(); this.toastError("Falha na execução."); }
             );
         },
-        print() {
-            printService.moviment(this.get_id_base(),this.getLoggedId(), this.form.date, this.form.codMovimentacao);
+        printfinal() {
+            if (this.printcheck.info && this.printcheck.bybase && this.printcheck.byevent && this.printcheck.byall) {
+                let myobj = this;
+                Vue.nextTick().then(response => {
+                    printJS({printable:'toprint', type:'html', css: `/assets/css/localhost/main.css`});
+                    this.gotoHomeTicketOffice();
+                    //this.printmode = false;
+                    //this.calcDiff();
+                });
+
+                //alert("oi")
+                // });
+            }
         },
         detail(type) {
             let typeAux = "";

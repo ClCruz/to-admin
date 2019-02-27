@@ -72,13 +72,13 @@
                         <span v-if="!processing">Consultar abertos</span>
                     </b-button>
                 </b-row>
-                <b-form-row>
+                <b-form-row class="toprint">
                     <b-alert show v-if="closedinfo.loaded">
                         Informações de fechamento
                         <br />
-                        Data Criação: {{closedinfo.created}}
+                        Data de abertura: {{closedinfo.created}}
                         <br />
-                        Data Fechamento: {{closedinfo.closed}} 
+                        Data de fechamento: {{closedinfo.closed}} 
                         <br /> 
                         Fechamento realizado por: {{closedinfo.name}} ({{closedinfo.login}})
                         <br />
@@ -368,8 +368,15 @@ export default {
             }
 
             this.showWaitAboveAll();
-            cashregisterService.listclosed(this.get_id_base(), id, this.form.datePTBR).then(response => { 
-                    this.hideWaitAboveAll(); if (this.validateJSON(response)) { this.closeds = response; }
+            cashregisterService.listclosed(this.get_id_base(), id, this.form.datePTBR, '00000000-0000-0000-0000-000000000000').then(response => { 
+                    this.hideWaitAboveAll(); 
+                    if (this.validateJSON(response)) 
+                    { 
+                        this.closeds = response; 
+                        if (this.closeds.length == 0) {
+                            this.toastError("Não existem fechamentos para essa data.");
+                        }
+                    }
                 },
                 error => { this.hideWaitAboveAll(); this.toastError("Falha na execução.");}
             );

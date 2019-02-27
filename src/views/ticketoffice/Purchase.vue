@@ -127,9 +127,9 @@
 
                     <template slot="print" slot-scope="data">
                         <b-button-group size="sm">
-                            <b-button v-b-tooltip.hover class="btnsmallest" title="Imprimir apenas esse bilhete." @click.stop="printOne(data.item,$event.target)">Bilhete</b-button>
-                            <b-button v-b-tooltip.hover class="btnsmallest" title="Imprimir todos bilhetes do código de venda." @click.stop="printAll(data.item,$event.target)">Código de Venda</b-button>
-                            <b-button :disabled="data.item.purchaseType!='bilheteria'" class="btnsmallest" v-b-tooltip.hover title="Enviar por e-mail." @click.stop="askEmail(data.item,$event.target)">Enviar por email</b-button>
+                            <b-button class="btnsmallest" title="Imprimir apenas esse bilhete." @click.stop="printOne(data.item,$event.target)">Bilhete</b-button>
+                            <b-button class="btnsmallest" title="Imprimir todos bilhetes do código de venda." @click.stop="printAll(data.item,$event.target)">Código de Venda</b-button>
+                            <b-button :disabled="data.item.purchaseType!='bilheteria'" class="btnsmallest" title="Enviar por e-mail." @click.stop="askEmail(data.item,$event.target)">Enviar por email</b-button>
                         </b-button-group>
                     </template>
                 </b-table>
