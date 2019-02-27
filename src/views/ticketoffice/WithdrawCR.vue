@@ -24,10 +24,56 @@
                     </b-input-group-append>
                 </b-input-group>
             </b-form-row>
+            <b-container id="print" v-show="printInfo.id !== ''">
+                    <table class="table table-sm table-bordered table-hover" style="background-color: #fff; max-width: 200px">
+                        <thead>
+                            <tr>
+                                <th scope="col">ID</th>
+                               
+                            </tr>
+                        </thead>
+                        <tbody>
+                                <td scope="col">{{printInfo.id |  replace()}}</td>
+                             
+                        </tbody>
+                        <thead>
+                            <tr>
+                                <th scope="col">Data</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                                <td scope="col">{{printInfo.created}}</td>
+                        </tbody>
+                        <thead>
+                            <tr>
+                                <th scope="col" colspan="1">Justificativa</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                                <td scope="col">{{printInfo.justificative}} </td>
+                        </tbody>
+                        <thead>
+                            <tr>
+                                <th scope="col">Valor</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                                <td scope="col">{{printInfo.currentAmount}}</td>  
+                        </tbody>
+                    </table>
+                    <br>
+                    <br>
+                    ______________________________________
+                    <br>
+                    <i>Assinatura</i>
+                    <br>
+            </b-container>
         </b-container>
 </template>
 
 <script>
+import printJS from 'print-js'
+
 import Vue from 'vue';
 import VueResource from "vue-resource";
 import config from '@/config';
@@ -59,6 +105,12 @@ export default {
                 //suffix: ' #',
                 precision: 2,
                 masked: false /* doesn't work with directive */
+            },
+            printInfo: {
+                id: '',
+                date: '',
+                justificative: '',
+                currentAmount: 0,
             },
             selects: {
                 types: [
@@ -94,8 +146,8 @@ export default {
     created() {
         this.showWaitAboveAll();
         cashregisterService.current(this.get_id_base(), this.getLoggedId()).then(
-                response => {
-                    this.hideWaitAboveAll();
+            response => {
+                this.hideWaitAboveAll();
                     this.processing = false;
                     if (this.validateJSON(response)) {
                         if (!response.isopen) {
@@ -114,12 +166,23 @@ export default {
                 this.toastError("Falha na execução.");        
             }
         );
+
     },
     methods: {
+
         sel() {
             Vue.nextTick().then(response => {
 
             });
+        },
+        getDate() {
+            var currentdate = new Date();
+            var datetime = currentdate.getDay() + "/"+currentdate.getMonth() 
+            + "/" + currentdate.getFullYear() + " @ " 
+            + currentdate.getHours() + ":" 
+            + currentdate.getMinutes() + ":" + currentdate.getSeconds();
+
+            return datetime;
         },
         dofunction() {
             if (this.form.amountInput == null || parseFloat(this.form.amountInput) <= 0) {
@@ -166,12 +229,26 @@ export default {
                         this.processing = false;
                         this.$wait.end("inprocess");
                         if (this.validateJSON(response)) {
+
                             if (response.success) {
                                 this.toastSuccess(response.msg);
+                                this.printInfo.id = response.id;
+                                this.printInfo.created = response.created;
+                                this.printInfo.justificative = this.form.justificative;
+                                this.printInfo.currentAmount =  amounthelper;
+
+
+                                
                                 this.form.justificative = '';
                                 this.form.selected =  "select";
                                 this.form.currentAmount =  null;
                                 this.form.amountInput =  0;
+
+                                Vue.nextTick().then(response => {
+                                    printJS({printable: 'print', type: 'html', css: 'http://tixs.me/assets/css/localhost/main.css'});
+
+                                    this.printInfo.id = '';
+                                });
                             }
                             else {
                                 this.toastError(response.msg);
@@ -184,6 +261,13 @@ export default {
                     this.toastError("Falha na execução.");        
                 }
             );
+        },
+    },
+    mounted() {
+        },
+    filters: {
+        replace: function (message) {
+            return message.split('-').join('')
         },
     }
 }
