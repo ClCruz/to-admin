@@ -96,7 +96,7 @@ export default {
   },
   methods: {
     edit(item) {
-      this.$router.push(`/producer/edit/${item.id}`);
+      this.$router.push(`/producer/edit/${item.id_produtor}`);
     },
     pagto(to) {
       this.grids.producers.currentPage = to;
