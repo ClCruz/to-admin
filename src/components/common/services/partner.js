@@ -201,7 +201,7 @@ function regen(loggedId,id, keyTo) {
     );
     return ret;
 }
-function save(loggedId,id, uniquename, name, domain, dateStart, dateEnd, type, active) {
+function save(loggedId,id, uniquename, name, domain, dateStart, dateEnd, type, active, fb_appid, recaptchaid) {
     let url = config.api + `/v1/admin/partner/save`;
 
     let obj = {
@@ -214,6 +214,8 @@ function save(loggedId,id, uniquename, name, domain, dateStart, dateEnd, type, a
         ,dateEnd
         ,type
         ,active
+        ,fb_appid
+        ,recaptchaid
     };
 
     var ret = new Promise(

@@ -83,6 +83,35 @@
                   </b-input-group>
                   <div class="errorFormValidate" v-if="!$v.form.selectedDate.start.required">Campo é obrigatório</div>
               </b-row>
+              <b-row class="mb-3">
+                  <b-input-group size="sm" v-b-tooltip.hover title="Facebook APP ID." >
+                      <b-input-group-prepend is-text>
+                          Facebook APP ID:
+                      </b-input-group-prepend>
+                      <b-form-input id="fb_appid"
+                                  type="text"
+                                  name="fb_appid"
+                                  maxlength="100"
+                                  v-model="form.fb_appid"
+                                  placeholder="Digite o código do APP do facebook">
+                      </b-form-input>
+                  </b-input-group>
+              </b-row>
+              <b-row class="mb-3">
+                  <b-input-group size="sm" v-b-tooltip.hover title="Recaptcha ID." >
+                      <b-input-group-prepend is-text>
+                          Recaptcha app:
+                      </b-input-group-prepend>
+                      <b-form-input id="recaptchaid"
+                                  :disabled="true"
+                                  type="text"
+                                  name="recaptchaid"
+                                  maxlength="400"
+                                  v-model="form.recaptchaid"
+                                  placeholder="Digite o código do recaptcha">
+                      </b-form-input>
+                  </b-input-group>
+              </b-row>
               <b-row class="mb-3" v-if="!isAdd">
                   <b-input-group size="sm">
                       <b-input-group-prepend is-text>
@@ -325,7 +354,7 @@ export default {
 
       this.$wait.start("inprocessSave");
       this.showWaitAboveAll();
-      partnerService.save(this.getLoggedId(), this.isAdd ? '' : this.id, this.form.uniquename, this.form.name, this.form.domain, this.form.selectedDate.start, this.form.selectedDate.end, this.form.type, this.form.active).then(
+      partnerService.save(this.getLoggedId(), this.isAdd ? '' : this.id, this.form.uniquename, this.form.name, this.form.domain, this.form.selectedDate.start, this.form.selectedDate.end, this.form.type, this.form.active, this.form.fb_appid, this.form.recaptchaid).then(
         response => {
           this.processing = false;
           this.hideWaitAboveAll();
@@ -382,6 +411,8 @@ export default {
               this.form.type = response.type;
               this.form.key = response.key;
               this.form.key_test = response.key;
+              this.form.recaptchaid = response.recaptchaid;
+              this.form.fb_appid = response.fb_appid;
           }
         },
         error => {
@@ -440,6 +471,8 @@ export default {
           type: '',
           key: '',
           key_test: '',
+          fb_appid: '',
+          recaptchaid: '',
         }
     }
   }
