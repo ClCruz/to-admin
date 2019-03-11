@@ -294,7 +294,7 @@
                   <b-input-group-prepend is-text>
                     Valor do Juros:
                   </b-input-group-prepend>
-                  <b-form-input id="interest_rate" type="text" name="interest_rate" maxlength="8" v-money="money" v-model="form.interest_rate" placeholder="00.00 %">
+                  <b-form-input ref="interest_rate" id="interest_rate" type="text" name="interest_rate" maxlength="8" v-money="components.money" v-model.lazy="form.interest_rate">
                   </b-form-input>
                 </b-input-group>
               </b-row>
@@ -566,6 +566,7 @@ export default {
               this.form.max_installments = response.max_installments;
               this.form.free_installments = response.free_installments;
               this.form.interest_rate = response.interest_rate;
+              this.$refs.interest_rate.$el.value = response.interest_rate;
               this.checkproducer();
               this.populateCity();
               this.populatePlace();
@@ -854,14 +855,6 @@ export default {
     return {
       processing: false,
       loading: false,
-      money: {
-        decimal: '.',
-        thousands: '',
-        //prefix: 'R$ ',
-        suffix: ' %',
-        precision: 2,
-        masked: false /* doesn't work with directive */
-      },
       components: {
         quillOptions: {
           modules: {
@@ -895,6 +888,14 @@ export default {
           fileSize: 'O tamanho da imagem ultrapassou o limite.', // Text only
           fileType: 'Esse tipo de arquivo não é suportado.', // Text only
           aspect: 'Landscape/Portrait' // Text only
+        },
+        money: {
+            decimal: '.',
+            thousands: '',
+            //prefix: 'R$ ',
+            //suffix: ' #',
+            precision: 2,
+            masked: false /* doesn't work with directive */
         },
       },
       popups: {
@@ -1077,7 +1078,7 @@ export default {
 
         free_installments: null,
         max_installments: null,
-        interest_rate: '',
+        interest_rate: 0,
       }
     }
   }
