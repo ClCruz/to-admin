@@ -36,7 +36,7 @@
               <b-input-group-prepend is-text v-bind:class="{ errorFormValidateLabel: ($v.form.NomPeca.$invalid) }">
                 Nome:
               </b-input-group-prepend>
-              <b-form-input id="name" type="text" v-bind:class="{ errorFormValidateInput: ($v.form.NomPeca.$invalid) }" name="name" maxlength="90" v-model="form.NomPeca" placeholder="Digite o nome">
+              <b-form-input id="name" type="text" v-bind:class="{ errorFormValidateInput: ($v.form.NomPeca.$invalid) }" name="name" maxlength="150" v-model="form.NomPeca" placeholder="Digite o nome">
               </b-form-input>
             </b-input-group>
             <div class="errorFormValidate" v-if="!$v.form.NomPeca.required">Campo é obrigatório</div>
