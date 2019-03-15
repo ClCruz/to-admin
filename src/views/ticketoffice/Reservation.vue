@@ -116,14 +116,14 @@
 
                     <template slot="print" slot-scope="data">
                         <b-button-group size="sm">
-                            <b-button v-b-tooltip.hover title="Imprimir apenas esse bilhete." @click.stop="printOne(data.item,$event.target)">Bilhete</b-button>
-                            <b-button v-b-tooltip.hover title="Imprimir todos bilhetes do código de venda." @click.stop="printAll(data.item,$event.target)">Código de Reserva</b-button>
+                            <b-button title="Imprimir apenas esse bilhete." @click.stop="printOne(data.item,$event.target)">Bilhete</b-button>
+                            <b-button title="Imprimir todos bilhetes do código de venda." @click.stop="printAll(data.item,$event.target)">Reserva</b-button>
                         </b-button-group>
                     </template>
                     <template slot="cancel" slot-scope="data">
                         <b-button-group size="sm">
-                            <b-button v-b-tooltip.hover title="Cancelar o assento desse Código de Reserva." @click.stop="cancelOne(data.item,$event.target)">Cancelar Assento</b-button>
-                            <b-button v-b-tooltip.hover title="Cancelar a reserva de todos os assentos desse Código de Reserva." @click.stop="cancelAll(data.item,$event.target)">Cancelar Reserva</b-button>
+                            <b-button title="Cancelar o assento desse Código de Reserva." @click.stop="cancelOne(data.item,$event.target)">Bilhete</b-button>
+                            <b-button title="Cancelar a reserva de todos os assentos desse Código de Reserva." @click.stop="cancelAll(data.item,$event.target)">Reserva</b-button>
                         </b-button-group>
                     </template>
                 </b-table>

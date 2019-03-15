@@ -12,7 +12,33 @@ export const eventService =  {
     listEventDayHours,
     getMap,
     getSeats,
-    get
+    get,
+    seatinfo,
+}
+
+function seatinfo(loggedid, id_base, id_apresentacao, indice) {
+    let url = config.api + `/v1/event/seatinfo`;
+
+    let obj = {
+        loggedid,
+        id_base,
+        id_apresentacao,
+        indice
+    };
+
+    var ret = new Promise(
+        function (resolve, reject) {
+            Vue.http.post(url, obj, { emulateJSON: true }).then(res => {
+                resolve(res.body);
+            }, err => {
+                reject({
+                    error: true,
+                    msg: err
+                });
+            });    
+        }
+    );
+    return ret;
 }
 
 function list(id_base) {

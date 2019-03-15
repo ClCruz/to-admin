@@ -9,6 +9,7 @@ config.setapikey();
 export const bookingService =  {
     book,
     bookNotNumered,
+    bookornot,
     remove,
     clear,
     getCodeReservation,
@@ -16,6 +17,34 @@ export const bookingService =  {
     cancel,
 }
 
+
+function bookornot(id_base, id_apresentacao, indice, id, nin, codCliente = "", codReserva = "") {
+    let url = config.api + `/v1/purchase/reservation/addmultiple`
+    
+    let obj = {
+        id_base,
+        id_apresentacao,
+        indice,
+        id,
+        nin,
+        codCliente,
+        codReserva
+    };
+
+    var ret = new Promise(
+        function (resolve, reject) {
+            Vue.http.post(url, obj, { emulateJSON: true }).then(res => {
+                resolve(res.body);
+            }, err => {
+                reject({
+                    error: true,
+                    msg: err
+                });
+            });    
+        }
+    );
+    return ret;
+}
 function book(id_base, id_apresentacao, indice, id, nin, codCliente = "", codReserva = "") {
     let url = config.api + `/v1/purchase/reservation/add?id_base=${id_base}&id_apresentacao=${id_apresentacao}&indice=${indice}&id=${id}&nin=${nin}&codCliente=${codCliente}&codReserva=${codReserva}`;
 

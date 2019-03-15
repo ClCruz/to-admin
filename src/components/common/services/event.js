@@ -71,7 +71,7 @@ function save(id_to_admin_user, id_base,id_produtor
         ,imagechanged,imagebase64,free_installments,max_installments,interest_rate
     };
 
-    console.log(obj);
+    // console.log(obj);
 
     var ret = new Promise(
         function (resolve, reject) {

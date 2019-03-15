@@ -4,7 +4,6 @@
                 <b-form-row>
                     <b-col>
                         <b-form-group id="ningroup"
-                                        label="CPF:"
                                         label-for="cpf"
                                         description="">
                             <b-input-group>
@@ -28,7 +27,6 @@
                     </b-col>
                     <b-col>
                         <b-form-group id="rggroup"
-                                        label="RG:"
                                         label-for="rg">
                             <b-form-input id="rg"
                                         type="text"
@@ -43,7 +41,6 @@
                 <b-form-row>
                     <b-col>
                         <b-form-group id="namegroup"
-                                        label="Nome:"
                                         label-for="name">
                             <b-form-input id="name"
                                         type="text"
@@ -57,7 +54,6 @@
                 <b-form-row>
                     <b-col>
                         <b-form-group id="emailgroup"
-                                        label="E-mail:"
                                         label-for="email">
                             <b-form-input id="email"
                                         type="email"
@@ -69,7 +65,6 @@
                     </b-col>
                     <b-col>
                         <b-form-group id="phonegroup"
-                                        label="Telefone:"
                                         label-for="telefone">
                             <b-input-group>
                                 <b-form-input id="ddd"
@@ -106,7 +101,7 @@
                         </v-wait>
                         <span v-if="!processing">Salvar</span>
                     </b-button>
-                    <b-button type="button" variant="secundary" @click="cancel">
+                    <b-button type="button" variant="secondary" @click="cancel">
                         <v-wait for="inprocess">
                             <template slot="waiting">
                             Aguarde...

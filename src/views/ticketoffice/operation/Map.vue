@@ -14,10 +14,21 @@
                     </ul>
                 </span>
             </b-tooltip>
+            <span class="fa-stack fa-lg" title="Recarregar os assentos." @click="reloadme"><i class="fa fa-circle fa-stack-2x"></i><i class="fa fa-retweet fa-stack-1x fa-inverse" style="top: 14px; cursor:pointer;"></i></span>
             <div id="mapa_de_plateia" :style="{
                 'width': ( map.width)+ 'px', 'max-width': ( map.width)+ 'px', 'min-height': map.height + 'px', 'margin' : '0 0 20px'
             }" class="mapa_de_plateia" v-if="hasSeatNumber">
                 <img :src="map.img" :height="map.height" :width="map.width" style="margin: 0 0 20px;" />
+                <span v-if="showmapwait" id="waitmap" style="position: absolute;
+    right: 235px;
+    top: 103px;
+    z-index: 1;
+    font-size: larger;
+    font-weight: 900;
+    background: white;
+    border: 1px solid grey;
+    padding-left: 50px;
+    padding-right: 50px;">Aguarde...</span>
             </div>
         </span>
     </div>
@@ -26,8 +37,11 @@
 <script>
 import Vue from 'vue';
 import VueResource from "vue-resource";
+import VModal from 'vue-js-modal';
 import config from '@/config';
 import $ from 'jquery';
+import 'jquery-ui/ui/widgets/draggable';
+import 'jquery-ui/ui/widgets/selectable';
 import { func } from '@/functions';
 import { funcOperation } from '../../../components/ticketoffice/services/functions';
 import { eventService } from '../../../components/ticketoffice/services/event';
@@ -35,6 +49,13 @@ import { bookingService } from '../../../components/common/services/booking';
 import { shoppingCartService } from '../../../components/ticketoffice/services/shoppingcart';
 import { printService } from '../../../components/ticketoffice/services/print';
 import clientAdd from '../Client';
+
+import seatinfo from "@/components/ticketoffice/Seatinfo.vue";
+
+Vue.use(VModal, {
+  dynamic: true,
+  injectModalsContainer: true
+});
 
 export default {
     mixins: [func, funcOperation],
@@ -47,6 +68,16 @@ export default {
             timers: {
                 getSeats: null,
             },
+            css: {
+                opennedClass: 'open',
+                standbyClass: 'standby',
+                closedClass: 'closed',
+                reservedClass: 'reserved',
+                waitingClass: "waiting",
+                selectedClass: "ui-selected",
+            },
+            showmapwait: true,
+            added: false,
             isMap: true,
             processing: false,
             showClientAdd: false,
@@ -65,6 +96,9 @@ export default {
         }
     },
     methods: {
+        reloadme() {
+            this.getSeats(true);
+        },
         showClient() {
             this.toffice_buttonNext(false, this.nextURI);
             this.showClientAdd = true;
@@ -82,6 +116,21 @@ export default {
                 name: name
             }
         },
+        showinfo(indice) {
+            this.$modal.show(seatinfo, { id_apresentacao: this.operation.step1.id_apresentacao, indice: indice }, 
+                {
+                    draggable: false,
+                    name: "seatinfo",//'login',
+                    resizable: true,
+                    adaptive: true,
+                    height: "auto",
+                    scrollable: true,
+                    classes: '',
+                    clickToClose: true,
+                },{ }
+            );
+
+        },
         setSeats() {
             Vue.nextTick().then(response=> {
                 if (this.showClientAdd)
@@ -94,9 +143,13 @@ export default {
                     if (seatsFiltered[x].Indice)
                         this.movSeat(this.createSeatSelectedObject(seatsFiltered[x].Indice, seatsFiltered[x].NomObjeto, seatsFiltered[x].NomSetor), false);                    
                 }
-
-                addSeatJS($("#mapa_de_plateia"), annotation, this.seats, this.chooseSeat, this.indiceInProcess, this.codCliente, this.codReserva);
-                setup_without_touch();
+                if (!this.added) {
+                    this.showmapwait = true;
+                    addSeatJS($("#mapa_de_plateia"), annotation, this.seats, this.chooseSeat, this.indiceInProcess, this.codCliente, this.codReserva, this.chooseSeatMultiple, this.showinfo);
+                    setup_without_touch(this.operation.step1.type == "reservation");
+                    this.added=true;
+                    this.showmapwait = false;
+                }
 
                 //mapa_de_plateia[0].removeAnnotations();
                 //$mapa_de_plateia.addAnnotations(annotation, this.seats);
@@ -171,57 +224,61 @@ export default {
                     this.toastError("Falha na execução.");
             });
         },
+        indicechangestatus(indice, isAdd, isError) {
+            let seat = document.getElementById("seat-"+indice);
+            //this.indicechangestatus(element.indice, element.isAdd == 1, element.isError == 1);
+            if (seat!=undefined && seat!=null) {
+                seat.classList.remove(this.css.waitingClass);
+                seat.classList.remove(this.css.selectedClass);
+                if (!isAdd) {
+                    seat.classList.remove(this.css.reservedClass);
+                    seat.classList.add(this.css.opennedClass);
+                }
+                else {
+                    seat.classList.remove(this.css.opennedClass);
+                    if (isError) {
+                        seat.classList.add(this.css.closedClass);
+                    }
+                    else {
+                        seat.classList.add(this.css.reservedClass);
+                    }
+                }
+            }                 
+        },
+        chooseSeatMultiple(indices) {
+            bookingService.bookornot(this.get_id_base(), this.operation.step1.id_apresentacao, indices, this.getLoggedId(), "", this.codCliente, this.codReserva).then(response=> {
+                if (this.validateJSON(response))
+                {
+                    //console.log(response);
+                    if (response.length > 0) {
+                        if (response[0].alliserror == 1) {
+                            this.toastError("Não foi possível a escolha dos assentos demarcados, verifique a disponibilidade deles.");
+                        }
+                        else {
+                            if (response[0].hasanyerror == 1) {
+                                this.toastInfo("Não foi possível a escolha de alguns assentos demarcados, verifique a disponibilidade deles.");
+                            }
+                        }
+                    }
+                    for (let index = 0; index < response.length; index++) {
+                        const element = response[index];
+                        this.indicechangestatus(element.indice, element.isAdd == 1, element.hasError == 1);
+                    }
+                    this.toffice_buttonNext(response.length>0, this.nextURI);
+                }
+            }
+            ,error=> {
+                this.toastError("Falha na execução.");
+            });
+        },
         chooseSeat(indice, name, sector, status) {
             this.toffice_buttonNext(false);
-            this.indiceInProcess.push(indice);
+            // this.indiceInProcess.push(indice);
 
-            switch (status) {
-                case "C":
-                case "S":
-                case "R":
-                    bookingService.remove(this.get_id_base(), this.operation.step1.id_apresentacao, indice, this.getLoggedId()).then(response=> {
-                            this.indiceInProcess.splice(this.indiceInProcess.indexOf(indice));
-                            if (this.validateJSON(response))
-                            {
-                                if (response.success == 0) {
-                                    this.popupError("Falha para remover o assento.");
-                                }
-                                else {
-                                    this.movSeat(indice,true);
-
-                                    this.toastSuccess("Assento removido.");
-                                }
-                            }
-
-                            this.getSeats(false);
-                        }
-                        ,error=> {
-                            this.toastError("Falha na execução.");
-                    });
-                break;
-                default:
-                    bookingService.book(this.get_id_base(), this.operation.step1.id_apresentacao, indice, this.getLoggedId(), "", this.codCliente, this.codReserva).then(response=> {
-                            this.indiceInProcess.splice(this.indiceInProcess.indexOf(indice));
-                            if (this.validateJSON(response))
-                            {
-                                if (response.success == 0) {
-                                    this.popupError(response.message);
-                                }
-                                else {
-                                    this.movSeat(this.createSeatSelectedObject(indice, sector, name), true);
-                                    this.toastSuccess(response.message);
-                                }
-                            }
-                            this.getSeats(false);
-                        }
-                        ,error=> {
-                            this.toastError("Falha na execução.");
-                    });
-                break;
-            }
+            this.chooseSeatMultiple(indice.toString());
         },
         setSeatsTimer() {
-            this.timers.getSeats = setInterval(this.getSeats, 10000);
+            //this.timers.getSeats = setInterval(this.getSeats, 10000);
         },
         clearSeatsTimer() {
             clearInterval(this.timers.getSeats);
@@ -387,15 +444,19 @@ export default {
     reservedClass = 'reserved',
     waitingClass = "waiting";
     let seatClickOut = null;
+    let seatClickOutMulti = null;
+    let seatClickOutShowInfo = null;
     let cc = null;
     let cr = null;
 
-    function addSeatJS(obj, annotationCallback, annotations, callbackVue, inprocessclicked, codCliente, codReserva) {
+    function addSeatJS(obj, annotationCallback, annotations, callbackVue, inprocessclicked, codCliente, codReserva, callbackVueMulti, callbackVueShowInfo) {
         seatClickOut = callbackVue;
+        seatClickOutMulti = callbackVueMulti;
+        seatClickOutShowInfo = callbackVueShowInfo;
+
         cc = codCliente;
         cr = codReserva;
-        
-    //    debugger;
+
         var container = obj,
             containerHeight = $(container).height(),
             defaults = {
@@ -427,6 +488,7 @@ export default {
             $.each(this, function(key, val) {
                 element.data(key, val);
             });
+            element.attr("id", "seat-"+element.data("Indice"));
             element.attr('title', element.data('NomObjeto') + ' (' + element.data('Indice') + ")");
             if (element.data('img')) element.attr('data-img', element.data('img'));
             //if (top > containerHeight) element.hide();
@@ -535,9 +597,66 @@ export default {
         .attr('id', obj.id)
         .addClass('annotation')
         .addClass('diametro')
-        .addClass(withclass);
+        .addClass(withclass)
+        .draggable({
+            containment: 'parent',
+            stack: 'span',
+            distance: 10,
+            //revert: 'valid',
+            start: function(event, ui) {
+                $(this).is(".ui-selected") || $(".ui-selected").removeClass("ui-selected");
+                for (let index = 0; index < $(".ui-selected").length; index++) {
+                    const element = $(".ui-selected")[index];
+                    let el = $(element);
+                    el.data("offset", el.offset());
+                }
+                selected = $(".ui-selected");
+                // selected = $(".ui-selected").each(function() {
+                //     var el = $(this);
+                //     el.data("offset", el.offset());
+                // });
+                offset = $(this).offset();
+            },
+            drag: function(event, ui) {
+                var dt = ui.position.top - offset.top, dl = ui.position.left - offset.left;
+                for (let index = 0; index < selected.length; index++) {
+                    const element = selected[index];
+                    let el = $(element);
+                    let off = el.data("offset");
+                    el.css({
+                        top: off.top + dt,
+                        left: off.left + dl
+                    });
+                }
+                // selected.not(this).each(function() {
+                //     var el = $(this), off = el.data("offset");
+                //     el.css({
+                //         top: off.top + dt,
+                //         left: off.left + dl
+                //     });
+                // });
+                
+            },
+            stop: function(ev, ui) {}
+        });
     }
-    function setup_without_touch() {
+    function setup_without_touch(multiple) {
+        if (multiple) {
+            $('#mapa_de_plateia').selectable({
+                distance: 1,
+                filter: 'span',
+                stop: function(event, ui) {
+                    let selected = Array.from(document.querySelectorAll(".ui-selected")).map(x => x.id.replace("seat-",""));
+                    if (selected.length != 0) {
+                        seatClickOutMulti(selected.join(","));
+                    }
+                },
+                selected: function (event, ui) {
+                    // console.log("selected");
+                }
+            });
+        }
+
       $('#mapa_de_plateia span:not(.' + closedClass + ')').off('mouseenter mouseleave')
       .on('mouseenter mouseleave', function() {
         if (!$(this).hasClass('annotationHover') && !$(this).hasClass('annotationSelected')) {
@@ -546,36 +665,43 @@ export default {
           $(this).removeClass('annotationHover');
         }
       });
-      $('#mapa_de_plateia span:not(.' + closedClass + ')').off('click').on('click', span_click);
+      $('#mapa_de_plateia span').off('click').on('click', span_click);
     }
     function span_click(e) {
-        //debugger;
         var $this = $(e.target),
             objSerialized = '',
             action = ($this.hasClass(standbyClass)) ? 'delete' : 'add',
             quantidade;
-            
-        $.each($this.data(), function(key, val) {
-            var exceptions = 'tooltip events handle x y status';
-            if (exceptions.indexOf(key) == -1) {
-            objSerialized += key + '=' + escape(val) + '&';
-            }
-        });
-        if ($this.hasClass(waitingClass)){
-            return;
-        }
-        if ($this.hasClass(closedClass)){
-            //return;
-        }
-        //console.log($this.data());
-        $this
-        .removeClass(opennedClass)
-        .removeClass(standbyClass)
-        .removeClass(closedClass)
-        .removeClass(reservedClass)
-        .addClass(waitingClass);
 
-        seatClickOut($this.data().Indice, $this.data().NomObjeto, $this.data().NomSetor, $this.data().status);
+        if (e.ctrlKey) {
+            //console.log("The ctrlKey key was pressed!");
+            seatClickOutShowInfo($this.attr("id").replace("seat-",""));
+            return;
+        }        
+
+        if ($this.hasClass(opennedClass) || $this.hasClass(reservedClass)) {
+            $.each($this.data(), function(key, val) {
+                var exceptions = 'tooltip events handle x y status';
+                if (exceptions.indexOf(key) == -1) {
+                objSerialized += key + '=' + escape(val) + '&';
+                }
+            });
+            if ($this.hasClass(waitingClass)){
+                return;
+            }
+            if ($this.hasClass(closedClass)){
+                //return;
+            }
+            //console.log($this.data());
+            $this
+            .removeClass(opennedClass)
+            .removeClass(standbyClass)
+            .removeClass(closedClass)
+            .removeClass(reservedClass)
+            .addClass(waitingClass);
+    
+            seatClickOut($this.data().Indice, $this.data().NomObjeto, $this.data().NomSetor, $this.data().status);
+        }            
 
       /*
       $.ajax({
@@ -635,7 +761,7 @@ export default {
 
 .annotationHover {
   border:2px solid transparent;
-  margin: -2px;
+  opacity: 0.5;
 }
 
 .annotationSelected {}
@@ -659,12 +785,10 @@ export default {
 }
 
 .mapa_de_plateia .ui-selecting {
-  margin: -2px;
-  border:2px solid #FF0;
+  border: 2px solid #FF0;
 }
 
 .mapa_de_plateia .ui-selected {
-  margin: -2px;
   border: 2px solid #F00;
 }
 
@@ -674,5 +798,10 @@ export default {
     margin: auto;
     max-width: 450px;
     max-height: 350px;
+}
+.ui-selectable-helper {
+  position: absolute; 
+  z-index: 100; 
+  border: 2px solid black; 
 }
 </style>
