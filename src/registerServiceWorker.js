@@ -25,9 +25,9 @@ if (process.env.NODE_ENV === 'production') {
       // Add a custom event and dispatch it.
       // Used to display of a 'refresh' banner following a service worker update.
       // Set the event payload to the service worker registration object.
-      document.dispatchEvent(
-        new CustomEvent('swUpdated', { detail: registration })
-      );
+      // document.dispatchEvent(
+      //   new CustomEvent('swUpdated', { detail: registration })
+      // );
     },
     offline () {
       console.log('No internet connection found. App is running in offline mode.');
