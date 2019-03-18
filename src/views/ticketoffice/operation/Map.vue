@@ -697,7 +697,7 @@ export default {
                     }
                 break;
                 case "W":
-                    withclass = closedClass;
+                    withclass = closedreservedClass;
                     if (sellonlyreservation == 1) {
                         withclass = opennedClass;
                     }
