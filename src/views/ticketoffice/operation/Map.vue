@@ -76,6 +76,7 @@ export default {
                 opennedClass: 'open',
                 standbyClass: 'standby',
                 closedClass: 'closed',
+                closedreservedClass: 'closedreserved',
                 reservedClass: 'reserved',
                 waitingClass: "waiting",
                 selectedClass: "ui-selected",
@@ -462,6 +463,7 @@ export default {
     closedClass = 'closed',
     reservedClass = 'reserved',
     waitingClass = "waiting",
+    closedreservedClass = "closedreserved",
     nothingClass = "nothing";
     let seatClickOut = null;
     let seatClickOutMulti = null;
@@ -626,7 +628,7 @@ export default {
                     }
                 break;
                 case "R":
-                    withclass = closedClass;
+                    withclass = closedreservedClass;
                     if (obj.CodCliente !=null && cc != null && obj.CodCliente == cc)
                         withclass = reservedClass;
 
@@ -635,7 +637,7 @@ export default {
                     }
                 break;
                 case "W":
-                    withclass = closedClass;
+                    withclass = closed;
                     if (sellonlyreservation == 1) {
                         withclass = opennedClass;
                     }
@@ -831,6 +833,9 @@ export default {
 
 .closed {
   background-color: #cccccc;
+}
+.closedreserved {
+  background-color: #7e159b;
 }
 
 .reserved {
