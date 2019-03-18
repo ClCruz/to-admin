@@ -3,6 +3,12 @@
         <span v-if="showClientAdd">
             <client-add needCPF="true" needRG="false" needPhone="true" needName="true" needCardBin="false" showCardBin="false"></client-add>
         </span>
+            <b-row :style="{ 'width': ( map.width)+ 'px', 'max-width': ( map.width)+ 'px' }">
+                <b-col>
+                    <b-alert variant="success" show v-if="event.loaded">Evento: {{event.name}} | {{operation.step1.roomName}} - {{operation.step1.datePresentation}} - {{operation.step1.hourPresentation}}</b-alert>
+                </b-col>
+            </b-row>
+
             <div :style="{ 'width': ( map.width)+ 'px', 'max-width': ( map.width)+ 'px', 'text-align': 'center', 'height': '40px', 'font-size': '14px' }">
                 <span class="pretty p-default" v-if="issell" style="float:left; padding-top: 8px;">
                     <input type="checkbox" v-model="sellReservation" @click="changetypeofsell" />
@@ -81,6 +87,29 @@ export default {
                 waitingClass: "waiting",
                 selectedClass: "ui-selected",
             },
+            event: {
+                validations: {
+                    needClient: false,
+                    needCPF: false,
+                    needRG: false,
+                    needPhone: false,
+                    needName: false,
+                    needCardBin: false,
+                },  
+                loaded: false,
+                image: "",
+                name: null,
+                cost: null,
+                sellWeb: false,
+                days: null,
+                ticketoffice_askemail: 0,
+                duration: null,
+                genre: null,
+                room: {
+                    loaded: false,
+                    isNumbered: false,
+                }                
+            },
             sellReservation: false,
             showmapwait: true,
             added: false,
@@ -102,6 +131,35 @@ export default {
         }
     },
     methods: {
+        loadEvent() {
+            this.showWaitAboveAll();
+
+            eventService.get(this.get_id_base(), this.operation.codPeca).then(response=> {
+                    this.hideWaitAboveAll();
+                    if (this.validateJSON(response))
+                    {
+                        this.event.loaded = true;
+
+                        this.event.name = response.NomPeca;
+                        this.event.cost = response.ValIngresso;
+                        this.event.sellWeb = response.in_vende_site == "1";
+                        this.event.days = response.days;
+                        this.event.duration = response.TemDurPeca;
+                        this.event.genre = response.TipPeca;
+                        this.event.ticketoffice_askemail = response.ticketoffice_askemail;
+                        
+                        this.event.validations.needClient = response.needClient == "1";
+                        this.event.validations.needCPF = response.needCPF == "1";
+                        this.event.validations.needRG = response.needRG == "1";
+                        this.event.validations.needPhone = response.needPhone == "1";
+                        this.event.validations.needName = response.needName == "1";
+                    }
+                }
+                ,error=> {
+                    this.hideWaitAboveAll();
+                    this.toastError("Falha na execução.");
+            });
+        },
         changetypeofsell() {
             Vue.nextTick().then(response => {
                 this.reloadme();
@@ -383,6 +441,8 @@ export default {
 
         if (this.operation.step1.type == "reservation")
             this.getHeader().initiatingReservationProcess();
+
+        this.loadEvent();
         
         this.toffice_buttonNext(this.selected.length>0, this.nextURI);
         this.setSeatsTimer();
