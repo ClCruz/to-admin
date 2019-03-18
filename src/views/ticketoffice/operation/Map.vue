@@ -675,7 +675,7 @@ export default {
             withclass = waitingClass;
         }
         else {
-            if (obj.Indice == 4047 || obj.Indice == "4047") {
+            if (obj.Indice == 1916 || obj.Indice == "1916") {
                 console.log(obj);
             }
             switch (obj.status){
@@ -697,7 +697,7 @@ export default {
                     }
                 break;
                 case "W":
-                    withclass = closed;
+                    withclass = closedClass;
                     if (sellonlyreservation == 1) {
                         withclass = opennedClass;
                     }
