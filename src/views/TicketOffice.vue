@@ -3,10 +3,7 @@
     <v-wait for="loadingAboveAll">
         <template slot="waiting">
             <div id="aboveAll">
-            </div>
-            <div class="bar_loading">
-              <div class="circle_loading"></div>
-              <p class="p_loading">Aguarde...</p>
+              <img src="/assets/ico_loading.gif" alt="">
             </div>
         </template>
     </v-wait>
@@ -86,6 +83,12 @@ export default {
       width: 100%;
       height: 100%;
       z-index:6000;
-      background-color: rgb(0, 0, 0, 0.5)
+      background-color: rgb(0, 0, 0, 0.1);
+      transition: 0.2;
+  }
+
+  #aboveAll img {
+    width: 80px !important;
+    height: auto !important;
   }
 </style>

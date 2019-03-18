@@ -24,6 +24,7 @@
     "luxon": "^1.10.0",
     "moment": "^2.23.0",
     "moment-range": "^4.0.1",
+    "npm-check": "^5.9.0",
     "print-js": "^1.0.54",
     "register-service-worker": "^1.5.2",
     "secure-ls": "^1.2.3",

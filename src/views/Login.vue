@@ -103,4 +103,8 @@ export default {
 .input-group-text {
   width: 72px;
 }
+
+.btn-success {
+  background-color: #68d381;
+}
 </style>
