@@ -1,6 +1,6 @@
 <template>
 <div class="container">
-    <div v-bind:class="{ notice_success: isOpen, notice_warning: isSelected, notice: true }">
+    <div v-bind:class="{ notice_success: isOpen, notice_warning: isSelected, notice_reserved: isReserved, notice: true }">
         <div class="cardinfo">
             <div class="box" v-if="isloaded">
                 <h2>{{NomSala}} - {{NomSetor}}<br><span>{{NomObjeto}} ({{indice}})</span></h2>
@@ -142,6 +142,13 @@ export default {
 .notice_warning>strong {
     color: #FEAF20;
 }
+.notice_reserved {
+    border-color: #7e159b;
+}
+.notice_reserved>strong {
+    color: #7e159b;
+}
+
 .notice_danger {
     border-color: #d73814;
 }
