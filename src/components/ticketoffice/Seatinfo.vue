@@ -12,8 +12,8 @@
                 <p v-if="isWeb">Compra efetuada pela internet</p>
                 <p v-if="isBought">Tipo de Bilhete: {{TipBilhete}}</p>
                 <p v-if="isBought">Forma de Pagamento: {{ForPagto}}</p>
-                <p v-if="isBought || isReserved">Emitido para: {{Nome}} ({{CPF}})</p>
-                <p v-if="isBought || isReserved">Telefone: ({{DDD}}) {{Telefone}}</p>
+                <p v-if="isBought || isReserved">Emitido para: <span v-if="Nome!='' && Nome != null">{{Nome}} ({{CPF}})</span></p>
+                <p v-if="isBought || isReserved">Telefone: <span v-if="Telefone!='' && Telefone != null">({{DDD}}) {{Telefone}}</span></p>
                 <p v-if="isBought">Código Venda: {{CodVenda}}</p>
                 <p v-if="isReserved">Código Reserva: {{CodReserva}}</p>
                 <p v-if="isBought && isWeb">Pedido: {{id_pedido_venda}}</p>

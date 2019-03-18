@@ -122,7 +122,7 @@
                             </template>
 
                             <template slot="amount_topay" slot-scope="data">
-                                {{data.item.amount | subTotal(data) }}
+                                {{data.item.amount_topay | subTotal(data) }}
                             </template>
 
                             <template slot="PerDesconto" slot-scope="data">

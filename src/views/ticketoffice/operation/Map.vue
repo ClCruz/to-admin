@@ -3,18 +3,19 @@
         <span v-if="showClientAdd">
             <client-add needCPF="true" needRG="false" needPhone="true" needName="true" needCardBin="false" showCardBin="false"></client-add>
         </span>
+            <div :style="{ 'width': ( map.width)+ 'px', 'max-width': ( map.width)+ 'px', 'text-align': 'center', 'height': '40px', 'font-size': '14px' }">
+                <span class="pretty p-default" v-if="issell" style="float:left; padding-top: 8px;">
+                    <input type="checkbox" v-model="sellReservation" @click="changetypeofsell" />
+                    <span class="state p-success">
+                        <label>Vender Reservas</label>
+                    </span>
+                </span>
+                <span title="Recarregar o mapa" @click="reloadme" class="reloadme"><i class="fas fa-redo-alt"></i>Recarregar o mapa</span>
+            </div>
         <span v-if="!showClientAdd">
             <b-tooltip target="header_next" placement="top">
-                <span v-if="selected.length>0">
-                    Assentos selecionados:
-                    <ul>
-                        <li v-for="(item, index) in selected" v-bind:key="index">
-                            {{ item.sector }}: {{ item.name }}
-                        </li>
-                    </ul>
-                </span>
+                <span>Prosseguir com a venda</span>
             </b-tooltip>
-            <span class="fa-stack fa-lg" title="Recarregar os assentos." @click="reloadme"><i class="fa fa-circle fa-stack-2x"></i><i class="fa fa-retweet fa-stack-1x fa-inverse" style="top: 14px; cursor:pointer;"></i></span>
             <div id="mapa_de_plateia" :style="{
                 'width': ( map.width)+ 'px', 'max-width': ( map.width)+ 'px', 'min-height': map.height + 'px', 'margin' : '0 0 20px'
             }" class="mapa_de_plateia" v-if="hasSeatNumber">
@@ -37,19 +38,22 @@
 <script>
 import Vue from 'vue';
 import VueResource from "vue-resource";
+
 import VModal from 'vue-js-modal';
-import config from '@/config';
 import $ from 'jquery';
 import 'jquery-ui/ui/widgets/draggable';
 import 'jquery-ui/ui/widgets/selectable';
+
+import config from '@/config';
+
 import { func } from '@/functions';
 import { funcOperation } from '../../../components/ticketoffice/services/functions';
 import { eventService } from '../../../components/ticketoffice/services/event';
 import { bookingService } from '../../../components/common/services/booking';
 import { shoppingCartService } from '../../../components/ticketoffice/services/shoppingcart';
 import { printService } from '../../../components/ticketoffice/services/print';
-import clientAdd from '../Client';
 
+import clientAdd from '../Client';
 import seatinfo from "@/components/ticketoffice/Seatinfo.vue";
 
 Vue.use(VModal, {
@@ -76,6 +80,7 @@ export default {
                 waitingClass: "waiting",
                 selectedClass: "ui-selected",
             },
+            sellReservation: false,
             showmapwait: true,
             added: false,
             isMap: true,
@@ -96,7 +101,15 @@ export default {
         }
     },
     methods: {
+        changetypeofsell() {
+            Vue.nextTick().then(response => {
+                this.reloadme();
+            });
+        },
         reloadme() {
+            this.added = false;
+            this.showmapwait = true;
+            clearSeats();
             this.getSeats(true);
         },
         showClient() {
@@ -145,7 +158,7 @@ export default {
                 }
                 if (!this.added) {
                     this.showmapwait = true;
-                    addSeatJS($("#mapa_de_plateia"), annotation, this.seats, this.chooseSeat, this.indiceInProcess, this.codCliente, this.codReserva, this.chooseSeatMultiple, this.showinfo);
+                    addSeatJS(this.sellReservation, $("#mapa_de_plateia"), annotation, this.seats, this.chooseSeat, this.indiceInProcess, this.codCliente, this.codReserva, this.chooseSeatMultiple, this.showinfo);
                     setup_without_touch(this.operation.step1.type == "reservation");
                     this.added=true;
                     this.showmapwait = false;
@@ -246,7 +259,7 @@ export default {
             }                 
         },
         chooseSeatMultiple(indices) {
-            bookingService.bookornot(this.get_id_base(), this.operation.step1.id_apresentacao, indices, this.getLoggedId(), "", this.codCliente, this.codReserva).then(response=> {
+            bookingService.bookornot(this.get_id_base(), this.operation.step1.id_apresentacao, indices, this.getLoggedId(), "", this.codCliente, this.codReserva, this.sellReservation).then(response=> {
                 if (this.validateJSON(response))
                 {
                     //console.log(response);
@@ -388,15 +401,15 @@ export default {
                             text: "Não há assentos disponíveis para compra.",
                             showConfirmButton: true,
                         }).then((result) => {
-                            this.$router.push("/ticketoffice/operation");
+                            //this.$router.push("/ticketoffice/operation");
                         });
-                        return;
+                        // return;
                     }
                     this.maxSeatsAvailableToBuy = response.maxSeatsAvailableToBuy;
                     this.hasSeatNumber = response.IngressoNumerado == "1";
                     if (this.hasSeatNumber)
                     {
-                        console.log(response);
+                        // console.log(response);
                         this.map.img = response.FotoImagemSite;
                         this.map.width = parseInt(response.LarguraSite);
                         this.map.height = parseInt(response.AlturaSite);
@@ -424,6 +437,12 @@ export default {
         });
     },
     computed: {
+        issell() {
+            return this.operation.step1.type == "sell";
+        },
+        isreservation() {
+            return this.operation.step1.type == "reservation";
+        },
         operation() {
             return this.retrieve();
         }
@@ -442,14 +461,17 @@ export default {
     standbyClass = 'standby',
     closedClass = 'closed',
     reservedClass = 'reserved',
-    waitingClass = "waiting";
+    waitingClass = "waiting",
+    nothingClass = "nothing";
     let seatClickOut = null;
     let seatClickOutMulti = null;
     let seatClickOutShowInfo = null;
+    let sellonlyreservation = 0;
     let cc = null;
     let cr = null;
 
-    function addSeatJS(obj, annotationCallback, annotations, callbackVue, inprocessclicked, codCliente, codReserva, callbackVueMulti, callbackVueShowInfo) {
+    function addSeatJS(onlyreservation, obj, annotationCallback, annotations, callbackVue, inprocessclicked, codCliente, codReserva, callbackVueMulti, callbackVueShowInfo) {
+        sellonlyreservation = onlyreservation;
         seatClickOut = callbackVue;
         seatClickOutMulti = callbackVueMulti;
         seatClickOutShowInfo = callbackVueShowInfo;
@@ -488,8 +510,20 @@ export default {
             $.each(this, function(key, val) {
                 element.data(key, val);
             });
+            let statushumanread = "";
+            switch (element.data("status")) {
+                case "R":
+                    statushumanread = "Reservado";
+                break;
+                case "C":
+                    statushumanread = "Vendido";
+                break;
+                default: 
+                    statushumanread = "Livre";
+                break;
+            }
             element.attr("id", "seat-"+element.data("Indice"));
-            element.attr('title', element.data('NomObjeto') + ' (' + element.data('Indice') + ")");
+            element.attr('title', element.data('NomObjeto') + ' (' + element.data('Indice') + ") - " + statushumanread);
             if (element.data('img')) element.attr('data-img', element.data('img'));
             //if (top > containerHeight) element.hide();
         });
@@ -502,7 +536,7 @@ export default {
 		$(obj).css('left', event.pageX - container.offset().left - ($(obj).xOffset(xPosition)) + 'px');
 		$(obj).css('top', event.pageY - container.offset().top - ($(obj).yOffset(yPosition)) + 'px');
 		$(obj).css('position', 'absolute');
-	};
+    };
 
 	function seralizeAnnotations (obj,xPosition, yPosition) {
 		var annotations = [];
@@ -566,6 +600,10 @@ export default {
 	function coordinates (obj) {
 		return {x: parseInt($(obj).css('left').replace('px', '')), y: parseInt($(obj).css('top').replace('px', ''))};
     };
+
+    function clearSeats() {
+        $(".seatchoose").remove();
+    }
     
     function annotation(obj, inprocessclicked) {
         let clicked = inprocessclicked.filter(indice => indice == obj.id).length>0;
@@ -575,14 +613,32 @@ export default {
             withclass = waitingClass;
         }
         else {
+            if (obj.Indice == 4047 || obj.Indice == "4047") {
+                console.log(obj);
+            }
             switch (obj.status){
                 case "O":
-                    withclass = opennedClass;
+                    if (sellonlyreservation == 1) {
+                        withclass = closedClass;
+                    }
+                    else {
+                        withclass = opennedClass;
+                    }
                 break;
                 case "R":
                     withclass = closedClass;
                     if (obj.CodCliente !=null && cc != null && obj.CodCliente == cc)
                         withclass = reservedClass;
+
+                    if (sellonlyreservation == 1) {
+                        withclass = opennedClass;
+                    }
+                break;
+                case "W":
+                    withclass = closedClass;
+                    if (sellonlyreservation == 1) {
+                        withclass = opennedClass;
+                    }
                 break;
                 case "C":
                     withclass = closedClass;
@@ -596,6 +652,7 @@ export default {
         return $(document.createElement('span'))
         .attr('id', obj.id)
         .addClass('annotation')
+        .addClass('seatchoose')
         .addClass('diametro')
         .addClass(withclass)
         .draggable({
@@ -783,6 +840,9 @@ export default {
 .waiting {
   background-color: #FF0;    
 }
+.nothing {
+    visibility: hidden;
+}
 
 .mapa_de_plateia .ui-selecting {
   border: 2px solid #FF0;
@@ -803,5 +863,17 @@ export default {
   position: absolute; 
   z-index: 100; 
   border: 2px solid black; 
+}
+.pretty input {
+    margin-right: 10px;
+}
+.reloadme {
+    padding-top: 10px;
+    cursor:pointer;
+    float:right;
+    font-size: 14px;
+}
+.reloadme i {
+    padding-right: 10px;    
 }
 </style>

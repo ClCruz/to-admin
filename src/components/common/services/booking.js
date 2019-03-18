@@ -18,7 +18,7 @@ export const bookingService =  {
 }
 
 
-function bookornot(id_base, id_apresentacao, indice, id, nin, codCliente = "", codReserva = "") {
+function bookornot(id_base, id_apresentacao, indice, id, nin, codCliente = "", codReserva = "", overwrite = "0") {
     let url = config.api + `/v1/purchase/reservation/addmultiple`
     
     let obj = {
@@ -28,7 +28,8 @@ function bookornot(id_base, id_apresentacao, indice, id, nin, codCliente = "", c
         id,
         nin,
         codCliente,
-        codReserva
+        codReserva,
+        overwrite: overwrite == 1 || overwrite == true ? 1 : 0,
     };
 
     var ret = new Promise(
