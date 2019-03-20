@@ -69,6 +69,28 @@
               </b-row>
               <b-row class="mb-3">
                   <b-input-group size="sm">
+                      <b-input-group-prepend is-text v-bind:class="{ errorFormValidateLabel: ($v.form.domain.$invalid) }">
+                          Enviar e-mail com a venda para?
+                      </b-input-group-prepend>
+                      <b-form-checkbox id="send_sell_email"
+                                      style="margin-left:10px;"
+                                      v-model="form.send_sell_email"
+                                      value="1"
+                                      unchecked-value="not_accepted">
+                      </b-form-checkbox>
+                      <b-form-input id="sell_email"
+                        type="text"
+                        name="sell_email"
+                        :disabled="form.send_sell_email != 1 && form.send_sell_email != true"
+                        v-bind:class="{ errorFormValidateInput: (false) }"
+                        maxlength="500"
+                        v-model="form.sell_email"
+                        :placeholder="form.send_sell_email == 1 || form.send_sell_email == true ? 'Digite o e-mail' : 'Não enviar.'">
+                      </b-form-input>
+                  </b-input-group>
+              </b-row>
+              <b-row class="mb-3">
+                  <b-input-group size="sm">
                       <b-input-group-prepend is-text v-bind:class="{ errorFormValidateLabel: ($v.form.selectedDate.start.$invalid) }">
                           Validade:
                       </b-input-group-prepend>
@@ -354,7 +376,8 @@ export default {
 
       this.$wait.start("inprocessSave");
       this.showWaitAboveAll();
-      partnerService.save(this.getLoggedId(), this.isAdd ? '' : this.id, this.form.uniquename, this.form.name, this.form.domain, this.form.selectedDate.start, this.form.selectedDate.end, this.form.type, this.form.active, this.form.fb_appid, this.form.recaptchaid).then(
+
+      partnerService.save(this.getLoggedId(), this.isAdd ? '' : this.id, this.form.uniquename, this.form.name, this.form.domain, this.form.selectedDate.start, this.form.selectedDate.end, this.form.type, this.form.active, this.form.fb_appid, this.form.recaptchaid, this.form.sell_email, this.form.send_sell_email).then(
         response => {
           this.processing = false;
           this.hideWaitAboveAll();
@@ -413,6 +436,8 @@ export default {
               this.form.key_test = response.key;
               this.form.recaptchaid = response.recaptchaid;
               this.form.fb_appid = response.fb_appid;
+              this.form.sell_email = response.sell_email;
+              this.form.send_sell_email = response.send_sell_email;
           }
         },
         error => {
@@ -473,6 +498,8 @@ export default {
           key_test: '',
           fb_appid: '',
           recaptchaid: '',
+          send_sell_email: 0,
+          sell_email: '',
         }
     }
   }
