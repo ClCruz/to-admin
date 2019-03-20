@@ -76,7 +76,7 @@
                                       style="margin-left:10px;"
                                       v-model="form.send_sell_email"
                                       value="1"
-                                      unchecked-value="not_accepted">
+                                      unchecked-value="0">
                       </b-form-checkbox>
                       <b-form-input id="sell_email"
                         type="text"
