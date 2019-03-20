@@ -183,6 +183,15 @@
             <div class="errorFormValidate" v-if="!$v.form.id_local_evento.required">Campo é obrigatório</div>
           </b-row>
           <b-row class="mb-3">
+            <b-input-group size="sm">
+              <b-input-group-prepend is-text v-bind:class="{ errorFormValidateLabel: ($v.form.ticketoffice_ticketmodel.$invalid) }">
+                Modelo de Ingresso na Bilheteria:
+              </b-input-group-prepend>
+              <b-form-select v-model="form.ticketoffice_ticketmodel" :options="selects.ticketmodels" size="sm" v-bind:class="{ errorFormValidateInput: ($v.form.ticketoffice_ticketmodel.$invalid) }" />
+            </b-input-group>
+            <div class="errorFormValidate" v-if="!$v.form.ticketoffice_ticketmodel.required">Campo é obrigatório</div>
+          </b-row>
+          <b-row class="mb-3">
             <b-col>
               <b-row>
                 <b-input-group size="sm">
@@ -566,6 +575,9 @@ export default {
               this.form.max_installments = response.max_installments;
               this.form.free_installments = response.free_installments;
               this.form.interest_rate = response.interest_rate;
+              this.form.ticketoffice_ticketmodel = response.ticketoffice_ticketmodel;
+              console.log(this.form.ticketoffice_ticketmodel);
+              console.log(response.ticketoffice_ticketmodel);
               this.$refs.interest_rate.$el.value = response.interest_rate;
               this.checkproducer();
               this.populateCity();
@@ -633,6 +645,7 @@ export default {
           imagebase64 = "",
           free_installments = "",
           max_installments = "",
+          ticketoffice_ticketmodel = "",
           interest_rate = "";
 
         id_base = this.form.id_base;
@@ -654,6 +667,7 @@ export default {
         QtIngrPorPedido = this.form.QtIngrPorPedido;
         in_obriga_cpf = this.form.in_obriga_cpf;
         ticketoffice_askemail = this.form.ticketoffice_askemail;
+        ticketoffice_ticketmodel = this.form.ticketoffice_ticketmodel;
         qt_ingressos_por_cpf = this.form.qt_ingressos_por_cpf;
 
         imagechanged = this.form.changedImage;
@@ -665,11 +679,11 @@ export default {
         // this.$wait.start("inprocessSave");
         // this.processing = true;
 
-        eventService.save(this.getLoggedId(), id_base, id_produtor, CodPeca, NomPeca, CodTipPeca, TemDurPeca, CenPeca, id_local_evento, ValIngresso, description, meta_description, meta_keyword, opening_time, insurance_policy, showInBanner, bannerDescription, QtIngrPorPedido, in_obriga_cpf, qt_ingressos_por_cpf, ticketoffice_askemail, imagechanged, imagebase64, free_installments, max_installments, interest_rate).then(
+        eventService.save(this.getLoggedId(), id_base, id_produtor, CodPeca, NomPeca, CodTipPeca, TemDurPeca, CenPeca, id_local_evento, ValIngresso, description, meta_description, meta_keyword, opening_time, insurance_policy, showInBanner, bannerDescription, QtIngrPorPedido, in_obriga_cpf, qt_ingressos_por_cpf, ticketoffice_askemail, imagechanged, imagebase64, free_installments, max_installments, interest_rate, ticketoffice_ticketmodel).then(
 
           response => {
             this.processing = false;
-            console.log("Event Service: " + response);
+//            console.log("Event Service: " + response);
             this.hideWaitAboveAll();
             this.$wait.end("inprocessSave");
 
@@ -842,6 +856,9 @@ export default {
       CenPeca: {
         required
       },
+      ticketoffice_ticketmodel: {
+        required
+      },
       QtIngrPorPedido: {
         required
       },
@@ -929,6 +946,7 @@ export default {
         state: [],
         place: [],
         genre: [],
+        ticketmodels: [{ value: "model001", text: "Modelo 1" }, { value: "model002", text: "Modelo 2 - Ingresso TicketOffice" }],
         producer: [],
         base: [],
         free_installments: [{
@@ -1069,6 +1087,7 @@ export default {
         qt_ingressos_por_cpf: '4',
         in_obriga_cpf: '',
         ticketoffice_askemail: '',
+        ticketoffice_ticketmodel: '',
         DatIniPeca: '',
         DatFinPeca: '',
         hasPresentantion: '',

@@ -56,7 +56,8 @@ function save(id_to_admin_user, id_base,id_produtor
     ,meta_keyword,opening_time,insurance_policy
     ,showInBanner,bannerDescription,QtIngrPorPedido
     ,in_obriga_cpf,qt_ingressos_por_cpf,ticketoffice_askemail
-    ,imagechanged,imagebase64,free_installments,max_installments,interest_rate) {
+    ,imagechanged,imagebase64,free_installments
+    ,max_installments,interest_rate,ticketoffice_ticketmodel) {
 
     let url = config.api + `/v1/admin/event/save`;
 
@@ -68,7 +69,8 @@ function save(id_to_admin_user, id_base,id_produtor
         ,meta_keyword,opening_time,insurance_policy
         ,showInBanner,bannerDescription,QtIngrPorPedido
         ,in_obriga_cpf,qt_ingressos_por_cpf,ticketoffice_askemail
-        ,imagechanged,imagebase64,free_installments,max_installments,interest_rate
+        ,imagechanged,imagebase64,free_installments
+        ,max_installments,interest_rate,ticketoffice_ticketmodel
     };
 
     // console.log(obj);
