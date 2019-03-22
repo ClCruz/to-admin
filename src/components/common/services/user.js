@@ -16,7 +16,31 @@ export const userService = {
   baseSave,
   baseSelect,
   pair,
+  changepass,
   ticketofficeuserwithpermission
+}
+function changepass(loggedId, oldpass, newpass) {
+    let url = config.api + `/v1/admin/user/changepass`;
+
+    let obj = {
+        id: loggedId,
+        oldpass,
+        newpass
+    };
+
+    var ret = new Promise(
+        function (resolve, reject) {
+            Vue.http.post(url, obj, { emulateJSON: true }).then(res => {
+                resolve(res.body);
+            }, err => {
+                reject({
+                    error: true,
+                    msg: err
+                });
+            });    
+        }
+    );
+    return ret;
 }
 function pair(loggedId) {
     let url = config.api + `/v1/admin/user/pair/generate`;
