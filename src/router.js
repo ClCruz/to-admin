@@ -36,6 +36,11 @@ const TicketOfficeClient = resolve => {
       resolve(require('./views/ticketoffice/Client.vue'));
   }, 'ticketoffice');
 };
+const TicketOfficeSeatQuantity = resolve => {
+  require.ensure(['./views/ticketoffice/SeatQuantity.vue'], () => {
+      resolve(require('./views/ticketoffice/SeatQuantity.vue'));
+  }, 'ticketoffice');
+};
 const TicketOfficePurchase = resolve => {
   require.ensure(['./views/ticketoffice/Purchase.vue'], () => {
       resolve(require('./views/ticketoffice/Purchase.vue'));
@@ -389,6 +394,12 @@ const obj = new Router({
           path: '/ticketoffice/client',
           components: {
             routerView_ticketoffice: TicketOfficeClient
+          }
+        },
+        {
+          path: '/ticketoffice/operation/seatquantity',
+          components: {
+            routerView_ticketoffice: TicketOfficeSeatQuantity
           }
         },
         {
