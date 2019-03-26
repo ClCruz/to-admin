@@ -209,6 +209,12 @@ export default {
               icon: 'fas fa-th-list',
               code: 'partner-viewer',//'user-viewer'
             },
+            {
+              href: '/partner/staticpage/add',
+              title: 'Páginas Estaticas',
+              icon: 'fas fa-scroll',
+              code: 'partner-staticpage',
+            },
           ]
         },
         {

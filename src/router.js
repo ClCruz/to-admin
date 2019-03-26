@@ -123,6 +123,12 @@ const adminPartnerWhitelabel = resolve => {
     resolve(require('./views/partner/whitelabel.vue'));
   }, 'admin-partner');
 };
+const adminPartnerStaticPage = resolve => {
+  require.ensure(['./views/partner/static.vue'], () => {
+    resolve(require('./views/partner/static.vue'));
+  }, 'admin-staticpage');
+};
+
 
 // producer
 const adminProducerList = resolve => {
@@ -234,6 +240,11 @@ const obj = new Router({
     //------
     //------
     //partner
+    {
+      path: '/partner/staticpage/add',
+      name: 'staticpage-add',
+      component: adminPartnerStaticPage
+    },
     {
       path: '/partner/list',
       name: 'partner-list',
