@@ -127,6 +127,26 @@ export default {
           ]
         },
         {
+          title: 'Propaganda',
+          icon: 'fas fa-ad',
+          code: 'all',
+          code: 'ad-viewer',
+          child: [
+            {
+              href: '/ad/add',
+              title: 'Adicionar',
+              icon: 'fas fa-plus',
+              code: 'ad-add'
+            },
+            {
+              href: '/ad/list',
+              title: 'Listar',
+              icon: 'fas fa-th-list',
+              code: 'ad-viewer'//'all',//'user-viewer'
+            },
+          ]
+        },
+        {
           title: 'Bilheteria',
           icon: 'fas fa-ticket-alt',
           code: 'ticketoffice-login',

@@ -168,7 +168,7 @@ export default {
           this.processing = true;
           this.showWaitAboveAll();
 
-          partnerService.withpermission(this.getLoggedId()).then(
+          partnerService.withpermissionbases(this.getLoggedId()).then(
                   response => {
                       this.hideWaitAboveAll();
                       this.processing = false;

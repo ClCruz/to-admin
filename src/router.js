@@ -107,6 +107,18 @@ const adminUserAdd = resolve => {
   }, 'admin-user');
 };
 
+// ad
+const adminAdList = resolve => {
+  require.ensure(['./views/ad/list.vue'], () => {
+    resolve(require('./views/ad/list.vue'));
+  }, 'admin-ad');
+};
+const adminAdAdd = resolve => {
+  require.ensure(['./views/ad/add.vue'], () => {
+    resolve(require('./views/ad/add.vue'));
+  }, 'admin-ad');
+};
+
 // partner
 const adminPartnerList = resolve => {
   require.ensure(['./views/partner/list.vue'], () => {
@@ -236,6 +248,24 @@ const obj = new Router({
       name: 'user-edit',
       props: true,
       component: adminUserAdd
+    },
+    //------
+    //ad
+    {
+      path: '/ad/list',
+      name: 'ad-list',
+      component: adminAdList
+    },
+    {
+      path: '/ad/add',
+      name: 'ad-add',
+      component: adminAdAdd
+    },
+    {
+      path: '/ad/edit/:id',
+      name: 'ad-edit',
+      props: true,
+      component: adminAdAdd
     },
     //------
     //------
