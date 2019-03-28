@@ -1,7 +1,20 @@
 <template>
         <b-container>
             <b-form @submit="onSubmit">
-                <b-form-row>
+                <b-form-row v-if="form.partner">
+                    <b-col>
+                        <b-form-group id="namegroup"
+                                        label-for="name">
+                            <b-form-input id="name"
+                                        type="text"
+                                        v-model="form.name"
+                                        maxlength="50"
+                                        placeholder="Nome">
+                            </b-form-input>
+                        </b-form-group>
+                    </b-col>
+                </b-form-row>
+                <b-form-row v-if="!form.partner">
                     <b-col>
                         <b-form-group id="ningroup"
                                         label-for="cpf"
@@ -38,7 +51,7 @@
                         </b-form-group>
                     </b-col>
                 </b-form-row>
-                <b-form-row>
+                <b-form-row v-if="!form.partner">
                     <b-col>
                         <b-form-group id="namegroup"
                                         label-for="name">
@@ -51,7 +64,7 @@
                         </b-form-group>
                     </b-col>
                 </b-form-row>
-                <b-form-row>
+                <b-form-row v-if="!form.partner">
                     <b-col>
                         <b-form-group id="emailgroup"
                                         label-for="email">
@@ -109,6 +122,22 @@
                         </v-wait>
                         <span v-if="!processing">Fechar</span>
                     </b-button>
+                    <b-button type="button" variant="warning" @click="form.partner=true;" v-if="!form.partner">
+                        <v-wait for="inprocess">
+                            <template slot="waiting">
+                            Salvando...
+                            </template>
+                        </v-wait>
+                        <span v-if="!processing">Reserva para parceiro</span>
+                    </b-button>
+                    <b-button type="button" variant="warning" @click="form.partner=false;" v-if="form.partner">
+                        <v-wait for="inprocess">
+                            <template slot="waiting">
+                            Salvando...
+                            </template>
+                        </v-wait>
+                        <span v-if="!processing">Reserva para cliente</span>
+                    </b-button>
                 </b-form-row>
             </b-form>
         </b-container>
@@ -142,6 +171,7 @@ export default {
             loading: false,
             result: null,
             form: {
+                partner: false,
                 code: '',
                 cpf: '',
                 rg: '',
@@ -219,26 +249,34 @@ export default {
         save() {
             if (this.processing) return;
 
-            if ((this.$props["needCPF"] == true || this.$props["needCPF"] == "true") && this.form.cpf == "") {
-                this.toastError("CPF é obrigatório.");
-                return;
-            }
-            if ((this.$props["needRG"] == true || this.$props["needRG"] == "true") && this.form.rg == "") {
-                this.toastError("RG é obrigatório.");
-                return;
-            }
-            if ((this.$props["needPhone"] == true || this.$props["needPhone"] == "true") && (this.form.phone == "" || this.form.ddd == "")) {
-                this.toastError("Telefone é obrigatório.");
-                return;
-            }
             if ((this.$props["needName"] == true || this.$props["needName"]=="true") && this.form.name == "") {
                 this.toastError("Nome é obrigatório.");
                 return;
             }
-            if ((this.$props["needCardBin"] == true || this.$props["needCardBin"] == "true") && this.form.bincard == "") {
-                this.toastError("Bin do Cartão é obrigatório.");
-                return;
+
+            if (this.form.partner) {
+
             }
+            else {
+                if ((this.$props["needCPF"] == true || this.$props["needCPF"] == "true") && this.form.cpf == "") {
+                    this.toastError("CPF é obrigatório.");
+                    return;
+                }
+                if ((this.$props["needRG"] == true || this.$props["needRG"] == "true") && this.form.rg == "") {
+                    this.toastError("RG é obrigatório.");
+                    return;
+                }
+                if ((this.$props["needPhone"] == true || this.$props["needPhone"] == "true") && (this.form.phone == "" || this.form.ddd == "")) {
+                    this.toastError("Telefone é obrigatório.");
+                    return;
+                }
+                if ((this.$props["needCardBin"] == true || this.$props["needCardBin"] == "true") && this.form.bincard == "") {
+                    this.toastError("Bin do Cartão é obrigatório.");
+                    return;
+                }
+
+            }
+
 
             this.processing = true;
             this.showWaitAboveAll();
@@ -248,7 +286,7 @@ export default {
             if (this.$route.fullPath == "/ticketoffice/operation/reservation/seat") 
                 makeCode = true;
 
-            clientService.add(this.get_id_base(), this.form.cpf, this.form.rg, this.form.name, this.form.email, this.form.ddd, this.form.phone, this.form.ramal, this.form.bincard, makeCode).then(
+            clientService.add(this.get_id_base(), this.form.cpf, this.form.rg, this.form.name, this.form.email, this.form.ddd, this.form.phone, this.form.ramal, this.form.bincard, makeCode, this.form.partner).then(
                     response => {
                         this.hideWaitAboveAll();
                         this.processing = false;
@@ -265,13 +303,17 @@ export default {
                             {
                                 this.$parent.codCliente = response.codigo;
                                 this.$parent.codReserva = response.codReserva;
-                                this.$parent.hideClient();
+                                Vue.nextTick().then(d => {
+                                    this.$parent.hideClientWhenForced();
+                                });
                             }
                             else {
                                 this.$parent.getCashRegister().form.clientCode = response.codigo;
                                 this.$parent.getCashRegister().form.cardBin = this.form.bincard;
-                                this.$parent.getCashRegister().hideClient();
-                                this.$parent.getCashRegister().checkIfCanSell();
+                                Vue.nextTick().then(response => {
+                                    this.$parent.getCashRegister().hideClient();
+                                    this.$parent.getCashRegister().checkIfCanSell();
+                                });
                             }
                         }
                 },

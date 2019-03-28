@@ -15,8 +15,32 @@ export const bookingService =  {
     getCodeReservation,
     list,
     cancel,
+    listReservation,
 }
 
+function listReservation(id_base, loggedid, id_apresentacao) {
+    let url = config.api + `/v1/purchase/reservation/select`
+    
+    let obj = {
+        id_base,
+        id_apresentacao,
+        loggedid
+    };
+
+    var ret = new Promise(
+        function (resolve, reject) {
+            Vue.http.post(url, obj, { emulateJSON: true }).then(res => {
+                resolve(res.body);
+            }, err => {
+                reject({
+                    error: true,
+                    msg: err
+                });
+            });    
+        }
+    );
+    return ret;
+}
 
 function bookornot(id_base, id_apresentacao, indice, id, nin, codCliente = "", codReserva = "", overwrite = "0") {
     let url = config.api + `/v1/purchase/reservation/addmultiple`
@@ -63,12 +87,24 @@ function book(id_base, id_apresentacao, indice, id, nin, codCliente = "", codRes
     );
     return ret;
 }
-function bookNotNumered(id_base, id_apresentacao, id, qtd, nin) {
-    let url = config.api + `/v1/purchase/reservation/addnotnumered?id_base=${id_base}&id_apresentacao=${id_apresentacao}&id=${id}&qtd=${qtd}&nin=${nin}`;
-
+function bookNotNumered(id_base, id_apresentacao, id, qtd, nin, caller, codReserva, codCliente, sellreservation) {
+    let url = config.api + `/v1/purchase/reservation/addnotnumered`;
+    
+    let obj = {
+        id_base,
+        id_apresentacao,
+        id,
+        qtd,
+        nin,
+        caller,
+        codReserva,
+        codCliente,
+        sellreservation
+    };
+  
     var ret = new Promise(
         function (resolve, reject) {
-            Vue.http.get(url).then(res => {
+            Vue.http.post(url, obj, { emulateJSON: true }).then(res => {
                 resolve(res.body);
             }, err => {
                 reject({
@@ -131,12 +167,20 @@ function getCodeReservation(codCliente) {
     );
     return ret;
 }
-function list(id_base, nin, codReserva, id_apresentacao) {
-    let url = config.api + `/v1/purchase/reservation/list?&id_base=${id_base}&nin=${nin}&codReserva=${codReserva}&id_apresentacao=${id_apresentacao}`;
-
+function list(id_base, nin, codReserva, id_apresentacao, name) {
+    let url = config.api + `/v1/purchase/reservation/list`
+    
+        let obj = {
+        id_base,
+        nin,
+        codReserva,
+        id_apresentacao,
+        name
+    };
+  
     var ret = new Promise(
         function (resolve, reject) {
-            Vue.http.get(url).then(res => {
+            Vue.http.post(url, obj, { emulateJSON: true }).then(res => {
                 resolve(res.body);
             }, err => {
                 reject({

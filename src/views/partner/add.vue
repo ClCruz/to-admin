@@ -173,7 +173,7 @@
                       <b-form-checkbox id="active"
                                       v-model="form.active"
                                       value="1"
-                                      unchecked-value="not_accepted">
+                                      unchecked-value="0">
                       <span v-if="form.active == 1">Ativo</span>
                       <span v-else>Inativo</span>
                       </b-form-checkbox>

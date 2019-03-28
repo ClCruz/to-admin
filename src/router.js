@@ -36,6 +36,11 @@ const TicketOfficeClient = resolve => {
       resolve(require('./views/ticketoffice/Client.vue'));
   }, 'ticketoffice');
 };
+const TicketOfficeSeatQuantity = resolve => {
+  require.ensure(['./views/ticketoffice/SeatQuantity.vue'], () => {
+      resolve(require('./views/ticketoffice/SeatQuantity.vue'));
+  }, 'ticketoffice');
+};
 const TicketOfficePurchase = resolve => {
   require.ensure(['./views/ticketoffice/Purchase.vue'], () => {
       resolve(require('./views/ticketoffice/Purchase.vue'));
@@ -102,6 +107,18 @@ const adminUserAdd = resolve => {
   }, 'admin-user');
 };
 
+// ad
+const adminAdList = resolve => {
+  require.ensure(['./views/ad/list.vue'], () => {
+    resolve(require('./views/ad/list.vue'));
+  }, 'admin-ad');
+};
+const adminAdAdd = resolve => {
+  require.ensure(['./views/ad/add.vue'], () => {
+    resolve(require('./views/ad/add.vue'));
+  }, 'admin-ad');
+};
+
 // partner
 const adminPartnerList = resolve => {
   require.ensure(['./views/partner/list.vue'], () => {
@@ -118,6 +135,12 @@ const adminPartnerWhitelabel = resolve => {
     resolve(require('./views/partner/whitelabel.vue'));
   }, 'admin-partner');
 };
+const adminPartnerStaticPage = resolve => {
+  require.ensure(['./views/partner/static.vue'], () => {
+    resolve(require('./views/partner/static.vue'));
+  }, 'admin-staticpage');
+};
+
 
 // producer
 const adminProducerList = resolve => {
@@ -227,8 +250,31 @@ const obj = new Router({
       component: adminUserAdd
     },
     //------
+    //ad
+    {
+      path: '/ad/list',
+      name: 'ad-list',
+      component: adminAdList
+    },
+    {
+      path: '/ad/add',
+      name: 'ad-add',
+      component: adminAdAdd
+    },
+    {
+      path: '/ad/edit/:id',
+      name: 'ad-edit',
+      props: true,
+      component: adminAdAdd
+    },
+    //------
     //------
     //partner
+    {
+      path: '/partner/staticpage/add',
+      name: 'staticpage-add',
+      component: adminPartnerStaticPage
+    },
     {
       path: '/partner/list',
       name: 'partner-list',
@@ -389,6 +435,12 @@ const obj = new Router({
           path: '/ticketoffice/client',
           components: {
             routerView_ticketoffice: TicketOfficeClient
+          }
+        },
+        {
+          path: '/ticketoffice/operation/seatquantity',
+          components: {
+            routerView_ticketoffice: TicketOfficeSeatQuantity
           }
         },
         {

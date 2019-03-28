@@ -49,6 +49,7 @@ export default {
     };
   },
   created() {
+    console.log("created");
   },
   computed: {
     isAuth() {
@@ -56,7 +57,9 @@ export default {
     }
   },
   mounted() {
+    console.log("mounted");
     this.$refs.headerRef.populateBases();
+    this.idHeader++;
     //this.reloadHeader();
 
     if (!this.isPurchasePages())

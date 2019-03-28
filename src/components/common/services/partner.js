@@ -19,6 +19,47 @@ export const partnerService = {
   videoupload,
   listbase,
   savebase,
+  withpermission,
+  withpermissionbases
+}
+
+function withpermissionbases(loggedId) {
+    let url = config.api + `/v1/admin/partner/selectwithpermissionbases`;
+    
+    let obj = { loggedId };
+
+    var ret = new Promise(
+        function (resolve, reject) {
+            Vue.http.post(url, obj, { emulateJSON: true }).then(res => {
+                resolve(res.body);
+            }, err => {
+                reject({
+                    error: true,
+                    msg: err
+                });
+            });    
+        }
+    );
+    return ret;
+}
+function withpermission(loggedId) {
+    let url = config.api + `/v1/admin/partner/selectwithpermission`;
+    
+    let obj = { loggedId };
+
+    var ret = new Promise(
+        function (resolve, reject) {
+            Vue.http.post(url, obj, { emulateJSON: true }).then(res => {
+                resolve(res.body);
+            }, err => {
+                reject({
+                    error: true,
+                    msg: err
+                });
+            });    
+        }
+    );
+    return ret;
 }
 function listbase(id_partner) {
     let url = config.api + `/v1/admin/partner/base/list?id=${id_partner}`;

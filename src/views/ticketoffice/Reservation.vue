@@ -2,38 +2,51 @@
     <b-container fluid>
         <b-col>
             <b-row class="my-1">
+                <b-input-group size="sm">
+                    <b-input-group-prepend is-text class="firstLabel">
+                        Código da Reserva:
+                    </b-input-group-prepend>
+                    <b-form-input id="codReserva"
+                                type="text"
+                                name="codReserva"
+                                maxlength="10"
+                                v-model="form.codReserva"
+                                placeholder="Código da Reserva">
+                    </b-form-input>
+                </b-input-group>
+            </b-row>
+            <b-row class="my-1">
                 <b-col>
                     <b-row>
-                        <b-input-group size="sm">
-                            <b-input-group-prepend is-text class="firstLabel">
-                                Código da Reserva:
-                            </b-input-group-prepend>
-                            <b-form-input id="codReserva"
-                                        type="text"
-                                        name="codReserva"
-                                        maxlength="10"
-                                        v-model="form.codReserva"
-                                        placeholder="Código da Reserva">
-                            </b-form-input>
-                        </b-input-group>
+                    <b-input-group size="sm">
+                        <b-input-group-prepend is-text class="firstLabel">
+                            Nome:
+                        </b-input-group-prepend>
+                        <b-form-input id="name"
+                                    type="text"
+                                    name="name"
+                                    maxlength="80"
+                                    v-model="form.name"
+                                    placeholder="Nome">
+                        </b-form-input>
+                    </b-input-group>
                     </b-row>
                 </b-col>
                 <b-col>
                     <b-row>
-                        <b-input-group size="sm">
-                            <b-input-group-prepend is-text class="firstLabel">
-                                CPF:
-                            </b-input-group-prepend>
-                            <b-form-input id="cpf"
-                                        type="text"
-                                        name="cpf"
-                                        v-mask="['###.###.###-##']"
-                                        maxlength="14"
-                                        v-model="form.cpf"
-                                        placeholder="CPF">
-                            </b-form-input>
-                        </b-input-group>
-
+                    <b-input-group size="sm">
+                        <b-input-group-prepend is-text class="firstLabel">
+                            CPF:
+                        </b-input-group-prepend>
+                        <b-form-input id="cpf"
+                                    type="text"
+                                    name="cpf"
+                                    v-mask="['###.###.###-##']"
+                                    maxlength="14"
+                                    v-model="form.nin"
+                                    placeholder="CPF">
+                        </b-form-input>
+                    </b-input-group>
                     </b-row>
                 </b-col>
             </b-row>
@@ -168,7 +181,8 @@ export default {
                 nin: '',
                 codPeca: null,
                 datePresentation: null,
-                id_apresentacao: ''
+                id_apresentacao: '',
+                name: '',
             },
             action: {
                 codReserva: '',
@@ -351,8 +365,8 @@ export default {
         search() {
             this.form.cancelAll = false;
             this.form.selected = [];
-            if (this.form.nin == "" && this.form.codReserva == "" && this.form.id_apresentacao == '') {
-                this.toastError("Preencha o CPF, código da reserva ou uma sala para consultar");
+            if (this.form.nin == "" && this.form.name == "" && this.form.codReserva == "" && this.form.id_apresentacao == '') {
+                this.toastError("Preencha o Nome, CPF, código da reserva ou uma sala para consultar");
                 return;
             }
             if ((this.form.codPeca != '' && this.form.codPeca != null) && (this.form.id_apresentacao == '' || this.form.id_apresentacao == null)) {
@@ -364,7 +378,7 @@ export default {
             this.processing = true;
             this.showWaitAboveAll();
 
-            bookingService.list(this.get_id_base(), this.form.nin, this.form.codReserva, this.form.id_apresentacao).then(
+            bookingService.list(this.get_id_base(), this.form.nin, this.form.codReserva, this.form.id_apresentacao, this.form.name).then(
                     response => {
                         this.hideWaitAboveAll();
                         this.processing = false;

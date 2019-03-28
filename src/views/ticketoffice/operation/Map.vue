@@ -3,13 +3,13 @@
         <span v-if="showClientAdd">
             <client-add needCPF="true" needRG="false" needPhone="true" needName="true" needCardBin="false" showCardBin="false"></client-add>
         </span>
-            <b-row :style="{ 'width': ( map.width)+ 'px', 'max-width': ( map.width)+ 'px' }">
+            <b-row v-if="!showClientAdd" :style="{ 'width': ( map.width)+ 'px', 'max-width': ( map.width)+ 'px' }">
                 <b-col>
                     <b-alert variant="success" show v-if="event.loaded">Evento: {{event.name}} | {{operation.step1.roomName}} - {{operation.step1.datePresentation}} - {{operation.step1.hourPresentation}}</b-alert>
                 </b-col>
             </b-row>
 
-            <div :style="{ 'width': ( map.width)+ 'px', 'max-width': ( map.width)+ 'px', 'text-align': 'center', 'height': '40px', 'font-size': '14px' }">
+            <div v-if="!showClientAdd && !showSeatsNotNumbered" :style="{ 'width': ( map.width)+ 'px', 'max-width': ( map.width)+ 'px', 'text-align': 'center', 'height': '40px', 'font-size': '14px' }">
                 <span class="pretty p-default" v-if="issell" style="float:left; padding-top: 8px;">
                     <input type="checkbox" v-model="sellReservation" @click="changetypeofsell" />
                     <span class="state p-success">
@@ -18,7 +18,10 @@
                 </span>
                 <span title="Recarregar o mapa" @click="reloadme" class="reloadme"><i class="fas fa-redo-alt"></i>Recarregar o mapa</span>
             </div>
-        <span v-if="!showClientAdd">
+        <span v-if="showSeatsNotNumbered">
+            <seatquantity :max="maxSeatsAvailableToBuy" :codReserva="codReserva"></seatquantity>
+        </span>
+        <span v-if="!showClientAdd && !showSeatsNotNumbered">
             <b-tooltip target="header_next" placement="top">
                 <span>Prosseguir com a venda</span>
             </b-tooltip>
@@ -60,6 +63,7 @@ import { shoppingCartService } from '../../../components/ticketoffice/services/s
 import { printService } from '../../../components/ticketoffice/services/print';
 
 import clientAdd from '../Client';
+import seatquantity from '../SeatQuantity';
 import seatinfo from "@/components/ticketoffice/Seatinfo.vue";
 
 Vue.use(VModal, {
@@ -70,7 +74,8 @@ Vue.use(VModal, {
 export default {
     mixins: [func, funcOperation],
     components: {
-        clientAdd: clientAdd
+        clientAdd,
+        seatquantity
     },
     data () {
         return {
@@ -110,6 +115,7 @@ export default {
                     isNumbered: false,
                 }                
             },
+            showSeatsNotNumbered: false,
             sellReservation: false,
             showmapwait: true,
             added: false,
@@ -117,7 +123,7 @@ export default {
             processing: false,
             showClientAdd: false,
             codCliente: null,
-            codReserva: null,
+            codReserva: '',
             seats: [],
             selected: [],
             hasSeatNumber: false,
@@ -179,6 +185,13 @@ export default {
             this.showClientAdd = false;
             this.selected = [];
             this.toffice_buttonNext(this.selected.length>0, this.nextURI);
+            this.getSeats();
+        },
+        hideClientWhenForced() {
+            this.showClientAdd = false;
+            this.selected = [];
+            this.toffice_buttonNext(this.selected.length>0, this.nextURI);
+            this.loadmap();
             this.getSeats();
         },
         createSeatSelectedObject(indice, sector, name) {
@@ -277,17 +290,33 @@ export default {
                 this.toffice_buttonNext(this.selected.length>0, this.nextURI);
             }
         },
-        reserveSeats(qtd) {
+        reserveSeats(qtd, sellreservation, codReservaForced) {
+            if (sellreservation == null || sellreservation == undefined)
+                sellreservation = 0;
+
+            let codReserva = this.codReserva;
+            if (codReservaForced!='' && codReservaForced!=null && codReservaForced!=undefined) {
+                codReserva = codReservaForced;
+            }
+
             this.showWaitAboveAll();
-            bookingService.bookNotNumered(this.get_id_base(), this.operation.step1.id_apresentacao, this.getLoggedId(), parseInt(qtd), "").then(response=> {
+            bookingService.bookNotNumered(this.get_id_base(), this.operation.step1.id_apresentacao, this.getLoggedId(), parseInt(qtd), "", this.operation.step1.type, codReserva, this.codCliente, sellreservation).then(response=> {
                     this.hideWaitAboveAll();
                     if (this.validateJSON(response))
                     {
                         if (response.success == 0) {
                             this.popupError(response.message);
+                            this.showSeatsNotNumbered = true;
                         }
                         else {
-                            this.$router.push(this.nextURI);
+                            this.toastSuccess(response.message);
+                            if (this.operation.step1.type == "sell") {
+                                this.$router.push(this.nextURI);
+                            }
+                            else {
+                                this.finishReservation(false);
+                            }
+
                         }
                     }
                 }
@@ -368,6 +397,8 @@ export default {
             });
         },
         seatNotNumered() {
+            this.showSeatsNotNumbered = true;
+            return;
             this.$swal({
                 allowEscapeKey: false,
                 allowOutsideClick: false,
@@ -393,47 +424,114 @@ export default {
             });
 
         },
-        finishReservation() {
-            this.$swal({
-                allowEscapeKey: false,
-                allowOutsideClick: false,
-                allowEnterKey: false,
-                showCancelButton: true,
-                confirmButtonText: 'Sim',
-                cancelButtonText: 'Não',
-                title: 'Processo de reserva',
-                text: "Deseja finalizar a reserva?",
-            }).then((result) => {
-                if (result.value) {
-                    this.$swal({
-                        type: 'success',
-                        title: 'Processo de reserva',
-                        text: `Reserva ${this.codReserva} efetuada com sucesso.`,
-                    }).then((result2) => {
+        finishReservation(ask) {
+            if (ask == null || ask == undefined)
+                ask = true;
+
+            if (ask) {
+                this.$swal({
+                    allowEscapeKey: false,
+                    allowOutsideClick: false,
+                    allowEnterKey: false,
+                    showCancelButton: true,
+                    confirmButtonText: 'Sim',
+                    cancelButtonText: 'Não',
+                    title: 'Processo de reserva',
+                    text: "Deseja finalizar a reserva?",
+                }).then((result) => {
+                    if (result.value) {
                         this.$swal({
-                            allowEscapeKey: false,
-                            allowOutsideClick: false,
-                            allowEnterKey: false,
-                            showCancelButton: true,
-                            confirmButtonText: 'Sim',
-                            cancelButtonText: 'Não',
-                            title: 'Impressão da reserva',
-                            text: "Deseja Imprimir a reserva?",
-                        }).then((result) => {
-                            if (result.value) {
-                                printService.booking(this.get_id_base(), this.codReserva, '');
-                            }
-                        });
-                    }); 
-                    this.getHeader().cancelingReservationProcess();
-                    
-                }
-                else if (result.dismiss === this.$swal.DismissReason.cancel) {
-                    this.toffice_buttonNext(true, this.nextURI);
-                    this.gotoHomeTicketOffice();
-                }
-            });
+                            type: 'success',
+                            title: 'Processo de reserva',
+                            text: `Reserva ${this.codReserva} efetuada com sucesso.`,
+                        }).then((result2) => {
+                            this.$swal({
+                                allowEscapeKey: false,
+                                allowOutsideClick: false,
+                                allowEnterKey: false,
+                                showCancelButton: true,
+                                confirmButtonText: 'Sim',
+                                cancelButtonText: 'Não',
+                                title: 'Impressão da reserva',
+                                text: "Deseja Imprimir a reserva?",
+                            }).then((result) => {
+                                if (result.value) {
+                                    printService.booking(this.get_id_base(), this.codReserva, '');
+                                }
+                            });
+                        }); 
+                        this.getHeader().cancelingReservationProcess();
+                        
+                    }
+                    else if (result.dismiss === this.$swal.DismissReason.cancel) {
+                        this.toffice_buttonNext(true, this.nextURI);
+                        this.gotoHomeTicketOffice();
+                    }
+                });
+            }
+            else {
+                this.$swal({
+                    type: 'success',
+                    title: 'Processo de reserva',
+                    text: `Reserva ${this.codReserva} efetuada com sucesso.`,
+                }).then((result2) => {
+                    this.$swal({
+                        allowEscapeKey: false,
+                        allowOutsideClick: false,
+                        allowEnterKey: false,
+                        showCancelButton: true,
+                        confirmButtonText: 'Sim',
+                        cancelButtonText: 'Não',
+                        title: 'Impressão da reserva',
+                        text: "Deseja Imprimir a reserva?",
+                    }).then((result) => {
+                        if (result.value) {
+                            printService.booking(this.get_id_base(), this.codReserva, '');
+                        }
+                    });
+                }); 
+                this.getHeader().cancelingReservationProcess();
+
+            }
+
         },
+        loadmap() {
+            eventService.getMap(this.get_id_base(), this.operation.step1.id_apresentacao).then(response=> {
+                    this.hideWaitAboveAll();
+                    if (this.validateJSON(response))
+                    {
+                        if (response.seatsAvailable <= 0) {
+                            this.$swal({
+                                type: 'error',
+                                text: "Não há assentos disponíveis para compra.",
+                                showConfirmButton: true,
+                            }).then((result) => {
+                                //this.$router.push("/ticketoffice/operation");
+                            });
+                            // return;
+                        }
+                        this.maxSeatsAvailableToBuy = response.maxSeatsAvailableToBuy;
+                        this.hasSeatNumber = response.IngressoNumerado == "1";
+                        if (this.hasSeatNumber)
+                        {
+                            // console.log(response);
+                            this.map.img = response.FotoImagemSite;
+                            this.map.width = parseInt(response.LarguraSite);
+                            this.map.height = parseInt(response.AlturaSite);
+                            this.getSeats(true);
+                        }
+                        else {
+                            this.clearSeatsTimer();
+                            this.seatNotNumered();
+                        }
+                    }
+                }
+                ,error=> {
+                    this.hideWaitAboveAll();
+                    this.toastError("Falha na execução.");
+            });
+
+        }
     },
     created () {
         if (this.operation.step1.type == "sell")
@@ -446,46 +544,14 @@ export default {
         
         this.toffice_buttonNext(this.selected.length>0, this.nextURI);
         this.setSeatsTimer();
-        this.showWaitAboveAll();
         if (this.operation.step1.type == "reservation") {
             this.showClient();
             this.nextURI = "finishReservation";
         }
+        else {
+            this.loadmap();
+        }
 
-        eventService.getMap(this.get_id_base(), this.operation.step1.id_apresentacao).then(response=> {
-                this.hideWaitAboveAll();
-                if (this.validateJSON(response))
-                {
-                    if (response.seatsAvailable <= 0) {
-                        this.$swal({
-                            type: 'error',
-                            text: "Não há assentos disponíveis para compra.",
-                            showConfirmButton: true,
-                        }).then((result) => {
-                            //this.$router.push("/ticketoffice/operation");
-                        });
-                        // return;
-                    }
-                    this.maxSeatsAvailableToBuy = response.maxSeatsAvailableToBuy;
-                    this.hasSeatNumber = response.IngressoNumerado == "1";
-                    if (this.hasSeatNumber)
-                    {
-                        // console.log(response);
-                        this.map.img = response.FotoImagemSite;
-                        this.map.width = parseInt(response.LarguraSite);
-                        this.map.height = parseInt(response.AlturaSite);
-                        this.getSeats(true);
-                    }
-                    else {
-                        this.clearSeatsTimer();
-                        this.seatNotNumered();
-                    }
-                }
-            }
-            ,error=> {
-                this.hideWaitAboveAll();
-                this.toastError("Falha na execução.");
-        });
         window.addEventListener("beforeunload", function (e) {
 /*            if (this.processing) {
                 return undefined;

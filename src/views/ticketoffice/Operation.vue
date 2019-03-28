@@ -168,9 +168,9 @@ export default {
           }
 
           if (this.event.room.isNumbered == false && this.isReservation) {
-            this.toastError("Não é possível reservar para apresentação não numerada.");
-            this.toffice_buttonNext(false);
-            return;
+//            this.toastError("Não é possível reservar para apresentação não numerada.");
+//            this.toffice_buttonNext(false);
+//            return;
           }
 
           this.addStep1(
