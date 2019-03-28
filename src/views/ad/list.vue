@@ -54,6 +54,10 @@
                   <span v-if="data.item.priority == 0">Sem Prioridade</span>
                   <span v-else>{{data.item.priority}}</span>
               </template>
+              <template slot="type" slot-scope="data">
+                  <span v-if="data.item.type == 'card'">Cartão</span>
+                  <span v-else>Banner</span>
+              </template>
           </b-table>
           <b-pagination @change="pagto" size="sm" v-if="grids.defaults.loaded && grids.defaults.total>grids.defaults.perPage" :total-rows="grids.defaults.total" v-model="grids.defaults.currentPage" :per-page="grids.defaults.perPage">
           </b-pagination>
@@ -148,6 +152,7 @@ export default {
                     name: { label: 'Nome', sortable: false },
                     campaign: { label: "Campanha", sortable: false },
                     priority: { label: 'Prioridade', sortable: false },
+                    type: { label: 'Tipo', sortable: false },
                     startdate: { label: 'Início', sortable: false },
                     enddate: { label: 'Fim', sortable: false },
                     actions: { label: 'Ações' }
