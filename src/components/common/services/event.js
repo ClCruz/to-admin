@@ -10,6 +10,27 @@ export const eventService = {
   list,
   get,
   save,
+  base64
+}
+
+function base64(id, type) {
+    let url = config.api + `/v1/admin/event/base64`;
+
+    let obj = { id, type };
+
+    var ret = new Promise(
+        function (resolve, reject) {
+            Vue.http.post(url, obj, { emulateJSON: true }).then(res => {
+                resolve(res.body);
+            }, err => {
+                reject({
+                    error: true,
+                    msg: err
+                });
+            });    
+        }
+    );
+    return ret;
 }
 
 function get(loggedId, id_evento, id_base) {
@@ -57,7 +78,8 @@ function save(id_to_admin_user, id_base,id_produtor
     ,showInBanner,bannerDescription,QtIngrPorPedido
     ,in_obriga_cpf,qt_ingressos_por_cpf,ticketoffice_askemail
     ,imagechanged,imagebase64,free_installments
-    ,max_installments,interest_rate,ticketoffice_ticketmodel) {
+    ,max_installments,interest_rate,ticketoffice_ticketmodel
+    ,showonline) {
 
     let url = config.api + `/v1/admin/event/save`;
 
@@ -71,6 +93,7 @@ function save(id_to_admin_user, id_base,id_produtor
         ,in_obriga_cpf,qt_ingressos_por_cpf,ticketoffice_askemail
         ,imagechanged,imagebase64,free_installments
         ,max_installments,interest_rate,ticketoffice_ticketmodel
+        ,showonline
     };
 
     // console.log(obj);

@@ -340,6 +340,9 @@ export default {
     },
     validate() {
       let ret = !this.$v.form.$invalid;
+      if (this.isAdd) {
+        ret = this.form.saveimage;
+      }
       return ret;
     },
     get() {
@@ -443,9 +446,9 @@ export default {
       type: {
         required,
       },
-      image: {
-        required,
-      },
+      // image: {
+      //   required,
+      // },
       name: {
         required,
       },

@@ -50,6 +50,20 @@
               <template slot="ds_municipio" slot-scope="data">
                   {{data.item.ds_municipio}}/{{data.item.sg_estado}}
               </template>
+              <template slot="id_evento" slot-scope="data">
+                <span v-if="mayI('developer')">
+                  <span title="id_evento">{{data.item.id_evento}}</span>/<span title="codPeca">{{data.item.CodPeca}}</span>/<span title="id_base">{{data.item.id_base}}</span>
+                </span>
+                <span v-else></span>
+              </template>
+              <template slot="showonline" slot-scope="data">
+                <i class="fab fa-cloudversify" style="padding-right:2px;" v-if="data.item.showonline == 1" title="Venda pelo site"></i>
+                <i class="fas fa-id-card-alt" title="Venda pela bilheteria"></i>
+              </template>
+              <template slot="hasshowyet" slot-scope="data">
+                  <i class="fas fa-sad-tear" v-if="data.item.hasshowyet == 0" title="Todas apresentações acabaram"></i>
+                  <i class="fas fa-grin-stars" v-else title="Ainda tem apresentação acontecendo."></i>                  
+              </template>
 
               <template slot="actions" slot-scope="data">
                   <span v-if="!mayI('ev-add')">-</span>
@@ -152,8 +166,11 @@ export default {
                 perPage: 10,
                 items: [],
                 fields: {
-                    imageURI: { label: '-', sortable: false },
+                    id_evento: { label: '', sortable: false },
+                    imageURI: { label: '', sortable: false },
                     ds_evento: { label: 'Evento', sortable: false },
+                    showonline: { label: 'Está online?', sortable: false },
+                    hasshowyet: { label: 'Ainda tem show?', sortable: false },
                     ds_local_evento: { label: 'Local', sortable: false },
                     genreName: { label: 'Gênero', sortable: false },
                     ds_municipio: { label: 'Cidade', sortable: false },

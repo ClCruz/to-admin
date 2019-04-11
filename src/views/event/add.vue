@@ -8,29 +8,27 @@
       <iframe v-if="this.form.ds_googlemaps.length>0" :src="googlemapsURI" height="200" width="300"></iframe>
       <b-btn class="mt-3" variant="outline-info" block @click="gmapsClose">Fechar</b-btn>
     </b-modal>
-    <b-modal ref="imageModal" hide-footer title="Image">
-      <div class="d-block text-center">
-        <h4>Imagem {{popups.image.name}}</h4>
-      </div>
-      <img v-if="popups.image.url!=''" :src="popups.image.url" />
-      <b-btn class="mt-3" variant="outline-info" block @click="imageClose">Fechar</b-btn>
-    </b-modal>
     <b-row>
       <b-col>
-        <b-row v-if="form.imageURI!='' || !form.changedImage">
-          <img v-on:click="imageClick" :src="form.imageURI" alt="" title="Clique em cima para trocar a imagem." class="imgthumb" />
-              </b-row>
-          <b-row v-if="form.imageURI=='' || form.changedImage">
-            <picture-input ref="pictureInput" @change="onChange" width="160" height="180" margin="0" accept="image/jpeg,image/png" :crop="false" :hide-change-button="true" size="1" button-class="btn" :custom-strings="components.picOptions"></picture-input>
-          </b-row>
-          <b-row class="mx-auto mb-3" style="width: 403px;" v-if="form.imageURI!=''">
-            <b-button-group>
-              <b-button size="sm" @click="showImage('original', form.imageOriginalURI)" v-if="form.imageOriginalURI != '' && !form.changedImage" variant="outline-info" v-b-tooltip.hover title="Clique para ver a imagem original.">Original</b-button>
-              <b-button size="sm" @click="showImage('card', form.imageURI)" v-if="form.imageURI != '' && !form.changedImage" variant="outline-success" v-b-tooltip.hover title="Clique para ver a imagem do tipo card.">Card</b-button>
-              <b-button size="sm" @click="showImage('big', form.imageBigURI)" v-if="form.imageBigURI != '' && !form.changedImage" variant="outline-warning" v-b-tooltip.hover title="Clique para ver a imagem do tipo banner.">Banner</b-button>
-              <b-button size="sm" @click="imageClick" variant="outline-danger" v-b-tooltip.hover title="Clique para abrir a opção de alterar a imagem.">Alterar a imagem</b-button>
-            </b-button-group>
-          </b-row>
+        <div id="my-upload" style="display: flex; justify-content: center;">
+            <vue-upload-multiple-image
+              :key="idupload"
+              @upload-success="uploadImageSuccess"
+              @before-remove="beforeRemove"
+              @edit-image="editImage"
+              @data-change="dataChange"
+              :data-images="form.images"
+              :dragText="components.picOptions.dragText"
+              :browseText="components.picOptions.browseText"
+              :primaryText="components.picOptions.primaryText"
+              :markIsPrimaryText="components.picOptions.markIsPrimaryText"
+              :popupText="components.picOptions.popupText"
+              :dropText="components.picOptions.dropText"
+              :showPrimary="false"
+              :multiple="false"
+              ></vue-upload-multiple-image>
+        </div>
+        <div class="directlink" v-if="form.imageURICard!=''"><a :href="form.imageURICard" title="Abrir imagem usada como card" target="_blank">Card</a>/<a title="Abrir imagem usada como banner" :href="form.imageURIBanner" target="_blank">Banner</a>/<a title="Abrir imagem original" :href="form.imageURIOriginal" target="_blank">Imagem original</a></div>
           <b-row class="mb-3">
             <b-input-group size="sm">
               <b-input-group-prepend is-text v-bind:class="{ errorFormValidateLabel: ($v.form.NomPeca.$invalid) }">
@@ -310,35 +308,46 @@
             </b-col>
 
           </b-row>
-          <b-row class="mx-auto mb-3">
-            <b-form-group label="">
-              <b-form-checkbox-group v-model="checkboxs" buttons button-variant="outline-primary" size="sm" name="checkboxs" :options="checkbox.options">
-              </b-form-checkbox-group>
-            </b-form-group>
-          </b-row>
-
-          <b-row class="mb-3">
-            <b-button type="button" variant="success" size="sm" @click="save">
-              <v-wait for="inprocess">
-                <template slot="waiting">
-                  Carregando...
-                </template>
-              </v-wait>
-              <v-wait for="inprocessSave">
-                <template slot="waiting">
-                  Salvando...
-                </template>
-              </v-wait>
-              <span v-if="!processing">Salvar</span>
-            </b-button>
-            <b-button :disabled="id == 0 || id == null || id == undefined" v-if="mayI('presentation-add')" type="button" variant="info" size="sm" @click="addPresentation">
-              <span>Ver datas</span>
-            </b-button>
-
-          </b-row>
-
       </b-col>
     </b-row>
+    <div class="checkboxs">
+      <div class="checkboxGroup">
+        <input id="showonline" name="showonline" v-model="form.showonline" type="checkbox"/>
+        <label for="showonline">Vender Web</label>
+      </div>
+      <div class="checkboxGroup">
+        <input id="showInBanner" name="showInBanner" v-model="form.showInBanner" type="checkbox"/>
+        <label for="showInBanner">Mostrar no banner</label>
+      </div>
+      <div class="checkboxGroup">
+        <input id="in_obriga_cpf" name="in_obriga_cpf" v-model="form.in_obriga_cpf" type="checkbox"/>
+        <label for="in_obriga_cpf">Obriga CPF e Nome na compra da Bilheteria</label>
+      </div>
+      <div class="checkboxGroup">
+        <input id="ticketoffice_askemail" name="ticketoffice_askemail" v-model="form.ticketoffice_askemail" type="checkbox"/>
+        <label for="ticketoffice_askemail">Perguntar para enviar o bilhete por email na compra da Bilheteria</label>
+      </div>
+    </div>
+    <b-row class="mb-3">
+      <b-button type="button" variant="success" size="sm" @click="save">
+        <v-wait for="inprocess">
+          <template slot="waiting">
+            Carregando...
+          </template>
+        </v-wait>
+        <v-wait for="inprocessSave">
+          <template slot="waiting">
+            Salvando...
+          </template>
+        </v-wait>
+        <span v-if="!processing">Salvar</span>
+      </b-button>
+      <b-button :disabled="id == 0 || id == null || id == undefined" v-if="mayI('presentation-add')" type="button" variant="info" size="sm" @click="addPresentation">
+        <span>Ver datas</span>
+      </b-button>
+
+    </b-row>
+
   </b-container>
 </div>
 </template>
@@ -347,7 +356,7 @@
 import Vue from "vue";
 import VueHead from 'vue-head';
 import VueQuillEditor from 'vue-quill-editor';
-import PictureInput from 'vue-picture-input';
+import VueUploadMultipleImage from 'vue-upload-multiple-image';
 import VueMask from 'v-mask';
 import Vuelidate from 'vuelidate';
 import VModal from 'vue-js-modal';
@@ -355,33 +364,15 @@ import VModal from 'vue-js-modal';
 import dateadd from '../presentation/add';
 
 import config from "@/config";
-import {
-  func
-} from "@/functions";
-import {
-  userService
-} from '../../components/common/services/user';
-import {
-  genreService
-} from '../../components/common/services/genre';
-import {
-  cityService
-} from '../../components/common/services/city';
-import {
-  stateService
-} from '../../components/common/services/state';
-import {
-  placeService
-} from '../../components/common/services/place';
-import {
-  producerService
-} from '../../components/common/services/producer';
-import {
-  eventService
-} from '../../components/common/services/event';
-import {
-  VMoney
-} from 'v-money';
+import { func } from "@/functions";
+import { userService } from '../../components/common/services/user';
+import { genreService } from '../../components/common/services/genre';
+import { cityService } from '../../components/common/services/city';
+import { stateService } from '../../components/common/services/state';
+import { placeService } from '../../components/common/services/place';
+import { producerService } from '../../components/common/services/producer';
+import { eventService } from '../../components/common/services/event';
+import { VMoney } from 'v-money';
 
 import 'quill/dist/quill.core.css';
 import 'quill/dist/quill.snow.css';
@@ -404,7 +395,7 @@ Vue.use(Vuelidate);
 export default {
   mixins: [func],
   components: {
-    PictureInput,
+    VueUploadMultipleImage,
   },
   props: ['id', 'base'],
   name: 'event-add',
@@ -436,6 +427,9 @@ export default {
         let ret = [];
         if (this.form.showInBanner == '1' || this.form.showInBanner == 1) {
           ret.push("showInBanner");
+        }
+        if (this.form.showonline == '1' || this.form.showonline == 1) {
+          ret.push("showonline");
         }
         if (this.form.in_obriga_cpf == '1' || this.form.in_obriga_cpf == 1) {
           ret.push("in_obriga_cpf");
@@ -474,6 +468,31 @@ export default {
     }
   },
   methods: {
+    uploadImageSuccess(formData, index, fileList) {
+      //console.log(fileList);
+      this.form.saveimage = true;
+      this.form.image = fileList[index].path;
+      console.log("uploadImageSuccess");
+      // Upload image api
+      // axios.post('http://your-url-upload', formData).then(response => {
+      //   console.log(response)
+      // })
+    },
+    beforeRemove (index, done, fileList) {
+      this.form.saveimage = false;
+      this.form.image = null;
+      done();
+      console.log("beforeRemove");
+    },
+    editImage (formData, index, fileList) {
+      this.form.saveimage = true;
+      this.form.image = fileList[index].path;
+      console.log("editImage");
+    },
+    dataChange (data) {
+      console.log("dataChange");
+      console.log(data)
+    },
     addPresentation() {
       this.$modal.show(dateadd, {
         id: this.id,
@@ -494,36 +513,21 @@ export default {
       this.$refs.presentationModal.hide();
     },
     checkproducer() {
+      if (this.form.id_produtor == null || this.form.id_produtor == "") return;
+      if (this.selects.producer.length == 0) return;
+      if (this.form.produceralert) return;
+
       let index = this.selects.producer.map(function (e) {
         return e.id_produtor;
       }).indexOf(this.form.id_produtor);
       if (index == -1) {
+        this.form.produceralert = true;
         this.$swal({
           type: 'error',
           text: "Atenção existe uma incompatibilidade de permissão entre você e o produtor, não é possível visualizar o produtor que está cadastrado para o evento.",
           showConfirmButton: true,
         }).then((result) => {});
       }
-    },
-    showImage(type, url) {
-      switch (type) {
-        case "big":
-          this.popups.image.name = "Banner";
-          break;
-        case "original":
-          this.popups.image.name = "Original";
-          break;
-        case "card":
-          this.popups.image.name = "Card";
-          break;
-      }
-      this.popups.image.url = url;
-      this.$refs.imageModal.show();
-    },
-    imageClick() {
-      this.form.hasImage = false;
-      this.form.imageURI = '';
-      this.form.changedImage = true;
     },
     get() {
       if (this.processing) return;
@@ -558,6 +562,7 @@ export default {
               this.form.description = response.description;
               this.form.meta_description = response.meta_description;
               this.form.meta_keyword = response.meta_keyword;
+              this.form.showonline = response.showonline;
               this.form.showInBanner = response.showInBanner;
               this.form.bannerDescription = response.bannerDescription;
               this.form.opening_time = response.opening_time;
@@ -569,19 +574,22 @@ export default {
               this.form.DatIniPeca = response.DatIniPeca;
               this.form.DatFinPeca = response.DatFinPeca;
               this.form.hasPresentantion = response.hasPresentantion;
-              this.form.imageOriginalURI = response.imageOriginalURI;
-              this.form.imageBigURI = response.imageBigURI;
-              this.form.imageURI = response.imageURI;
+
+              this.form.imageURICard = response.imageURICard;
+              this.form.imageURIBanner = response.imageURIBanner;
+              this.form.imageURIOriginal = response.imageURIOriginal;
+
               this.form.max_installments = response.max_installments;
               this.form.free_installments = response.free_installments;
               this.form.interest_rate = response.interest_rate;
               this.form.ticketoffice_ticketmodel = response.ticketoffice_ticketmodel;
-              console.log(this.form.ticketoffice_ticketmodel);
-              console.log(response.ticketoffice_ticketmodel);
               this.$refs.interest_rate.$el.value = response.interest_rate;
+
               this.checkproducer();
               this.populateCity();
               this.populatePlace();
+
+              this.populateImage();
 
               if (this.queryString("opendate")) {
                 this.addPresentation();
@@ -597,22 +605,12 @@ export default {
         }
       );
     },
-    onChange(image) {
-      if (image) {
-        this.form.imagebase64 = image;
-        this.form.changedImage = true;
-      }
-    },
     openMaps() {
       this.popups.gmaps.name = this.form.ds_local_evento;
       this.$refs.gmapsModal.show();
     },
     gmapsClose() {
       this.$refs.gmapsModal.hide();
-    },
-    imageClose() {
-      this.popups.url = '';
-      this.$refs.imageModal.hide();
     },
     validate() {
       return !this.$v.form.$invalid;
@@ -642,6 +640,7 @@ export default {
           ticketoffice_askemail = "",
           id_base = "",
           imagechanged = false,
+          showonline = "",
           imagebase64 = "",
           free_installments = "",
           max_installments = "",
@@ -649,6 +648,7 @@ export default {
           interest_rate = "";
 
         id_base = this.form.id_base;
+        showonline = this.form.showonline;
         id_produtor = this.form.id_produtor;
         CodPeca = this.form.CodPeca;
         NomPeca = this.form.NomPeca;
@@ -670,26 +670,22 @@ export default {
         ticketoffice_ticketmodel = this.form.ticketoffice_ticketmodel;
         qt_ingressos_por_cpf = this.form.qt_ingressos_por_cpf;
 
-        imagechanged = this.form.changedImage;
-        imagebase64 = this.form.imagebase64;
+        imagechanged = this.form.saveimage;
+        imagebase64 = this.form.image;
 
         free_installments = this.form.free_installments;
         max_installments = this.form.max_installments;
         interest_rate = this.formatInterestRate(this.form.interest_rate);
-        // this.$wait.start("inprocessSave");
-        // this.processing = true;
 
-        eventService.save(this.getLoggedId(), id_base, id_produtor, CodPeca, NomPeca, CodTipPeca, TemDurPeca, CenPeca, id_local_evento, ValIngresso, description, meta_description, meta_keyword, opening_time, insurance_policy, showInBanner, bannerDescription, QtIngrPorPedido, in_obriga_cpf, qt_ingressos_por_cpf, ticketoffice_askemail, imagechanged, imagebase64, free_installments, max_installments, interest_rate, ticketoffice_ticketmodel).then(
+        eventService.save(this.getLoggedId(), id_base, id_produtor, CodPeca, NomPeca, CodTipPeca, TemDurPeca, CenPeca, id_local_evento, ValIngresso, description, meta_description, meta_keyword, opening_time, insurance_policy, showInBanner, bannerDescription, QtIngrPorPedido, in_obriga_cpf, qt_ingressos_por_cpf, ticketoffice_askemail, imagechanged, imagebase64, free_installments, max_installments, interest_rate, ticketoffice_ticketmodel, showonline).then(
 
           response => {
             this.processing = false;
-//            console.log("Event Service: " + response);
             this.hideWaitAboveAll();
             this.$wait.end("inprocessSave");
 
             if (response.success) {
               this.toastSuccess("Salvo com sucesso");
-              //this.$router.push(`/event/list`);
             } else {
               this.toastError(response.msg);
             }
@@ -724,6 +720,40 @@ export default {
         this.form.ds_googlemaps = this.selects.place[index].ds_googlemaps;
       }
 
+    },
+    populateImage() {
+      Vue.nextTick().then(response => {
+        this.$wait.start("inprocess");
+        this.showWaitAboveAll();
+        eventService.base64(this.id, "ori").then(
+          response => {
+            this.hideWaitAboveAll();
+            this.$wait.end("inprocess");
+
+            if (this.validateJSON(response)) {
+              this.form.imgbase64 = response.code;
+              this.imageobj();
+            }
+          },
+          error => {
+            this.hideWaitAboveAll();
+            this.$wait.end("inprocess");
+            this.toastError("Falha na execução.");
+          }
+        );
+      });
+    },
+    imageobj() {
+      Vue.nextTick().then(response => {
+        let obj = {
+          default: 1
+          ,highlight: 1
+          ,name: "default.jpg"
+          ,path: this.form.imgbase64
+        }
+        this.form.images.push(obj);
+        this.idupload++;
+      });
     },
     populatePlace() {
       this.showWaitAboveAll();
@@ -797,6 +827,7 @@ export default {
 
           if (this.validateJSON(response)) {
             this.selects.producer = response;
+            this.checkproducer();
           }
         },
         error => {
@@ -872,6 +903,7 @@ export default {
     return {
       processing: false,
       loading: false,
+      idupload: 1,
       components: {
         quillOptions: {
           modules: {
@@ -895,16 +927,12 @@ export default {
           theme: 'snow'
         },
         picOptions: {
-          upload: '<p>Não foi possível realizar o upload.</p>', // HTML allowed
-          drag: 'Arraste a imagem ou clique para selecionar', // HTML allowed
-          tap: 'Toque aqui para selecionar uma imagem', // HTML allowed
-          change: 'Mudar', // Text only
-          remove: 'Remover', // Text only
-          select: 'Selecione uma imagem', // Text only
-          selected: '<p>Imagem selecionada com sucesso.</p>', // HTML allowed
-          fileSize: 'O tamanho da imagem ultrapassou o limite.', // Text only
-          fileType: 'Esse tipo de arquivo não é suportado.', // Text only
-          aspect: 'Landscape/Portrait' // Text only
+          dragText: "Arrastar imagem",
+          browseText: "Selecione",
+          primaryText: "Padrão",
+          markIsPrimaryText: "Definir como padrão",
+          popupText: "Esta imagem será exibida como padrão",
+          dropText: "Solte aqui",
         },
         money: {
             decimal: '.',
@@ -927,7 +955,12 @@ export default {
         }
       },
       checkbox: {
-        options: [{
+        options: [
+          {
+            text: "Vender Web",
+            value: "showonline"
+          },
+          {
             text: "Mostrar no banner",
             value: "showInBanner"
           },
@@ -1057,15 +1090,21 @@ export default {
         ]
       },
       form: {
+        workaround: 0,
+        imgbase64: '',
+        images: [],
+        image: '',
+        imageURICard: '',
+        imageURIBanner: '',
+        imageOriginalURI: '',
+        saveimage: false,
+
+        produceralert: false,
         loaded: false,
         id: '',
         id_estado: '',
         id_municipio: '',
         ds_googlemaps: '',
-        hasImage: true,
-        changedImage: false,
-        imagebase64: "",
-
         CodPeca: '',
         id_produtor: '',
         id_base: '',
@@ -1080,6 +1119,7 @@ export default {
         meta_description: '',
         meta_keyword: '',
         showInBanner: '',
+        showonline: '',
         bannerDescription: '',
         opening_time: '',
         insurance_policy: '',
@@ -1091,9 +1131,6 @@ export default {
         DatIniPeca: '',
         DatFinPeca: '',
         hasPresentantion: '',
-        imageOriginalURI: '',
-        imageBigURI: '',
-        imageURI: '',
 
         free_installments: null,
         max_installments: null,
@@ -1103,6 +1140,107 @@ export default {
   }
 }
 </script>
+<style lang="scss">
+.checkboxGroup {
+    background-color: #fff;
+    display: block;
+    margin: 2px 0;
+    position: relative;
+
+    label {
+      padding: 2px 5px;
+      width: 100%;
+      display: block;
+      text-align: left;
+      color: #3C454C;
+      cursor: pointer;
+      position: relative;
+      z-index: 2;
+      transition: color 200ms ease-in;
+      overflow: hidden;
+
+      &:before {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        content: '';
+        background-color: #2b1dc3;
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%) scale3d(1, 1, 1);
+        transition: all 300ms cubic-bezier(0.4, 0.0, 0.2, 1);
+        opacity: 0;
+        z-index: -1;
+      }
+
+      &:after {
+        width: 32px;
+        height: 32px;
+        content: '';
+        border: 2px solid #D1D7DC;
+        background-color: #fff;
+        background-image: url("data:image/svg+xml,%3Csvg width='32' height='32' viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M5.414 11L4 12.414l5.414 5.414L20.828 6.414 19.414 5l-10 10z' fill='%23fff' fill-rule='nonzero'/%3E%3C/svg%3E ");
+        background-repeat: no-repeat;
+        background-position: 2px 3px;
+        border-radius: 50%;
+        z-index: 2;
+        position: absolute;
+        right: 30px;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        transition: all 200ms ease-in;
+      }
+    }
+
+    input:checked ~ label {
+      color: #fff;
+
+      &:before {
+        transform: translate(-50%, -50%) scale3d(56, 56, 1);
+        opacity: 1;
+      }
+
+      &:after {
+        background-color: #28a745;
+        border-color: #28a745;
+      }
+    }
+
+    input {
+      width: 32px;
+      height: 32px;
+      order: 1;
+      z-index: 2;
+      position: absolute;
+      right: 30px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      visibility: hidden;
+    }
+  }
+
+
+// codepen formatting
+.checkboxs {
+  padding: 0 16px;
+  max-width: 600px;
+  margin: 15px auto;
+  line-height: 36px;
+}
+
+html {
+  box-sizing: border-box;
+}
+
+code {
+  background-color: #9AA3AC;
+  padding: 0 8px;
+}
+
+</style>
 
 <style>
 .datepicker--open {
