@@ -1,6 +1,6 @@
 <template>
     <div v-if="mayIsee">
-      <b-modal ref="authModal" hide-footer title="Usuário x Permissão">
+      <b-modal ref="authModal" hide-footer title="Usuário x Permissão" size="lg">
         <div class="d-block text-center">
           <h4>Permissão para {{popups.auth.name}}</h4>
         </div>
@@ -102,9 +102,36 @@
               <template slot="actions" slot-scope="data">
                   <span v-if="!mayI('user-add')">-</span>
                   <b-button-group size="sm" v-if="mayI('user-add')">
-                      <b-button title="Editar" v-if="mayI('user-add')" @click.stop="edit(data.item,$event.target)">Editar</b-button>
-                      <b-button title="Bases" v-if="mayI('user-add')" @click.stop="base(data.item,$event.target)">Bases</b-button>
-                      <b-button title="Permissão" v-if="mayI('user-add-auth')" @click.stop="authorization(data.item,$event.target)">Permissão</b-button>
+                      <b-button title="Editar" v-if="mayI('user-add')" @click.stop="edit(data.item,$event.target)">
+                        <span v-if="!this.processing">
+                          Editar
+                        </span>
+                        <v-wait for="inprocess">
+                            <template slot="waiting">
+                                Carregando...
+                            </template>
+                        </v-wait>
+                      </b-button>
+                      <b-button title="Bases" v-if="mayI('user-add')" @click.stop="base(data.item,$event.target)">
+                        <span v-if="!this.processing">
+                          Bases
+                        </span>
+                        <v-wait for="inprocess">
+                            <template slot="waiting">
+                                Carregando...
+                            </template>
+                        </v-wait>
+                      </b-button>
+                      <b-button title="Permissão" v-if="mayI('user-add-auth')" @click.stop="authorization(data.item,$event.target)">
+                        <span v-if="!this.processing">
+                          Permissão
+                        </span>
+                        <v-wait for="inprocess">
+                            <template slot="waiting">
+                                Carregando...
+                            </template>
+                        </v-wait>
+                      </b-button>
                   </b-button-group>
               </template>
               <template slot="active" slot-scope="data">
@@ -222,14 +249,14 @@ export default {
       this.popups.base.grids.base.processing = true;
       this.processing = true;
 
-      //this.$wait.start("inprocess");
+      this.$wait.start("inprocess");
       this.showWaitAboveAll();
       userService.baseList(item.id).then(
         response => {
           this.processing = false;
           this.popups.base.grids.base.processing = false;
           this.hideWaitAboveAll();
-          //this.$wait.end("inprocess");
+          this.$wait.end("inprocess");
 
           if (this.validateJSON(response))
           {
@@ -242,7 +269,7 @@ export default {
           this.popups.base.grids.base.processing = false;
           this.processing = false;
           this.hideWaitAboveAll();
-          //this.$wait.end("inprocess");
+          this.$wait.end("inprocess");
           this.toastError("Falha na execução.");
         }
       );      
@@ -252,21 +279,18 @@ export default {
     },
     authorization(item) {
       if (this.processing) return;
+      
+      this.processing = true;
 
       this.popups.auth.name = item.name;
       this.popups.auth.id = item.id;
 
       this.popups.auth.grids.auth.processing = true;
-      this.processing = true;
 
-      //this.$wait.start("inprocess");
+      this.$wait.start("inprocess");
       this.showWaitAboveAll();
       userService.authList(item.id).then(
         response => {
-          this.processing = false;
-          this.popups.auth.grids.auth.processing = false;
-          this.hideWaitAboveAll();
-          //this.$wait.end("inprocess");
 
           if (this.validateJSON(response))
           {
@@ -274,12 +298,16 @@ export default {
               this.popups.auth.grids.auth.items = response;
               this.$refs.authModal.show();
           }
+          this.processing = false;
+          this.popups.auth.grids.auth.processing = false;
+          this.hideWaitAboveAll();
+          this.$wait.end("inprocess");
         },
         error => {
           this.popups.auth.grids.auth.processing = false;
           this.processing = false;
           this.hideWaitAboveAll();
-          //this.$wait.end("inprocess");
+          this.$wait.end("inprocess");
           this.toastError("Falha na execução.");
         }
       );      
@@ -305,7 +333,13 @@ export default {
 
       this.$wait.start("inprocess");
       this.showWaitAboveAll();
-      userService.list(this.form.search, this.grids.users.currentPage, this.grids.users.perPage).then(
+      let search = this.form.search;
+
+      if (search == "@me") {
+        search = this.ls_get("name");
+      }
+
+      userService.list(search, this.grids.users.currentPage, this.grids.users.perPage).then(
         response => {
           this.processing = false;
           this.grids.users.processing = false;
@@ -348,6 +382,7 @@ export default {
                 loaded: false,
                 items: [],
                 fields: {
+                  group: { label: 'Grupo', sortable: false },
                   name: { label: 'Nome', sortable: false },
                   description: { label: 'Descrição', sortable: false },
                   active: { label: '', sortable: false },
