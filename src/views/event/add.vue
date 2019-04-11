@@ -494,7 +494,7 @@ export default {
       console.log(data)
     },
     addPresentation() {
-      this.$modal.show(dateadd, {
+      this.$modal.show(dateadd, { //dateadd, {
         id: this.id,
         id_base: this.base
       }, {
@@ -910,7 +910,7 @@ export default {
             toolbar: [
               [{
                 header: [1, 2, false]
-              }], , ['bold', 'italic', 'underline'],
+              }], , ['bold', 'italic', 'underline', 'image'],
               [{
                 'color': []
               }, {

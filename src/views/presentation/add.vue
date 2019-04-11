@@ -1,5 +1,5 @@
 <template>
-    <div v-if="mayIsee">
+    <div v-if="mayIsee" style="-moz-user-select: none; -webkit-user-select: none; -ms-user-select:none; user-select:none;-o-user-select:none;" unselectable="on" onselectstart="return false;">
       <b-container v-if="isAdd">
         <b-row class="mb-3">
           <b-col>
@@ -29,7 +29,7 @@
             </b-collapse>
           </b-col>
         </b-row>
-        <b-row class="mb-3">
+        <b-row class="mb-3" >
           <b-col>
             <b-collapse v-model="form.collapseWeekdays" id="collapse1" class="mt-2">
                 <h3>Quais os dias da semana?</h3>
@@ -230,7 +230,19 @@ export default {
   },
   methods: {
     savedays() {
+      //console.log(this.grids.added.items);
+      this.showWaitAboveAll();
+      presentationService.save(this.grids.added.items).then(
+        response => {
+          this.hideWaitAboveAll();
 
+          alert("oi");
+        },
+        error => {
+          this.hideWaitAboveAll();
+          this.toastError("Falha na execução.");
+        }
+      );  
     },
     startchanged(date) {
       this.form.selectedDate.start = moment(date).isValid() ? moment(date).format("YYYY-MM-DD") : '';
@@ -308,6 +320,8 @@ export default {
           let obj = {
             codSala: this.form.codSala,
             codApresentacao: this.form.codApresentacao,
+            id_evento: this.id,
+            id_base: this.id_base,
             weekdayName,
             weekday,
             ValPeca: this.form.amount,
@@ -315,7 +329,9 @@ export default {
             dateStart: this.form.selectedDate.start,
             dateEnd: this.form.selectedDate.end,
             allowweb: this.form.allowweb,
+            allowwebBIT: this.form.allowweb ? 1 : 0,
             allowticketoffice: this.form.allowticketoffice,
+            allowticketofficeBIT: this.form.allowticketoffice ? 1 : 0,
           };
           if (this.grids.added.items.filter(function (data) {
             return data.codSala == obj.codSala && data.HorSessao == obj.HorSessao && data.weekday == obj.weekday;
@@ -537,8 +553,8 @@ export default {
             start: '',
             end: ''
           },
-          allowweb: false,
-          allowticketoffice: false,
+          allowweb: true,
+          allowticketoffice: true,
           amount: '',
           sessionTime: {
             HH: "00",

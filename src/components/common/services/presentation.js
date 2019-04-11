@@ -49,27 +49,10 @@ function list(loggedId, id_base, id_evento) {
   return ret;
 }
 
-function save(id_to_admin_user, id_base,id_produtor
-    ,CodPeca,NomPeca,CodTipPeca
-    ,TemDurPeca,CenPeca,id_local_evento
-    ,ValIngresso,description,meta_description
-    ,meta_keyword,opening_time,insurance_policy
-    ,showInBanner,bannerDescription,QtIngrPorPedido
-    ,in_obriga_cpf,qt_ingressos_por_cpf
-    ,imagechanged,imagebase64) {
+function save(data) {
+    let url = config.api + `/v1/admin/event/presentation/save`;
 
-    let url = config.api + `/v1/admin/event/save`;
-
-    let obj = {
-        id_base,id_produtor,id_to_admin_user
-        ,CodPeca,NomPeca,CodTipPeca
-        ,TemDurPeca,CenPeca,id_local_evento
-        ,ValIngresso,description,meta_description
-        ,meta_keyword,opening_time,insurance_policy
-        ,showInBanner,bannerDescription,QtIngrPorPedido
-        ,in_obriga_cpf,qt_ingressos_por_cpf
-        ,imagechanged,imagebase64
-    };
+    let obj = { data };
 
     console.log(obj);
 
