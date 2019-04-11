@@ -12,8 +12,13 @@
     "localhost:2004": "localhost",
     "localhost:2002": "localhost",
     "localhost:8080": "localhost",
+    "192.168.15.23:8080": "localhost",
+    "192.168.15.26:8080": "localhost",
+    "192.168.15.23": "localhost",
+    "192.168.15.26": "localhost",
     "localhost": "localhost",
-    "10.0.2.2:8080": "localhostpinpad",
+    "localhost:2001": "localhost",
+    "10.0.2.2:8080": "pinpad_lh",
     "10.0.2.2": "pinpad_lh",
     "www.sazarte.com": "sazarte",
     "api.sazarte.com": "sazarte",
@@ -135,7 +140,6 @@
     "compra.teatrorenaissance.tixs.me": "teatrorenaissance",
     "admin.teatrorenaissance.tixs.me": "teatrorenaissance",
     "ingressos.coastfight.com.br": "coastfight",
-<<<<<<< HEAD
     "api.ingressos.coastfight.com.br": "coastfight",
     "compra.ingressos.coastfight.com.br": "coastfight",
     "admin.ingressos.coastfight.com.br": "coastfight",
@@ -143,13 +147,4 @@
     "api.reservagruposdemo.tk": "reservagrupos",
     "compra.reservagruposdemo.tk": "reservagrupos",
     "admin.reservagruposdemo.tk": "reservagrupos"
-=======
-    "api.coastfight.com.br": "coastfight",
-    "compra.coastfight.com.br": "coastfight",
-    "admin.coastfight.com.br": "coastfight",
-    "reservagrupos.tixs.me": "reservagrupos",
-    "api.reservagrupos.tixs.me": "reservagrupos",
-    "compra.reservagrupos.tixs.me": "reservagrupos",
-    "admin.reservagrupos.tixs.me": "reservagrupos"
->>>>>>> master
 }
