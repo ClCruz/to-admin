@@ -325,6 +325,7 @@ export default {
             weekdayName,
             weekday,
             ValPeca: this.form.amount,
+            amount: this.form.amount*100,
             HorSessao: `${this.form.sessionTime.HH}:${this.form.sessionTime.mm}`,
             dateStart: this.form.selectedDate.start,
             dateEnd: this.form.selectedDate.end,

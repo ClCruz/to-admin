@@ -134,6 +134,7 @@ export default {
         days: null,
         duration: null,
         genre: null,
+        splitok: false,
         room: {
           loaded: false,
           isNumbered: false,
@@ -196,6 +197,7 @@ export default {
           this.event.image = null;
           this.event.cost = null;
           this.event.sellWeb = false;
+          this.event.splitok = false;
           this.event.days = null;
           this.event.duration = null;
           this.event.genre = null;
@@ -205,6 +207,7 @@ export default {
           obj = obj[0];
 
           this.event.loaded = true;
+          this.event.splitok = obj.splitok == 1 || obj.splitok == "1";
           this.event.name = obj.NomPeca;
           this.event.image = obj.img;
           this.event.cost = obj.ValIngresso;
@@ -214,7 +217,16 @@ export default {
           this.event.genre = obj.TipPeca;
           this.event.room.loaded = false;
           this.event.room.isNumbered = false;
+
+          if (!this.event.splitok && !this.isReservation) {
+            this.toffice_buttonNext(false);
+            this.days = [];
+            this.hours = [];
+            this.popupError("Split não configurado.");
+            return;
+          }
         }
+
         this.populateDays();
       });
     },
