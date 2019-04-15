@@ -308,10 +308,10 @@ export default {
             });
         },
         printOne(data) {
-            printService.ticket(this.get_id_base(), data.CodVenda, data.Indice);
+            printService.ticket(this.get_id_base(), data.CodVenda, data.Indice, this.getLoggedId());
         },
         printAll(data) {
-            printService.ticket(this.get_id_base(), data.CodVenda, '');
+            printService.ticket(this.get_id_base(), data.CodVenda, '', this.getLoggedId());
         },
         refundIntern() {
             purchaseService.refund(this.get_id_base(), this.getLoggedId(), this.form.codVendaToRefund, 0,this.form.selected.join(),this.form.inGatewayTo ? 1 : 0).then(response=> {

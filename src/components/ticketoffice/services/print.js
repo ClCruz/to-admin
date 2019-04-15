@@ -13,8 +13,8 @@ export const printService =  {
     moviment,
 }
 
-function ticket(id_base, codVenda, indice) {
-    let url = config.api + `/v1/print/ticket?id_base=${id_base}&id=${codVenda}&indice=${indice}`;
+function ticket(id_base, codVenda, indice, loggedid) {
+    let url = config.api + `/v1/print/ticket?id_base=${id_base}&id=${codVenda}&indice=${indice}&loggedid=${loggedid}`;
     window.open(url);
 }
 

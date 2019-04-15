@@ -526,7 +526,7 @@ export default {
         },
         askAfter() {
             if (!this.form.sentbyemail)
-                printService.ticket(this.get_id_base(), this.form.codVenda, '');
+                printService.ticket(this.get_id_base(), this.form.codVenda, '', this.getLoggedId());
 
             this.$swal({
                 allowEscapeKey: false,
