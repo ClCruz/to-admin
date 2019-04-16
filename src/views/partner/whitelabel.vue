@@ -220,6 +220,7 @@
                           <b-dropdown-item href="#" v-if="isdeveloper" @click="saveme(2)">Salvar e Criar (apenas site)</b-dropdown-item>
                           <b-dropdown-item href="#" v-if="isdeveloper" @click="saveme(4)">Salvar e Criar (apenas legacy)</b-dropdown-item>
                           <b-dropdown-item href="#" v-if="isdeveloper" @click="saveme(3)">Salvar e Criar (apenas api)</b-dropdown-item>
+                          <b-dropdown-item href="#" v-if="isdeveloper" @click="saveme(5)">Salvar e Criar (apenas admin)</b-dropdown-item>
                           <b-dropdown-item href="#" v-if="isdeveloper" @click="scaffolder_test">Pump it up!</b-dropdown-item>
                           <b-dropdown-item href="#" v-if="isdeveloper" @click="scaffolder_reset">Resetar git</b-dropdown-item>
                         </b-dropdown>
@@ -695,11 +696,14 @@ export default {
                 case 2:
                   this.toastSuccess("Dados salvos com sucesso, processo de deploy do SITE irá acontecer em breve.");
                 break;
-                case 3:
+                case 4:
                   this.toastSuccess("Dados salvos com sucesso, processo de deploy do LEGADO irá acontecer em breve.");
                 break;
                 case 3:
                   this.toastSuccess("Dados salvos com sucesso, processo de deploy da API irá acontecer em breve.");
+                break;
+                case 5:
+                  this.toastSuccess("Dados salvos com sucesso, processo de deploy do ADMIN irá acontecer em breve.");
                 break;
               }
 
