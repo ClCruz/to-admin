@@ -117,7 +117,7 @@
                     Nenhuma data cadastrada
                   </b-input-group-prepend>
                   <b-input-group-prepend is-text v-if="form.hasPresentantion == 1 && !isAdd">
-                    {{form.ValIngresso}}
+                    {{form.amountMax | showValue(form.amountMin)}}
                   </b-input-group-prepend>
                 </b-input-group>
               </b-row>
@@ -361,9 +361,11 @@ import VueMask from 'v-mask';
 import Vuelidate from 'vuelidate';
 import VModal from 'vue-js-modal';
 
+
 import dateadd from '../presentation/add';
 
 import config from "@/config";
+import { EventBus } from '@/event-bus';
 import { func } from "@/functions";
 import { userService } from '../../components/common/services/user';
 import { genreService } from '../../components/common/services/genre';
@@ -408,13 +410,18 @@ export default {
       }
     },
   },
+  mounted() {
+    EventBus.$on('reloadinfo', p => {
+      this.get(false);
+    });
+  },
   created() {
     this.populateState();
     this.populateGenre();
     this.populateProducer();
     this.populateBases();
     if (!this.isAdd) {
-      this.get();
+      this.get(true);
     }
   },
   directives: {
@@ -493,15 +500,22 @@ export default {
       console.log("dataChange");
       console.log(data)
     },
+    teste() {
+      alert("oi");
+    },
+    reloadonly() {
+      this.get(false);
+    },
     addPresentation() {
       this.$modal.show(dateadd, { //dateadd, {
         id: this.id,
-        id_base: this.base
+        id_base: this.base,
       }, {
         draggable: false,
         resizable: true,
         adaptive: true,
         height: "auto",
+        width: '800px',
         // resizable: true,
         scrollable: true,
       });
@@ -529,7 +543,7 @@ export default {
         }).then((result) => {});
       }
     },
-    get() {
+    get(type) {
       if (this.processing) return;
 
       this.processing = true;
@@ -554,6 +568,8 @@ export default {
               this.form.CodTipPeca = response.CodTipPeca;
               this.form.id_genre = response.id_genre;
               this.form.TemDurPeca = response.TemDurPeca;
+              this.form.amountMax = response.amountMax;
+              this.form.amountMin = response.amountMin;
               this.form.CenPeca = response.CenPeca;
               this.form.id_local_evento = response.id_local_evento;
               this.form.id_municipio = response.id_municipio;
@@ -590,9 +606,10 @@ export default {
               this.populatePlace();
 
               this.populateImage();
-
-              if (this.queryString("opendate")) {
-                this.addPresentation();
+              if (type == true) {
+                if (this.queryString("opendate")) {
+                  this.addPresentation();
+                }
               }
             }
           }
@@ -899,6 +916,26 @@ export default {
 
     }
   },
+  filters: {
+      showValue: function (value, value2) {
+          if (value != '' && value != null) {
+            let max = (parseFloat(value)/100).toFixed(2);
+            let min = (parseFloat(value2)/100).toFixed(2);
+            if (max!=min) {
+              return "R$ " + min + " a " + max;
+            }
+            else {
+              return "R$ " + max;
+            }
+          }
+          return " - ";
+          //return value == '' || value == null ? "Sim" : "Não";
+      },
+      money: function (value) {
+          //let v = parseFloat(value)/100;
+          return `R$ ${parseFloat(value).toFixed(2)}`;
+      }
+  },
   data() {
     return {
       processing: false,
@@ -1107,6 +1144,8 @@ export default {
         ds_googlemaps: '',
         CodPeca: '',
         id_produtor: '',
+        amountMax: '',
+        amountMin: '',
         id_base: '',
         NomPeca: '',
         CodTipPeca: '',
