@@ -342,8 +342,18 @@
         </v-wait>
         <span v-if="!processing">Salvar</span>
       </b-button>
-      <b-button :disabled="id == 0 || id == null || id == undefined" v-if="mayI('presentation-add')" type="button" variant="info" size="sm" @click="addPresentation">
-        <span>Ver datas</span>
+      <b-button :disabled="id == 0 || id == null || id == undefined" v-if="mayI('presentation-add')" type="button" variant="info" size="sm" @click="addPresentation(true)">
+        <v-wait for="inprocess">
+          <template slot="waiting">
+            Carregando...
+          </template>
+        </v-wait>
+        <v-wait for="inprocessSave">
+          <template slot="waiting">
+            Aguardando...
+          </template>
+        </v-wait>
+        <span v-if="!processing">Ver datas</span>
       </b-button>
 
     </b-row>
@@ -506,7 +516,10 @@ export default {
     reloadonly() {
       this.get(false);
     },
-    addPresentation() {
+    addPresentation(force) {
+
+      if (!force && this.processing) return;
+      
       this.$modal.show(dateadd, { //dateadd, {
         id: this.id,
         id_base: this.base,
@@ -608,7 +621,7 @@ export default {
               this.populateImage();
               if (type == true) {
                 if (this.queryString("opendate")) {
-                  this.addPresentation();
+                  this.addPresentation(false);
                 }
               }
             }
@@ -633,7 +646,9 @@ export default {
       return !this.$v.form.$invalid;
     },
     save() {
+      console.log(this.processing);
       if (this.processing) return;
+      console.log("passou");
 
       if (this.validate()) {
         let id_produtor = "",
@@ -693,6 +708,9 @@ export default {
         free_installments = this.form.free_installments;
         max_installments = this.form.max_installments;
         interest_rate = this.formatInterestRate(this.form.interest_rate);
+
+        this.processing = true;
+        this.$wait.start("inprocessSave");
 
         eventService.save(this.getLoggedId(), id_base, id_produtor, CodPeca, NomPeca, CodTipPeca, TemDurPeca, CenPeca, id_local_evento, ValIngresso, description, meta_description, meta_keyword, opening_time, insurance_policy, showInBanner, bannerDescription, QtIngrPorPedido, in_obriga_cpf, qt_ingressos_por_cpf, ticketoffice_askemail, imagechanged, imagebase64, free_installments, max_installments, interest_rate, ticketoffice_ticketmodel, showonline).then(
 

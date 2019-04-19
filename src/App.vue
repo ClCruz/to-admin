@@ -238,6 +238,25 @@ export default {
           ]
         },
         {
+          title: 'Bilhete',
+          icon: 'fas fa-clipboard-list',
+          code: 'tickettype-viewer',
+          child: [
+            {
+              href: '/tickettype/add',
+              title: 'Adicionar',
+              icon: 'fas fa-plus',
+              code: 'tickettype-add'
+            },
+            {
+              href: '/tickettype/list',
+              title: 'Listar',
+              icon: 'fas fa-th-list',
+              code: 'tickettype-viewer',
+            },
+          ]
+        },
+        {
           title: 'Eventos',
           icon: 'fas fa-puzzle-piece',
           code: 'ev-viewer',
