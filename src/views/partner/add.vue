@@ -120,6 +120,20 @@
                   </b-input-group>
               </b-row>
               <b-row class="mb-3">
+                  <b-input-group size="sm" v-b-tooltip.hover title="Google Analytics ID." >
+                      <b-input-group-prepend is-text>
+                          Google Analytics ID:
+                      </b-input-group-prepend>
+                      <b-form-input id="ga_id"
+                                  type="text"
+                                  name="ga_id"
+                                  maxlength="100"
+                                  v-model="form.ga_id"
+                                  placeholder="Digite o código do google analytics">
+                      </b-form-input>
+                  </b-input-group>
+              </b-row>
+              <b-row class="mb-3">
                   <b-input-group size="sm" v-b-tooltip.hover title="Recaptcha ID." >
                       <b-input-group-prepend is-text>
                           Recaptcha app:
@@ -377,7 +391,7 @@ export default {
       this.$wait.start("inprocessSave");
       this.showWaitAboveAll();
 
-      partnerService.save(this.getLoggedId(), this.isAdd ? '' : this.id, this.form.uniquename, this.form.name, this.form.domain, this.form.selectedDate.start, this.form.selectedDate.end, this.form.type, this.form.active, this.form.fb_appid, this.form.recaptchaid, this.form.sell_email, this.form.send_sell_email).then(
+      partnerService.save(this.getLoggedId(), this.isAdd ? '' : this.id, this.form.uniquename, this.form.name, this.form.domain, this.form.selectedDate.start, this.form.selectedDate.end, this.form.type, this.form.active, this.form.fb_appid, this.form.recaptchaid, this.form.sell_email, this.form.send_sell_email, this.form.ga_id).then(
         response => {
           this.processing = false;
           this.hideWaitAboveAll();
@@ -436,6 +450,7 @@ export default {
               this.form.key_test = response.key;
               this.form.recaptchaid = response.recaptchaid;
               this.form.fb_appid = response.fb_appid;
+              this.form.ga_id = response.ga_id;
               this.form.sell_email = response.sell_email;
               this.form.send_sell_email = response.send_sell_email;
           }
@@ -497,6 +512,7 @@ export default {
           key: '',
           key_test: '',
           fb_appid: '',
+          ga_id: '',
           recaptchaid: '',
           send_sell_email: 0,
           sell_email: '',

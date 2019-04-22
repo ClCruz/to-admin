@@ -1,6 +1,62 @@
 <template>
     <div v-if="mayIsee" style="-moz-user-select: none; -webkit-user-select: none; -ms-user-select:none; user-select:none;-o-user-select:none;" unselectable="on" onselectstart="return false;">
-      <b-container v-if="isAdd">
+      <b-container v-if="!isAdd && isModify">
+        <b-row class="mb-3">
+        </b-row>
+        <b-row class="mb-3">
+            <h2>Alterar dados de uma apresentação.</h2>
+        </b-row>
+        <b-row class="mb-3">
+          <b-input-group size="sm">
+            <b-input-group-prepend is-text>
+                Sala:
+            </b-input-group-prepend>
+            <b-input-group-prepend is-text>
+                {{this.form.modify.NomSala}}
+            </b-input-group-prepend>
+          </b-input-group>
+        </b-row>
+        <b-row class="mb-3">
+          <b-input-group size="sm">
+            <b-input-group-prepend is-text>
+                Data:
+            </b-input-group-prepend>
+            <b-input-group-prepend is-text>
+                {{this.form.modify.Date}}
+            </b-input-group-prepend>
+          </b-input-group>
+        </b-row>
+        <b-row class="mb-3">
+          <b-input-group size="sm">
+            <b-input-group-prepend is-text>
+                Horário:
+            </b-input-group-prepend>
+            <vue-timepicker v-model="form.modify.sessionTime" format="HH:mm" :minute-interval="1" class="fontsizetimepicker"></vue-timepicker>
+          </b-input-group>
+        </b-row>
+        <b-row class="mb-3">
+          <b-input-group size="sm" prepend="R$">
+            <b-form-input ref="amount" prepend="R$" type="text" v-model.lazy="form.modify.amount" v-money="components.money">
+            </b-form-input>
+          </b-input-group>
+        </b-row>
+        <b-row>
+          <b-col>
+            <toggle-button v-model="form.modify.allowweb" :width="110" :color="{checked: '#b3ffb3', unchecked: '#ffb3b3', disabled: '#a6a6a6'}" :labels="{ checked: 'Vender Web', unchecked: 'Não vender Web' }"/>
+          </b-col>
+          <b-col>
+            <toggle-button v-model="form.modify.allowticketoffice" :width="140" :color="{checked: '#b3ffb3', unchecked: '#ffb3b3', disabled: '#a6a6a6'}" :labels="{ checked: 'Vender Bilheteria', unchecked: 'Não vender Bilheteria' }"/>
+          </b-col>
+        </b-row>
+        <b-row class="mb-3">
+          <b-button-group size="sm" class="mx-auto mb-3">
+            <b-button variant="outline-info" @click="modifypresentation">Alterar</b-button>
+            <b-button variant="outline-danger" @click="deletepresentation">Remover</b-button>
+            <b-button variant="outline-dark" @click="cancelmodify">Cancelar</b-button>
+          </b-button-group>
+        </b-row>
+      </b-container>
+      <b-container v-if="isAdd && !isModify">
         <b-row class="mb-3">
           <b-col>
             <b-collapse v-model="form.collapseRoom" id="collapse1" class="mt-2">
@@ -67,7 +123,7 @@
                     </b-col>
                     <b-col>
                       <b-input-group size="sm" prepend="R$">
-                        <b-form-input prepend="R$" type="text" v-model.lazy="form.amount" v-money="components.money">
+                        <b-form-input ref="amount" prepend="R$" type="text" v-model.lazy="form.amount" v-money="components.money">
                         </b-form-input>
                       </b-input-group>
                     </b-col>
@@ -141,15 +197,18 @@
           </b-collapse>
         </b-row>
       </b-container>
-      <b-container v-if="!isAdd && !dummy">
+      <b-container v-if="!isAdd && !dummy && !isModify">
+        <b-row class="mb-3">
+        </b-row>
         <b-row class="mx-auto mb-3">
           <b-button-group size="sm" class="mx-auto mb-3">
             <b-button variant="outline-info" @click="add">Adicionar</b-button>
-            <b-button variant="outline-dark" @click="edit" :disabled="form.codApresentacao == ''">Alterar</b-button>
+            <b-button variant="outline-dark" @click="edit" :disabled="!this.form.modify.selected">Alterar</b-button>
           </b-button-group>
         </b-row>
         <b-row>
           <b-col>
+            Filtrar por: <i class="fas fa-times deletedate" @click="filterdate = ''"></i><datetime v-model="filterdate" class="inline" format="dd/MM/yyyy" value-zone="America/Sao_Paulo" zone="America/Sao_Paulo"></datetime>
             <b-table striped="striped"
                   outlined="outlined"
                   class="fontSize bg-white"
@@ -159,10 +218,32 @@
                   show-empty
                   empty-text="Não foram encontrados registros."
                   @row-clicked="rowClick"
+                  :busy="processing"
                   v-if="this.grids.result.loaded"
-                  :items="this.grids.result.items"
+                  :items="gridfiltered"
                   :fields="this.grids.result.fields">
 
+              <div slot="table-busy" class="text-center text-danger my-2">
+                <b-spinner class="align-middle"></b-spinner>
+                <strong>Carregando...</strong>
+              </div>
+              <template slot="ValPeca" slot-scope="data">
+                  <span>{{data.item.ValPeca | money}}</span>
+              </template>
+              <template slot="StaAtivoBilheteria" slot-scope="data">
+                  <span>{{data.item.StaAtivoBilheteria | yesorno}}</span>
+              </template>
+              <template slot="StaAtivoWeb" slot-scope="data">
+                  <span>{{data.item.StaAtivoWeb | yesorno}}</span>
+              </template>
+              <template slot="DatApresentacao" slot-scope="data">
+                <span>
+                  {{data.item.DatApresentacao}}
+                </span>
+                <span> - </span>
+                <span> {{data.item.HorSessao }}</span>
+                <span> ({{data.item.weekdayName }})</span>
+              </template>
               <template slot="active" slot-scope="data">
                 <b-button size="sm" @click="removeAdded(data.item)" title="Remover" variant="danger">
                     Remover
@@ -182,16 +263,20 @@ import Vue from "vue";
 import VueHead from 'vue-head';
 import config from "@/config";
 import Moment from 'moment';
-import VueTimepicker from 'vue2-timepicker';
+import VueTimepicker from 'vue2-timepicker';  
 import HotelDatePicker from 'vue-hotel-datepicker';
 import ToggleButton from 'vue-js-toggle-button';
 import { VMoney } from 'v-money';
 import { extendMoment } from 'moment-range';
 import { func } from "@/functions";
+import { EventBus } from '@/event-bus';
 import { presentationService } from '../../components/common/services/presentation';
 import { roomService } from '../../components/common/services/room';
 import { defer } from 'q';
+import { Datetime } from 'vue-datetime';
+import { Settings } from 'luxon';
 
+Settings.defaultLocale = 'pt';
 
 const moment = extendMoment(Moment);
 
@@ -199,11 +284,13 @@ Vue.use(VueTimepicker);
 Vue.use(ToggleButton);
 Vue.use(VueHead);
 
+import 'vue-datetime/dist/vue-datetime.css';
+
 export default {
   mixins: [func],
-  props: ['id', 'id_base'],
+  props: ['id', 'id_base', 'teste'],
   directives: {money: VMoney},
-  components: { VueTimepicker, HotelDatePicker },
+  components: { VueTimepicker, HotelDatePicker, Datetime },
   name: 'pres-add',
   head: {
     title: function () {
@@ -218,6 +305,12 @@ export default {
     this.populateGrid();
   },
   computed: {
+    gridfiltered() {
+      if (this.filterdate == '') {
+        return this.grids.result.items;
+      }
+      return this.grids.result.items.filter(x=> x.DatApresentacao == moment(this.filterdate).format("DD/MM/YYYY"));
+    },
     mayIsee() {
       return this.mayI('presentation-add', 'presentation-viewer');
     },
@@ -230,13 +323,34 @@ export default {
   },
   methods: {
     savedays() {
-      //console.log(this.grids.added.items);
       this.showWaitAboveAll();
-      presentationService.save(this.grids.added.items).then(
+      presentationService.save(this.getLoggedId(), this.grids.added.items,this.id_base).then(
         response => {
           this.hideWaitAboveAll();
 
-          alert("oi");
+          if (this.validateJSON(response)) {
+            if (response.success == true) {
+              this.toastSuccess("Cadastrado com sucesso");
+              this.populateGrid();
+              //console.log(this.$parent);
+              //this.$parent.$parent.teste();
+              this.isAdd = false;
+              this.dummy = false;
+              this.clear();
+              this.$refs.amount.$el.value = "";
+
+              this.form.sessionTime = {
+                HH: "00",
+                mm: "00",
+                ss: "00"
+              };
+
+              EventBus.$emit('reloadinfo', true);
+            }
+            else {
+              this.toastError(response.msg);
+            }
+          }
         },
         error => {
           this.hideWaitAboveAll();
@@ -356,8 +470,103 @@ export default {
       this.dummy = true;
       this.populateRoom();
     },
+    deletepresentation() {
+      if (this.processing) return;
+
+      this.processing = true;
+      this.showWaitAboveAll();
+      presentationService.remove(this.getLoggedId(), this.form.modify.CodApresentacao,this.id_base).then(
+        response => {
+          this.hideWaitAboveAll();
+          this.processing = false;
+
+          if (this.validateJSON(response)) {
+            if (response.success == true) {
+              this.toastSuccess(response.msg);
+              this.populateGrid();
+              this.isAdd = false;
+              this.isModify = false;
+              this.dummy = false;
+              this.clear();
+
+              EventBus.$emit('reloadinfo', true);
+            }
+            else {
+              this.toastError(response.msg);
+            }
+          }
+        },
+        error => {
+          this.hideWaitAboveAll();
+          this.processing = false;
+          this.toastError("Falha na execução.");
+        }
+      );
+    },
+    modifypresentation() {
+      if (this.processing) return;
+
+      let amount = parseInt(parseFloat(this.form.modify.amount)*100);
+
+      if (amount < 0) {
+        this.toastError("Valor não pode ser negativo.");
+        return;
+      }
+
+      this.processing = true;
+      this.showWaitAboveAll();
+      presentationService.modify(this.getLoggedId(), this.form.modify.CodApresentacao, this.form.modify.sessionTime.HH+":"+this.form.modify.sessionTime.mm, amount, this.form.modify.allowweb, this.form.modify.allowticketoffice, this.id_base).then(
+        response => {
+          this.hideWaitAboveAll();
+          this.processing = false;
+
+          if (this.validateJSON(response)) {
+            if (response.success == true) {
+              this.toastSuccess(response.msg);
+              this.populateGrid();
+              this.isAdd = false;
+              this.isModify = false;
+              this.dummy = false;
+              this.clear();
+
+              EventBus.$emit('reloadinfo', true);
+            }
+            else {
+              this.toastError(response.msg);
+            }
+          }
+        },
+        error => {
+          this.hideWaitAboveAll();
+          this.processing = false;
+          this.toastError("Falha na execução.");
+        }
+      );
+    },
+    cancelmodify() {
+      this.isAdd = false;
+      this.isModify = false;
+      this.dummy = false;
+      this.form.row = null;
+      this.form.modify.selected = false;
+      this.form.modify.CodSala = '';
+      this.form.modify.Date = '';
+      this.form.modify.CodApresentacao = '';
+      this.form.modify.NomSala = '';
+      this.form.modify.StaAtivoBilheteria = '';
+      this.form.modify.StaAtivoWeb = '';
+      this.form.modify.ValPeca = '';
+      this.form.modify.amount = '';
+      this.form.modify.HorSessao = '';
+      this.form.modify.allowweb = false;
+      this.form.modify.allowticketoffice = false;
+      this.form.modify.sessionTime = { HH: "00", mm: "00", ss: "00" };
+      this.populateGrid();
+    },
     edit() {
-      this.isAdd = true;
+      this.isAdd = false;
+      this.isModify = true;
+      this.dummy = true;
       this.populateRoom();
     },
     rowClick(record, index) {
@@ -365,21 +574,42 @@ export default {
       // `index` will be the visible row number (available in the v-model 'shownItems')
       //console.log(record); // This will be the item data for the row
       //console.log(record._rowVariant)
+
       if (this.form.row != null) this.form.row._rowVariant = null;
 
-      if (record.CodApresentacao == this.form.codApresentacao && record.CodSala == this.form.codSala) {
-        this.form.codApresentacao = '';
-        this.form.codSala = '';
+      if (record.CodApresentacao == this.form.modify.CodApresentacao) {
+        this.form.modify.selected = false;
+        this.form.modify.CodSala = '';
+        this.form.modify.Date = '';
+        this.form.modify.CodApresentacao = '';
+        this.form.modify.NomSala = '';
+        this.form.modify.StaAtivoBilheteria = '';
+        this.form.modify.StaAtivoWeb = '';
+        this.form.modify.ValPeca = '';
+        this.form.modify.amount = '';
+        this.form.modify.HorSessao = '';
+        this.form.modify.allowweb = false;
+        this.form.modify.allowticketoffice = false;
+        this.form.modify.sessionTime = { HH: "00", mm: "00", ss: "00" };
         return;
       }      
 
       this.form.row = record;
 
       record._rowVariant = record._rowVariant == 'info' ? '' : 'info';
-
-
-      this.form.codApresentacao = record.CodApresentacao;
-      this.form.codSala = record.CodSala;
+      this.form.modify.selected = true;
+      this.form.modify.CodSala = record.CodSala;
+      this.form.modify.Date = record.DatApresentacao;
+      this.form.modify.CodApresentacao = record.CodApresentacao;
+      this.form.modify.NomSala = record.NomSala;
+      this.form.modify.StaAtivoBilheteria = record.StaAtivoBilheteria;
+      this.form.modify.StaAtivoWeb = record.StaAtivoWeb;
+      this.form.modify.allowweb = record.StaAtivoWeb == 'S';
+      this.form.modify.allowticketoffice = record.StaAtivoBilheteria == 'S';
+      this.form.modify.amount = record.amount;
+      this.form.modify.ValPeca = record.ValPeca;
+      this.form.modify.HorSessao = record.HorSessao;
+      this.form.modify.sessionTime = { HH: record.HorSessao.split(':')[0], mm: record.HorSessao.split(":")[1], ss: "00" };
     },
     save() {
     },
@@ -471,6 +701,11 @@ export default {
       );      
     },
     clear() {
+      this.form.amount = "";
+      this.form.codSala = '';
+      this.grids.added.items = [];
+      this.grids.added.loaded = false;
+
       this.form.collapseRoom = true;
       this.form.collapseDays = false;
       this.form.collapseWeekdays = false;
@@ -493,12 +728,23 @@ export default {
       this.form.selectedDate.start = '';
     },
   },
+  filters: {
+      yesorno: function (value) {
+          return value == 'S' ? "Sim" : "Não";
+      },
+      money: function (value) {
+          //let v = parseFloat(value)/100;
+          return `R$ ${parseFloat(value).toFixed(2)}`;
+      }
+  },
   data () {
     return {
         processing: false,
+        filterdate: '',
         dummy: true,
         loading: false,
         isAdd: false,
+        isModify: false,
         components: { 
           money: {
               decimal: '.',
@@ -526,6 +772,23 @@ export default {
           }
         },
         form: {
+          modify: {
+            selected: false,
+            Date: '',
+            CodSala: '',
+            CodApresentacao: '',
+            NomSala: '',
+            StaAtivoBilheteria: '',
+            StaAtivoWeb: '',
+            ValPeca: '',
+            amount: '',
+            HorSessao: '',
+            sessionTime: {
+              HH: "00",
+              mm: "00",
+              ss: "00"
+            },
+          },
           loaded: false,
           codApresentacao: '',
           codSala: '',
@@ -575,11 +838,9 @@ export default {
             perPage: 1000,
             items: [],
             fields: {
-                NomSala: { label: 'Sala', sortable: false },
-                weekdayName: { label: 'Dia da Semana', sortable: false },
-                DatApresentacao: { label: 'Data', sortable: false },
-                HorSessao: { label: 'Hora', sortable: false },
-                ValPeca: { label: 'Valor', sortable: false },
+                NomSala: { label: 'Sala', sortable: false, tdClass: 'table_column_NomSala' },
+                DatApresentacao: { label: 'Data/Hora', sortable: false },
+                ValPeca: { label: 'Valor', sortable: false, tdClass: 'table_column_ValPeca' },
                 StaAtivoWeb: { label: 'Ativo Web?', sortable: false },
                 StaAtivoBilheteria: { label: 'Ativo Bilheteria?', sortable: false },
             },
@@ -611,6 +872,15 @@ export default {
 }
 .v-switch-label {
   color: #4d4d4d !important;
+}
+.table_column_NomSala {
+  width: 215px;
+}
+.table_column_ValPeca {
+  width: 115px;
+}
+.deletedate {
+  cursor: pointer;
 }
 </style>
 
@@ -658,4 +928,5 @@ export default {
 .input.display-time {
   font-size:.875rem;
 }
+
 </style>

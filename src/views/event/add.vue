@@ -117,7 +117,7 @@
                     Nenhuma data cadastrada
                   </b-input-group-prepend>
                   <b-input-group-prepend is-text v-if="form.hasPresentantion == 1 && !isAdd">
-                    {{form.ValIngresso}}
+                    {{form.amountMax | showValue(form.amountMin)}}
                   </b-input-group-prepend>
                 </b-input-group>
               </b-row>
@@ -308,6 +308,33 @@
             </b-col>
 
           </b-row>
+          <b-row class="mb-3">
+            <b-col>
+              <b-row>
+
+                <b-input-group size="sm">
+                  <b-input-group-prepend is-text>
+                    Valor minimo:
+                  </b-input-group-prepend>
+                  <b-form-input ref="minAmount" id="minAmount" type="text" name="minAmount" maxlength="8" v-money="components.money" v-model.lazy="form.minAmount">
+                  </b-form-input>
+                </b-input-group>
+              </b-row>
+            </b-col>
+            <b-col>
+              <b-row>
+
+                <b-input-group size="sm">
+                  <b-input-group-prepend is-text>
+                    Valor máximo:
+                  </b-input-group-prepend>
+                  <b-form-input ref="maxAmount" id="maxAmount" type="text" name="maxAmount" maxlength="8" v-money="components.money" v-model.lazy="form.maxAmount">
+                  </b-form-input>
+                </b-input-group>
+              </b-row>
+            </b-col>
+
+          </b-row>
       </b-col>
     </b-row>
     <div class="checkboxs">
@@ -329,7 +356,7 @@
       </div>
     </div>
     <b-row class="mb-3">
-      <b-button type="button" variant="success" size="sm" @click="save">
+      <b-button type="button" variant="outline-success" size="sm" @click="save">
         <v-wait for="inprocess">
           <template slot="waiting">
             Carregando...
@@ -342,10 +369,32 @@
         </v-wait>
         <span v-if="!processing">Salvar</span>
       </b-button>
-      <b-button :disabled="id == 0 || id == null || id == undefined" v-if="mayI('presentation-add')" type="button" variant="info" size="sm" @click="addPresentation">
-        <span>Ver datas</span>
+      <b-button :disabled="id == 0 || id == null || id == undefined" v-if="mayI('presentation-add')" type="button" variant="outline-info" size="sm" @click="addTicketType(true)">
+        <v-wait for="inprocess">
+          <template slot="waiting">
+            Carregando...
+          </template>
+        </v-wait>
+        <v-wait for="inprocessSave">
+          <template slot="waiting">
+            Aguardando...
+          </template>
+        </v-wait>
+        <span v-if="!processing">Tipos de Bilhetes</span>
       </b-button>
-
+      <b-button :disabled="id == 0 || id == null || id == undefined" v-if="mayI('presentation-add')" type="button" variant="outline-info" size="sm" @click="addPresentation(true)">
+        <v-wait for="inprocess">
+          <template slot="waiting">
+            Carregando...
+          </template>
+        </v-wait>
+        <v-wait for="inprocessSave">
+          <template slot="waiting">
+            Aguardando...
+          </template>
+        </v-wait>
+        <span v-if="!processing">Ver datas</span>
+      </b-button>
     </b-row>
 
   </b-container>
@@ -362,8 +411,10 @@ import Vuelidate from 'vuelidate';
 import VModal from 'vue-js-modal';
 
 import dateadd from '../presentation/add';
+import tickettypeadd from '../tickettype/event';
 
 import config from "@/config";
+import { EventBus } from '@/event-bus';
 import { func } from "@/functions";
 import { userService } from '../../components/common/services/user';
 import { genreService } from '../../components/common/services/genre';
@@ -408,13 +459,18 @@ export default {
       }
     },
   },
+  mounted() {
+    EventBus.$on('reloadinfo', p => {
+      this.get(false);
+    });
+  },
   created() {
     this.populateState();
     this.populateGenre();
     this.populateProducer();
     this.populateBases();
     if (!this.isAdd) {
-      this.get();
+      this.get(true);
     }
   },
   directives: {
@@ -493,15 +549,42 @@ export default {
       console.log("dataChange");
       console.log(data)
     },
-    addPresentation() {
+    teste() {
+      alert("oi");
+    },
+    reloadonly() {
+      this.get(false);
+    },
+    addPresentation(force) {
+
+      if (!force && this.processing) return;
+      
       this.$modal.show(dateadd, { //dateadd, {
         id: this.id,
-        id_base: this.base
+        id_base: this.base,
       }, {
         draggable: false,
         resizable: true,
         adaptive: true,
         height: "auto",
+        width: '800px',
+        // resizable: true,
+        scrollable: true,
+      });
+    },
+    addTicketType(force) {
+
+      if (!force && this.processing) return;
+      
+      this.$modal.show(tickettypeadd, { //dateadd, {
+        id: this.id,
+        id_base: this.base,
+      }, {
+        draggable: false,
+        resizable: true,
+        adaptive: true,
+        height: "auto",
+        width: '850px',
         // resizable: true,
         scrollable: true,
       });
@@ -529,7 +612,7 @@ export default {
         }).then((result) => {});
       }
     },
-    get() {
+    get(type) {
       if (this.processing) return;
 
       this.processing = true;
@@ -554,6 +637,8 @@ export default {
               this.form.CodTipPeca = response.CodTipPeca;
               this.form.id_genre = response.id_genre;
               this.form.TemDurPeca = response.TemDurPeca;
+              this.form.amountMax = response.amountMax;
+              this.form.amountMin = response.amountMin;
               this.form.CenPeca = response.CenPeca;
               this.form.id_local_evento = response.id_local_evento;
               this.form.id_municipio = response.id_municipio;
@@ -575,6 +660,11 @@ export default {
               this.form.DatFinPeca = response.DatFinPeca;
               this.form.hasPresentantion = response.hasPresentantion;
 
+              this.form.minAmount = response.minAmount;
+              this.form.maxAmount = response.maxAmount;
+              this.$refs.minAmount.$el.value = response.minAmount;
+              this.$refs.maxAmount.$el.value = response.maxAmount;
+
               this.form.imageURICard = response.imageURICard;
               this.form.imageURIBanner = response.imageURIBanner;
               this.form.imageURIOriginal = response.imageURIOriginal;
@@ -590,9 +680,14 @@ export default {
               this.populatePlace();
 
               this.populateImage();
-
-              if (this.queryString("opendate")) {
-                this.addPresentation();
+              if (type == true) {
+                if (this.queryString("opendate")) {
+                  this.addPresentation(false);
+                  return;
+                }
+                if (this.queryString("openticket")) {
+                  this.addTicketType(false);
+                }
               }
             }
           }
@@ -616,7 +711,9 @@ export default {
       return !this.$v.form.$invalid;
     },
     save() {
+      console.log(this.processing);
       if (this.processing) return;
+      console.log("passou");
 
       if (this.validate()) {
         let id_produtor = "",
@@ -645,7 +742,9 @@ export default {
           free_installments = "",
           max_installments = "",
           ticketoffice_ticketmodel = "",
-          interest_rate = "";
+          interest_rate = "",
+          minAmount = "",
+          maxAmount = "";
 
         id_base = this.form.id_base;
         showonline = this.form.showonline;
@@ -669,6 +768,8 @@ export default {
         ticketoffice_askemail = this.form.ticketoffice_askemail;
         ticketoffice_ticketmodel = this.form.ticketoffice_ticketmodel;
         qt_ingressos_por_cpf = this.form.qt_ingressos_por_cpf;
+        minAmount = this.form.minAmount;
+        maxAmount = this.form.maxAmount;
 
         imagechanged = this.form.saveimage;
         imagebase64 = this.form.image;
@@ -677,7 +778,11 @@ export default {
         max_installments = this.form.max_installments;
         interest_rate = this.formatInterestRate(this.form.interest_rate);
 
-        eventService.save(this.getLoggedId(), id_base, id_produtor, CodPeca, NomPeca, CodTipPeca, TemDurPeca, CenPeca, id_local_evento, ValIngresso, description, meta_description, meta_keyword, opening_time, insurance_policy, showInBanner, bannerDescription, QtIngrPorPedido, in_obriga_cpf, qt_ingressos_por_cpf, ticketoffice_askemail, imagechanged, imagebase64, free_installments, max_installments, interest_rate, ticketoffice_ticketmodel, showonline).then(
+        this.processing = true;
+        this.$wait.start("inprocessSave");
+
+        this.showWaitAboveAll();
+        eventService.save(this.getLoggedId(), id_base, id_produtor, CodPeca, NomPeca, CodTipPeca, TemDurPeca, CenPeca, id_local_evento, ValIngresso, description, meta_description, meta_keyword, opening_time, insurance_policy, showInBanner, bannerDescription, QtIngrPorPedido, in_obriga_cpf, qt_ingressos_por_cpf, ticketoffice_askemail, imagechanged, imagebase64, free_installments, max_installments, interest_rate, ticketoffice_ticketmodel, showonline, minAmount, maxAmount).then(
 
           response => {
             this.processing = false;
@@ -899,6 +1004,26 @@ export default {
 
     }
   },
+  filters: {
+      showValue: function (value, value2) {
+          if (value != '' && value != null) {
+            let max = (parseFloat(value)/100).toFixed(2);
+            let min = (parseFloat(value2)/100).toFixed(2);
+            if (max!=min) {
+              return "R$ " + min + " a " + max;
+            }
+            else {
+              return "R$ " + max;
+            }
+          }
+          return " - ";
+          //return value == '' || value == null ? "Sim" : "Não";
+      },
+      money: function (value) {
+          //let v = parseFloat(value)/100;
+          return `R$ ${parseFloat(value).toFixed(2)}`;
+      }
+  },
   data() {
     return {
       processing: false,
@@ -1107,6 +1232,8 @@ export default {
         ds_googlemaps: '',
         CodPeca: '',
         id_produtor: '',
+        amountMax: '',
+        amountMin: '',
         id_base: '',
         NomPeca: '',
         CodTipPeca: '',
@@ -1130,6 +1257,8 @@ export default {
         ticketoffice_ticketmodel: '',
         DatIniPeca: '',
         DatFinPeca: '',
+        minAmount: 0,
+        maxAmount: 0,
         hasPresentantion: '',
 
         free_installments: null,

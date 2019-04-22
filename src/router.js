@@ -119,6 +119,18 @@ const adminAdAdd = resolve => {
   }, 'admin-ad');
 };
 
+// tickettype
+const adminTicketTypeList = resolve => {
+  require.ensure(['./views/tickettype/list.vue'], () => {
+    resolve(require('./views/tickettype/list.vue'));
+  }, 'admin-tickettype');
+};
+const adminTicketTypeAdd = resolve => {
+  require.ensure(['./views/tickettype/add.vue'], () => {
+    resolve(require('./views/tickettype/add.vue'));
+  }, 'admin-tickettype');
+};
+
 // partner
 const adminPartnerList = resolve => {
   require.ensure(['./views/partner/list.vue'], () => {
@@ -268,6 +280,23 @@ const obj = new Router({
       component: adminAdAdd
     },
     //------
+    //TicketType
+    {
+      path: '/tickettype/list',
+      name: 'tickettype-list',
+      component: adminTicketTypeList
+    },
+    {
+      path: '/tickettype/add',
+      name: 'tickettype-add',
+      component: adminTicketTypeAdd
+    },
+    {
+      path: '/tickettype/edit/:id/:id_base',
+      name: 'tickettype-edit',
+      props: true,
+      component: adminTicketTypeAdd
+    },
     //------
     //partner
     {
