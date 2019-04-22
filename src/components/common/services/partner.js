@@ -242,7 +242,7 @@ function regen(loggedId,id, keyTo) {
     );
     return ret;
 }
-function save(loggedId,id, uniquename, name, domain, dateStart, dateEnd, type, active, fb_appid, recaptchaid, sell_email, send_sell_email) {
+function save(loggedId,id, uniquename, name, domain, dateStart, dateEnd, type, active, fb_appid, recaptchaid, sell_email, send_sell_email,ga_id) {
     let url = config.api + `/v1/admin/partner/save`;
 
     let obj = {
@@ -259,6 +259,7 @@ function save(loggedId,id, uniquename, name, domain, dateStart, dateEnd, type, a
         ,recaptchaid
         ,sell_email
         ,send_sell_email
+        ,ga_id
     };
 
     var ret = new Promise(
