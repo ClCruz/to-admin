@@ -146,7 +146,7 @@ Vue.use(VueMask);
 export default {
   mixins: [func],
   props: ['id'],
-  name: 'user-add',
+  name: 'producer-add',
   head: {
     title: function () {
       return { 
