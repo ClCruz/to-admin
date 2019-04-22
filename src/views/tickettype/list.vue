@@ -61,6 +61,11 @@
                   <span v-else><i class="far fa-circle"></i></span>
               </template>
 
+              <template slot="isDiscount" slot-scope="data">
+                  <span v-if="data.item.isDiscount == 1"><i class="fas fa-circle"></i></span>
+                  <span v-else><i class="far fa-circle"></i></span>
+              </template>
+
               <template slot="isPrincipal" slot-scope="data">
                   <span v-if="data.item.isPrincipal == 1"><i class="fas fa-circle"></i></span>
                   <span v-else><i class="far fa-circle"></i></span>
@@ -223,6 +228,7 @@ export default {
                     isFixed: { label: 'Fixo', sortable: false },
                     isPrincipal: { label: 'Inteira', sortable: false },
                     isHalf: { label: 'Meia', sortable: false },
+                    isDiscount: { label: 'Desconto', sortable: false },
                     isPlus: { label: 'Outros', sortable: false },
                     isAllotment: { label: 'Lote', sortable: false },
                     allowweb: { label: 'Web', sortable: false },

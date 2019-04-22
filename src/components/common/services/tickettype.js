@@ -11,8 +11,51 @@ export const tickettypeService = {
   save,
   list,
   base64,
+  eventlist
 }
 
+function eventlist2(loggedId, id_evento, id_base) {
+    let url = config.api + `/v1/admin/tickettype/select`;
+
+    //url = config.system.applyPagination(url, currentPage, perPage);
+  
+    let obj = { loggedId, id_evento, id_base };
+  
+    var ret = new Promise(
+        function (resolve, reject) {
+            Vue.http.post(url, obj, { emulateJSON: true }).then(res => {
+                resolve(res.body);
+            }, err => {
+                reject({
+                    error: true,
+                    msg: err
+                });
+            });    
+        }
+    );
+    return ret;
+  }
+function eventlist(loggedId, id_evento, id_base) {
+    let url = config.api + `/v1/admin/event/tickettype/list`;
+
+    //url = config.system.applyPagination(url, currentPage, perPage);
+  
+    let obj = { loggedId, id_evento, id_base };
+  
+    var ret = new Promise(
+        function (resolve, reject) {
+            Vue.http.post(url, obj, { emulateJSON: true }).then(res => {
+                resolve(res.body);
+            }, err => {
+                reject({
+                    error: true,
+                    msg: err
+                });
+            });    
+        }
+    );
+    return ret;
+  }
 function base64(local, id) {
     let url = config.api + `/v1/admin/tickettype/base64`;
 

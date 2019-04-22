@@ -90,6 +90,8 @@
                   <toggle-button :sync="true" @change="changed" name="isDiscount" v-model="form.isDiscount" :width="120" :color="{checked: '#b3ffb3', unchecked: '#ffb3b3', disabled: '#a6a6a6'}" :labels="{ checked: 'Desconto', unchecked: 'É com desconto?' }"/>
                   <toggle-button :sync="true" @change="changed" name="isHalf" v-model="form.isHalf" :width="110" :color="{checked: '#b3ffb3', unchecked: '#ffb3b3', disabled: '#a6a6a6'}" :labels="{ checked: 'Meia', unchecked: 'É meia entrada?' }"/>
                   <toggle-button :sync="true" @change="changed" name="isFixed" v-model="form.isFixed" :width="110" :color="{checked: '#b3ffb3', unchecked: '#ffb3b3', disabled: '#a6a6a6'}" :labels="{ checked: 'Fixo', unchecked: 'É valor fixo?' }"/>
+                  <toggle-button :sync="true" @change="changed" name="isNoValue" v-model="form.isNoValue" :width="110" :color="{checked: '#b3ffb3', unchecked: '#ffb3b3', disabled: '#a6a6a6'}" :labels="{ checked: 'Fixo', unchecked: 'É de graça?' }"/>
+                  <toggle-button :sync="true" @change="changed" name="isPOS" v-model="form.isPOS" :width="110" :color="{checked: '#b3ffb3', unchecked: '#ffb3b3', disabled: '#a6a6a6'}" :labels="{ checked: 'Fixo', unchecked: 'É POS?' }"/>
                   <toggle-button :sync="true" @change="changed" name="isPlus" v-model="form.isPlus" :width="110" :color="{checked: '#b3ffb3', unchecked: '#ffb3b3', disabled: '#a6a6a6'}" :labels="{ checked: 'Outros', unchecked: 'É outro tipo?' }"/>
               </b-row>
               <b-row class="mb-3" v-if="form.isFixed">
