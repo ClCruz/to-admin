@@ -109,15 +109,16 @@ export const func = {
             if (this.getLoggedId()!='' && this.getLoggedId() != null) {
                 let lastcheck = this.ls_get('lastcheck');
                 if (lastcheck == null || lastcheck == undefined || lastcheck == '' || (moment(lastcheck).isValid() && moment(lastcheck).toDate() <= moment().toDate()) ) {
-        
+                    //this.showWaitAboveAll();
                     authService.revalid(this.getLoggedId()).then(response => {
+                        //this.hideWaitAboveAll();
                         if (response.valid) {
                             this.ls_add("lastcheck", moment().add(10,'minutes').format("YYYY-MM-DD HH:mm"));                           
                         } else {
                             localStorage.clear();
                             window.location.reload(true);
                         }
-                    }, error => { });
+                    }, error => { this.hideWaitAboveAll(); });
                 }
                 ret = true;
             }
@@ -224,6 +225,9 @@ export const func = {
             console.log(getInfo());
         },
         showWaitAboveAll() {
+            if (this.waitCallers == null) {
+                this.waitCallers = [];
+            }
             this.waitCallers.push("a");
             this.$wait.start("loadingAboveAll");
         },
@@ -263,7 +267,7 @@ export const func = {
         codes(after) {
             if (this.getLoggedId() == '' || this.getLoggedId() == null || this.getLoggedId() == undefined)
                 return;
-
+            this.showWaitAboveAll();
             authService.codes(this.getLoggedId()).then(response => {
                 this.hideWaitAboveAll();
                 this.ls_add("codes", JSON.stringify(response));
@@ -273,7 +277,7 @@ export const func = {
                 }
                     
 
-            }, error => { });            
+            }, error => { this.hideWaitAboveAll(); });            
         },
         tryLogin(callback) {
             if (this.ls_get('token') == null) return;
