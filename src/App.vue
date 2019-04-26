@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div id="app" class="page">
     <v-wait for="loadingAboveAll">
         <template slot="waiting">
             <div id="aboveAll">
@@ -381,92 +381,4 @@ export default {
   }
 </style>
 <style lang="scss">
-.sk-cube-grid {
-  width: 140px;
-  height: 140px;
-  margin: 200px auto;
-}
-
-.sk-cube-grid .sk-cube {
-  width: 33%;
-  height: 33%;
-  background-color: #000;
-  float: left;
-  -webkit-animation: sk-cubeGridScaleDelay 1.3s infinite ease-in-out;
-          animation: sk-cubeGridScaleDelay 1.3s infinite ease-in-out; 
-}
-.sk-cube-grid .sk-cube1 {
-  -webkit-animation-delay: 0.2s;
-          animation-delay: 0.2s; }
-.sk-cube-grid .sk-cube2 {
-  -webkit-animation-delay: 0.3s;
-          animation-delay: 0.3s; }
-.sk-cube-grid .sk-cube3 {
-  -webkit-animation-delay: 0.4s;
-          animation-delay: 0.4s; }
-.sk-cube-grid .sk-cube4 {
-  -webkit-animation-delay: 0.1s;
-          animation-delay: 0.1s; }
-.sk-cube-grid .sk-cube5 {
-  -webkit-animation-delay: 0.2s;
-          animation-delay: 0.2s; }
-.sk-cube-grid .sk-cube6 {
-  -webkit-animation-delay: 0.3s;
-          animation-delay: 0.3s; }
-.sk-cube-grid .sk-cube7 {
-  -webkit-animation-delay: 0s;
-          animation-delay: 0s; }
-.sk-cube-grid .sk-cube8 {
-  -webkit-animation-delay: 0.1s;
-          animation-delay: 0.1s; }
-.sk-cube-grid .sk-cube9 {
-  -webkit-animation-delay: 0.2s;
-          animation-delay: 0.2s; }
-
-@-webkit-keyframes sk-cubeGridScaleDelay {
-  0%, 70%, 100% {
-    -webkit-transform: scale3D(1, 1, 1);
-            transform: scale3D(1, 1, 1);
-  } 35% {
-    -webkit-transform: scale3D(0, 0, 1);
-            transform: scale3D(0, 0, 1); 
-  }
-}
-
-@keyframes sk-cubeGridScaleDelay {
-  0%, 70%, 100% {
-    -webkit-transform: scale3D(1, 1, 1);
-            transform: scale3D(1, 1, 1);
-  } 35% {
-    -webkit-transform: scale3D(0, 0, 1);
-            transform: scale3D(0, 0, 1);
-  } 
-}
-
-
-.ql-editor {
-  max-height: 140px !important;
-}
-
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
-#nav {
-  padding: 30px;
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-    &.router-link-exact-active {
-      color: #42b983;
-    }
-  }
-}
-.v-sidebar-menu {
-  z-index: 50000;
-  display:block !important;
-}
 </style>
