@@ -17,7 +17,7 @@
             </div>
         </template>
     </v-wait>
-    <sidebar-menu :menu="menu" v-if="isAuth" :collapsed="true" />
+    <sidebar-menu :menu="menu" v-if="isAuth" :collapsed="true" :widthCollapsed="'35px'" :width="'250px'" />
     <div class="p-5">
       <router-view/>
     </div>
@@ -144,6 +144,26 @@ export default {
           ]
         },
         {
+          title: 'Relatórios',
+          icon: 'fas fa-chart-bar',
+          code: 'all',
+          code: 'report-viewer',
+          child: [
+            {
+              href: '/report/accounting',
+              title: 'Borderô',
+              icon: 'fas fa-file-invoice-dollar',
+              code: 'report-accounting'
+            },
+            {
+              href: '/report/report1',
+              title: 'Report 1',
+              icon: 'fas fa-chart-pie',
+              code: 'report-accounting'
+            },
+          ]
+        },
+               {
           title: 'Propaganda',
           icon: 'fas fa-ad',
           code: 'all',
@@ -468,5 +488,17 @@ export default {
 .v-sidebar-menu {
   z-index: 50000;
   display:block !important;
+}
+.vsm-link {
+  font-size: 12px !important;
+  padding: 8px !important;
+}
+.vsm-icon {
+  height: 20px !important;
+  width: 20px !important;
+  line-height: 20px !important;
+}
+.collapse-btn {
+  height: 30px !important;
 }
 </style>

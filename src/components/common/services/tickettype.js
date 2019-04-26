@@ -114,6 +114,8 @@ function get(loggedId, id, id_base) {
                 ,isHalf
                 ,isFixed
                 ,isPlus
+                ,isNoValue
+                ,isPOS
                 ,vl_preco_fixo
                 ,PerDesconto
                 ,CotaMeiaEstudante
@@ -146,6 +148,8 @@ function get(loggedId, id, id_base) {
         ,isHalf: (isHalf == true ? 1 : 0)
         ,isFixed: (isFixed == true ? 1 : 0)
         ,isPlus: (isPlus == true ? 1 : 0)
+        ,isNoValue: (isNoValue == true ? 1 : 0)
+        ,isPOS: (isPOS == true ? 1 : 0)
         ,vl_preco_fixo
         ,PerDesconto
         ,CotaMeiaEstudante

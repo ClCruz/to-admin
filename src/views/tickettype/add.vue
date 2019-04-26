@@ -90,7 +90,7 @@
                   <toggle-button :sync="true" @change="changed" name="isDiscount" v-model="form.isDiscount" :width="120" :color="{checked: '#b3ffb3', unchecked: '#ffb3b3', disabled: '#a6a6a6'}" :labels="{ checked: 'Desconto', unchecked: 'É com desconto?' }"/>
                   <toggle-button :sync="true" @change="changed" name="isHalf" v-model="form.isHalf" :width="110" :color="{checked: '#b3ffb3', unchecked: '#ffb3b3', disabled: '#a6a6a6'}" :labels="{ checked: 'Meia', unchecked: 'É meia entrada?' }"/>
                   <toggle-button :sync="true" @change="changed" name="isFixed" v-model="form.isFixed" :width="110" :color="{checked: '#b3ffb3', unchecked: '#ffb3b3', disabled: '#a6a6a6'}" :labels="{ checked: 'Fixo', unchecked: 'É valor fixo?' }"/>
-                  <toggle-button :sync="true" @change="changed" name="isNoValue" v-model="form.isNoValue" :width="110" :color="{checked: '#b3ffb3', unchecked: '#ffb3b3', disabled: '#a6a6a6'}" :labels="{ checked: 'Fixo', unchecked: 'É de graça?' }"/>
+                  <toggle-button :sync="true" @change="changed" name="isNoValue" v-model="form.isNoValue" :width="110" :color="{checked: '#b3ffb3', unchecked: '#ffb3b3', disabled: '#a6a6a6'}" :labels="{ checked: 'Fixo', unchecked: 'É gratuito?' }"/>
                   <toggle-button :sync="true" @change="changed" name="isPOS" v-model="form.isPOS" :width="110" :color="{checked: '#b3ffb3', unchecked: '#ffb3b3', disabled: '#a6a6a6'}" :labels="{ checked: 'Fixo', unchecked: 'É POS?' }"/>
                   <toggle-button :sync="true" @change="changed" name="isPlus" v-model="form.isPlus" :width="110" :color="{checked: '#b3ffb3', unchecked: '#ffb3b3', disabled: '#a6a6a6'}" :labels="{ checked: 'Outros', unchecked: 'É outro tipo?' }"/>
               </b-row>
@@ -438,6 +438,8 @@ export default {
       let isHalf = this.form.isHalf == true ? 1 : 0;
       let isFixed = this.form.isFixed == true ? 1 : 0;
       let isPlus = this.form.isPlus == true ? 1 : 0;
+      let isNoValue = this.form.isNoValue == true ? 1 : 0;
+      let isPOS = this.form.isPOS == true ? 1 : 0;
       let vl_preco_fixo_fixed = this.form.vl_preco_fixo;
       let vl_preco_fixo_plus = this.form.vl_preco_fixo;
       let discountHalf = this.form.discountHalf;
@@ -494,6 +496,8 @@ export default {
                             ,isHalf
                             ,isFixed
                             ,isPlus
+                            ,isNoValue
+                            ,isPOS
                             ,vl_preco_fixo
                             ,PerDesconto
                             ,CotaMeiaEstudante
@@ -578,6 +582,8 @@ export default {
                 this.form.isOld = response.isOld == 1;
                 this.form.isPlus = response.isPlus == 1;
                 this.form.isPrincipal = response.isPrincipal == 1;
+                this.form.isNoValue = response.isNoValue == 1;
+                this.form.isPOS = response.isPOS == 1;
                 this.form.nameTicketOffice = response.nameTicketOffice;
                 this.form.nameWeb = response.nameWeb;
                 this.form.PerDesconto = response.PerDesconto;
@@ -704,6 +710,8 @@ export default {
           isOld: false,
           isPlus: false,
           isPrincipal: false,
+          isNoValue: false,
+          isPOS: false,
           halftype: true,
           nameTicketOffice: '',
           nameWeb: '',
