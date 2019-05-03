@@ -1,5 +1,75 @@
 <template>
 <div id="app" class="">
+
+  <div class="header py-4" v-if="isAuth">
+    <div class="container">
+      <div class="d-flex">
+        <a class="header-brand" href="./index.html">
+                <!-- <img src="./demo/brand/tabler.svg" class="header-brand-img" alt="tabler logo"> -->
+              </a>
+        <div class="d-flex order-lg-2 ml-auto">
+          <!-- <div class="nav-item d-none d-md-flex">
+            <a href="https://github.com/tabler/tabler" class="btn btn-sm btn-outline-primary" target="_blank">Source code</a>
+          </div> -->
+          <!-- <div class="dropdown d-none d-md-flex">
+            <a class="nav-link icon" data-toggle="dropdown">
+                    <i class="fe fe-bell"></i>
+                    <span class="nav-unread"></span>
+                  </a>
+            <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
+              <a href="#" class="dropdown-item d-flex">
+                      <span class="avatar mr-3 align-self-center" style="background-image: url(demo/faces/male/41.jpg)"></span>
+                      <div>
+                        <strong>Nathan</strong> pushed new commit: Fix page load performance issue.
+                        <div class="small text-muted">10 minutes ago</div>
+                      </div>
+                    </a>
+              <a href="#" class="dropdown-item d-flex">
+                      <span class="avatar mr-3 align-self-center" style="background-image: url(demo/faces/female/1.jpg)"></span>
+                      <div>
+                        <strong>Alice</strong> started new task: Tabler UI design.
+                        <div class="small text-muted">1 hour ago</div>
+                      </div>
+                    </a>
+              <a href="#" class="dropdown-item d-flex">
+                      <span class="avatar mr-3 align-self-center" style="background-image: url(demo/faces/female/18.jpg)"></span>
+                      <div>
+                        <strong>Rose</strong> deployed new version of NodeJS REST Api V3
+                        <div class="small text-muted">2 hours ago</div>
+                      </div>
+                    </a>
+              <div class="dropdown-divider"></div>
+              <a href="#" class="dropdown-item text-center">Mark all as read</a>
+            </div>
+          </div> -->
+          <div class="dropdown">
+            <a href="#" class="nav-link pr-0 leading-none" data-toggle="dropdown">
+                    <span class="avatar" :style="{ backgroundImage: 'url(\'https://avatar.tobi.sh/tobiaslins.svg?text=' + getLoggedEmail().substring(0,2) + '\')' }" style="background-size: cover"></span>
+                    <span class="ml-3 d-none d-lg-block  text-left">
+                      <span class="text-default">{{this.getLoggedEmail() == null ? "Carregando..." : this.getLoggedEmail()}}</span>
+                      <!-- <small class="text-muted d-block mt-1">Administrador</small> -->
+                    </span>
+                  </a>
+            <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
+              <a class="dropdown-item" href="/my/info">
+                      <i class="dropdown-icon fe fe-user"></i> Informações de Perfil
+                    </a>
+              <a class="dropdown-item" href="/my/pass">
+                      <i class="dropdown-icon fas fa-key"></i> Mudar Senha
+                    </a>
+              <a class="dropdown-item" href="/logout">
+                      <i class="dropdown-icon fe fe-log-out"></i> Sair
+                    </a>
+            </div>
+          </div>
+        </div>
+        <a href="#" class="header-toggler d-lg-none ml-3 ml-lg-0" data-toggle="collapse" data-target="#headerMenuCollapse">
+                <span class="header-toggler-icon"></span>
+              </a>
+      </div>
+    </div>
+  </div>
+
   <v-wait for="loadingAboveAll">
     <template slot="waiting">
       <div id="aboveAll">
@@ -17,8 +87,8 @@
       </div>
     </template>
   </v-wait>
- 
-  <sidebar-menu :menu="menu" v-if="isAuth" :collapsed="true" :widthCollapsed="'48px'" :width="'350px'" />
+
+  <sidebar-menu :menu="menu" v-if="isAuth" :collapsed="true" :widthCollapsed="'48px'" :width="'240px'" />
   <div class="p-5">
     <router-view />
   </div>
@@ -100,31 +170,17 @@ export default {
       let menuHelper = [{
           header: true,
           title: 'TicketOffice - Administrador',
-          code: 'all'
-        },
-        {
-          title: 'Meu cadastro - ' + this.getLoggedEmail() == null ? "Carregando..." : this.getLoggedEmail(),
-          icon: 'far fa-address-card',
           code: 'all',
-          child: [{
-              href: '/my/info',
-              title: 'Informações',
-              icon: 'fas fa-info',
-              code: 'all',
-            },
-            {
-              href: '/my/pass',
-              title: 'Mudar senha',
-              icon: 'fas fa-key',
-              code: 'all',
-            },
-            {
-              href: '/logout',
-              title: 'Sair',
-              icon: 'fas fa-sign-out-alt',
-              code: 'all',
-            }
-          ]
+          theme: {
+            type: String,
+          }
+        },
+        
+        {
+          title: 'Dashboard',
+          icon: 'fas fa-chart-bar',
+          code: 'all',
+          href: '/',
         },
         {
           title: 'Usuários',
@@ -398,18 +454,18 @@ export default {
 </style>
 <style lang="scss">
 .sk-cube-grid {
-  width: 140px;
-  height: 140px;
-  margin: 200px auto;
+  width: 60px;
+  height: 60px;
+  margin: 340px auto;
 }
 
 .sk-cube-grid .sk-cube {
   width: 33%;
   height: 33%;
-  background-color: #000;
+  background-color: rgb(75, 114, 224);
   float: left;
-  -webkit-animation: sk-cubeGridScaleDelay 1.3s infinite ease-in-out;
-  animation: sk-cubeGridScaleDelay 1.3s infinite ease-in-out;
+  -webkit-animation: sk-cubeGridScaleDelay 3s infinite ease-in-out;
+  animation: sk-cubeGridScaleDelay 3s infinite ease-in-out;
 }
 
 .sk-cube-grid .sk-cube1 {
@@ -513,7 +569,7 @@ export default {
 }
 
 .v-sidebar-menu {
-  z-index: 50000;
+  z-index: 1000;
   display: block !important;
 }
 
@@ -530,5 +586,165 @@ export default {
 
 .collapse-btn {
   height: 35px !important;
+}
+
+// A
+
+.v-sidebar-menu {
+  background: #fff !important;
+}
+
+.v-sidebar-menu .vsm-item.first-item>.vsm-link>.vsm-icon {
+  background: #fff !important;
+}
+
+.v-sidebar-menu .vsm-icon {
+  color: #ccc !important;
+}
+
+$primaryColor: rgb(130, 130, 150);
+$baseBg: #fff;
+$darkenBg: darken($baseBg, 5%);
+$lightenBg: #e0e0e0;
+
+$itemColor: rgb(130, 130, 130);
+
+$itemOpenColor: #fff;
+$itemOpenBg: $primaryColor;
+
+$itemHoverColor: rgb(130, 130, 130);
+$itemHoverBg: $darkenBg;
+
+$iconColor: rgb(190, 190, 210);
+$iconBg: #fff;
+
+$iconActiveColor: rgb(75, 114, 224);
+$iconActiveBg: #fff;
+
+$iconOpenColor: #fff;
+$iconOpenBg: transparent;
+
+$mobileItemColor: #fff;
+$mobileItemBg: $primaryColor;
+$mobileIconBg: transparent;
+$mobileIconColor: #fff;
+
+$dropDownColor: #262626;
+$dropDownBg: #fff;
+
+.v-sidebar-menu {
+  background-color: $baseBg !important;
+
+        margin-top: 65px;
+  & .vsm-list {
+  }
+
+  & .vsm-link {
+    color: $itemColor !important;
+    text-align: left;
+    border-left: 1px solid #eee;
+    
+  }
+
+  & .vsm-title {
+    text-align: left;
+  }
+
+  & .vsm-item.mobile-item {
+    &>.vsm-link {
+      color: $mobileItemColor !important;
+    }
+
+    &>.vsm-icon {
+      color: $mobileIconColor !important;
+      background-color: $mobileIconBg !important;
+    }
+  }
+
+  & .vsm-item.first-item {
+    &>.vsm-link {
+      &>.vsm-icon {
+        color: $iconColor !important;
+        background-color: $iconBg !important;
+      }
+    }
+
+    &.active-item>.vsm-link,
+    &.parent-active-item>.vsm-link {
+
+      // box-shadow: 3px 0px 0px 0px $primaryColor inset !important;
+      &>.vsm-icon {
+        color: $iconActiveColor !important;
+        background-color: $iconActiveBg !important;
+      }
+    }
+  }
+
+  &.rtl .vsm-item.first-item {
+
+    &.active-item>.vsm-link,
+    &.parent-active-item>.vsm-link {
+      // box-shadow: -3px 0px 0px 0px $primaryColor inset !important;
+    }
+  }
+
+  &.vsm-default {
+    & .vsm-item.first-item {
+      &.open-item>.vsm-link {
+        color: $itemOpenColor !important;
+        background-color: $itemOpenBg !important;
+
+        &>.vsm-icon {
+          color: $iconOpenColor !important;
+          background-color: $iconOpenBg !important;
+        }
+      }
+    }
+
+    & .vsm-link:hover {
+      color: $itemHoverColor !important;
+      background-color: #000 !important;
+    }
+  }
+
+  & .vsm-dropdown {
+    &>.vsm-list {
+      background-color: $dropDownBg !important;
+
+      &:hover {}
+
+      & .vsm-link {
+        color: #333 !important;
+      }
+
+      & .vsm-link:hover {
+        color: $itemHoverColor !important;
+        background-color: #fff !important;
+      }
+
+      & :hover {
+        // color: $itemHoverColor !important;
+        // background-color: #e3e3e3 !important; 
+      }
+    }
+  }
+
+  & .vsm-mobile-bg {
+    background-color: $mobileItemBg !important;
+  }
+
+  & .vsm-header {
+    color: rgba($itemColor, 0.7) !important;
+  }
+
+  & .vsm-badge.default-badge {
+    color: $itemColor !important;
+    background-color: $lightenBg !important;
+  }
+
+  & .collapse-btn {
+    color: $itemColor !important;
+    background-color: $darkenBg !important;
+  }
 }
 </style>

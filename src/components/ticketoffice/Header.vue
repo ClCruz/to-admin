@@ -1,8 +1,8 @@
 <template>
     <div>
         <b-button-toolbar :key="idbuttons" key-nav  aria-label="Toolbar with button groups" class="menuticketoffice">
-            <b-button-group class="mx-1">
-                <b-dropdown id="ddbase" ref="ddbase" v-if="isAuth && !purchaseProcessing" variant="warning" right :text="base">
+            <b-button-group class="mx-1 ml-0">
+                <b-dropdown id="ddbase" ref="ddbase" variant="info" class="rounded" v-if="isAuth && !purchaseProcessing" right :text="base">
                     <b-dropdown-item v-on:click="goto('base', { id_base: null, ds_nome_teatro: 'Escolha'})">Escolha</b-dropdown-item>
                     <b-dropdown-item v-for="item in bases"  :key="item.id_base" v-on:click="goto('base',item)">{{item.ds_nome_teatro}}</b-dropdown-item>                    
                 </b-dropdown>
