@@ -155,12 +155,6 @@ export default {
               icon: 'fas fa-file-invoice-dollar',
               code: 'report-accounting'
             },
-            {
-              href: '/report/report1',
-              title: 'Report 1',
-              icon: 'fas fa-chart-pie',
-              code: 'report-accounting'
-            },
           ]
         },
                {

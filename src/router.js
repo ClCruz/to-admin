@@ -153,6 +153,13 @@ const adminPartnerStaticPage = resolve => {
   }, 'admin-staticpage');
 };
 
+// report
+const adminReportAccounting = resolve => {
+  require.ensure(['./views/report/accounting.vue'], () => {
+    resolve(require('./views/report/accounting.vue'));
+  }, 'admin-report-accounting');
+};
+
 
 // producer
 const adminProducerList = resolve => {
@@ -361,6 +368,13 @@ const obj = new Router({
       name: 'producer-edit',
       props: true,
       component: adminProducerAdd
+    },
+    //------
+    //Report
+    {
+      path: '/report/accounting',
+      name: 'report-accounting',
+      component: adminReportAccounting
     },
     //------
     //GENRE
