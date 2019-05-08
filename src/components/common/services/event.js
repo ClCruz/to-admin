@@ -200,7 +200,6 @@ function save(id_to_admin_user, id_base,id_produtor
         ,showonline,minAmount,maxAmount
     };
 
-    // console.log(obj);
 
     var ret = new Promise(
         function (resolve, reject) {

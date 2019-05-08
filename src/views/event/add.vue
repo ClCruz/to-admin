@@ -769,6 +769,7 @@ export default {
         ticketoffice_ticketmodel = this.form.ticketoffice_ticketmodel;
         qt_ingressos_por_cpf = this.form.qt_ingressos_por_cpf;
         minAmount = this.form.minAmount;
+        
         maxAmount = this.form.maxAmount;
 
         imagechanged = this.form.saveimage;
