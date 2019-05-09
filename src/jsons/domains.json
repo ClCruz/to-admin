@@ -46,11 +46,9 @@
     "api.cultingressos.tixs.me": "cultingressos",
     "compra.cultingressos.tixs.me": "cultingressos",
     "www.teatroumc.com.br": "teatroumc",
-    "api.teatroumc.com.br": "teatroumc",
-    "compra.teatroumc.com.br": "teatroumc",
+    "api.ingressos.teatroumc.com.br": "teatroumc",
+    "compra.ingressos.teatroumc.com.br": "teatroumc",
     "ingressos.teatroumc.com.br": "teatroumc",
-    "api.teatroumc.com.br": "teatroumc",
-    "compra.teatroumc.com.br": "teatroumc",
     "www.viveremsantosdemo.tk": "viveremsantos",
     "api.viveremsantosdemo.tk": "viveremsantos",
     "compra.viveremsantosdemo.tk": "viveremsantos",
@@ -181,5 +179,10 @@
     "admin.tremendao.ticketoffice.me": "tremendao",
     "api.hipocritas.ticketoffice.wl": "hipocritas",
     "compra.hipocritas.ticketoffice.wl": "hipocritas",
-    "admin.hipocritas.ticketoffice.wl": "hipocritas"
+    "admin.hipocritas.ticketoffice.wl": "hipocritas",
+
+    "ingressos.teatroalphaville.com.br": "alphaville",
+    "api.ingressos.teatroalphaville.com.br": "alphaville",
+    "compra.ingressos.teatroalphaville.com.br": "alphaville",
+    "admin.ingressos.teatroalphaville.com.br": "alphaville"
 }
