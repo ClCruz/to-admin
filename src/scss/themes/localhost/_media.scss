@@ -8,21 +8,17 @@ $XL: 1200px;
 // media queries
 
 @mixin MQ($canvas) {
-  @if $canvas==S {
-    @media only screen and (min-width: $S) and (max-width: $M) {
-      @content;
-    }
-  }
-
-  @else if $canvas==M {
-    @media only screen and (min-width: $M) and (max-width: $L) {
-      @content;
-    }
-  }
-
-  @else if $canvas==L {
-    @media only screen and (min-width: $L) {
-      @content;
-    }
-  }
+	@if $canvas==S {
+		@media only screen and (min-width: $S) and (max-width: $M) {
+			@content;
+		}
+	} @else if $canvas==M {
+		@media only screen and (min-width: $M) and (max-width: $L) {
+			@content;
+		}
+	} @else if $canvas==L {
+		@media only screen and (min-width: $L) {
+			@content;
+		}
+	}
 }

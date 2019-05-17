@@ -13,6 +13,7 @@ environment = multi.env;
 const configHelp = {
   environment,
   setapikey,
+  getapikeyQS,
   info: myinfo,
   system: {
     perPage: 10,
@@ -40,7 +41,9 @@ function applyPagination(url, currentPage, perPage) {
   let ret = `${url}${separator}${defaultConfig.system.currentPageLabel}=${currentPage}&${defaultConfig.system.perPageLabel}=${perPage}`;
   return ret;
 }
-
+function getapikeyQS() {
+  return "apikey="+defaultConfig.apikey;
+}
 function setapikey() {
   Vue.http.interceptors.push((request, next) => {
       if (request.url.startsWith(defaultConfig.api)) {
