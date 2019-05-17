@@ -212,15 +212,12 @@ export default {
               icon: 'fas fa-file-invoice-dollar',
               code: 'report-accounting'
             },
-<<<<<<< HEAD
             {
               href: '/report/partnersell',
               title: 'Venda para parceiros',
               icon: 'fas fa-chart-pie',
               code: 'report-partnersell'
             },
-=======
->>>>>>> dev
           ]
         },
         {
