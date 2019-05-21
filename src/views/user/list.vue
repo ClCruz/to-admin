@@ -52,7 +52,34 @@
                 </b-button>
               </template>
         </b-table>
-        <b-btn class="mt-3" variant="outline-info" block @click="baseClose">Fechar</b-btn>
+        <b-btn class="mt-3" variant="outline-info" block @click="partnerClose">Fechar</b-btn>
+      </b-modal>
+      <b-modal ref="partnerModal" hide-footer title="Usuário x Parceiro" size="lg">
+        <div class="d-block text-center">
+          <h4>Permissão nos parceiros para {{popups.partner.name}}</h4>
+        </div>
+        <b-table striped="striped"
+                  outlined="outlined"
+                  class="fontSize tableClicked bg-white"
+                  small="small"
+                  hover="hover"
+                  responsive
+                  show-empty
+                  empty-text="Não foram encontrados registros."
+                  v-if="this.popups.partner.grids.partner.loaded"
+                  :items="this.popups.partner.grids.partner.items"
+                  :fields="this.popups.partner.grids.partner.fields">
+
+              <template slot="active" slot-scope="data">
+                <b-button size="sm" @click="changePartner('add', data.item)" title="Adicionar parceiro" variant="outline-success" v-if="data.item.active != 1">
+                    Adicionar
+                </b-button>
+                <b-button size="sm" @click="changePartner('del', data.item)" title="Remover parceiro" variant="danger" v-if="data.item.active == 1">
+                    Remover
+                </b-button>
+              </template>
+        </b-table>
+        <b-btn class="mt-3" variant="outline-info" block @click="partnerClose">Fechar</b-btn>
       </b-modal>
 
       <b-container>
@@ -115,6 +142,16 @@
                       <b-button title="Bases" v-if="mayI('user-add')" @click.stop="base(data.item,$event.target)">
                         <span v-if="!this.processing">
                           Bases
+                        </span>
+                        <v-wait for="inprocess">
+                            <template slot="waiting">
+                                Carregando...
+                            </template>
+                        </v-wait>
+                      </b-button>
+                      <b-button title="Bases" v-if="mayI('user-add-partner')" @click.stop="partner(data.item,$event.target)">
+                        <span v-if="!this.processing">
+                          Parceiro
                         </span>
                         <v-wait for="inprocess">
                             <template slot="waiting">
@@ -237,6 +274,41 @@ export default {
         }
       );      
     },
+    changePartner(type, item) {
+      if (this.processing) return;
+
+      this.processing = true;
+
+      this.showWaitAboveAll();
+      userService.partnerSave(this.getLoggedId(), this.popups.partner.id, item.id).then(
+        response => {
+          this.processing = false;
+
+          this.hideWaitAboveAll();
+          //this.$wait.end("inprocess");
+
+          if (this.validateJSON(response))
+          {
+            if (response.success) {
+              this.toastSuccess("Salvo com sucesso.");
+              this.refreshPartner();
+            }
+            else {
+              this.toastError(response.msg);
+            }
+          }
+        },
+        error => {
+          this.processing = false;
+          this.hideWaitAboveAll();
+          //this.$wait.end("inprocess");
+          this.toastError("Falha na execução.");
+        }
+      );      
+    },
+    refreshPartner() {
+      this.partner({ name: this.popups.partner.name, id: this.popups.partner.id });
+    },
     refreshBase() {
       this.base({ name: this.popups.base.name, id: this.popups.base.id });
     },
@@ -267,6 +339,40 @@ export default {
         },
         error => {
           this.popups.base.grids.base.processing = false;
+          this.processing = false;
+          this.hideWaitAboveAll();
+          this.$wait.end("inprocess");
+          this.toastError("Falha na execução.");
+        }
+      );      
+    },
+    partner(item) {
+      if (this.processing) return;
+
+      this.popups.partner.name = item.name;
+      this.popups.partner.id = item.id;
+
+      this.popups.partner.grids.partner.processing = true;
+      this.processing = true;
+
+      this.$wait.start("inprocess");
+      this.showWaitAboveAll();
+      userService.partnerList(item.id).then(
+        response => {
+          this.processing = false;
+          this.popups.partner.grids.partner.processing = false;
+          this.hideWaitAboveAll();
+          this.$wait.end("inprocess");
+
+          if (this.validateJSON(response))
+          {
+              this.popups.partner.grids.partner.loaded = true;
+              this.popups.partner.grids.partner.items = response;
+              this.$refs.partnerModal.show();
+          }
+        },
+        error => {
+          this.popups.partner.grids.partner.processing = false;
           this.processing = false;
           this.hideWaitAboveAll();
           this.$wait.end("inprocess");
@@ -401,6 +507,23 @@ export default {
                 items: [],
                 fields: {
                   ds_nome_teatro: { label: 'Nome', sortable: false },
+                  active: { label: '', sortable: false },
+                },
+              }
+            }
+          },
+          partner: {
+            loaded: false,
+            name: '',
+            id: '',
+            grids: {
+              partner: {
+                processing: false,
+                loaded: false,
+                items: [],
+                fields: {
+                  name: { label: 'Nome', sortable: false },
+                  domain: { label: 'Dominio', sortable: false },
                   active: { label: '', sortable: false },
                 },
               }

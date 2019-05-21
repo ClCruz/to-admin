@@ -213,10 +213,10 @@ export default {
               code: 'report-accounting'
             },
             {
-              href: '/report/partnersell',
+              href: '/report/partnersale',
               title: 'Venda para parceiros',
               icon: 'fas fa-chart-pie',
-              code: 'report-partnersell'
+              code: 'report-partnersale'
             },
           ]
         },

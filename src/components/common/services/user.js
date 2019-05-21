@@ -14,6 +14,8 @@ export const userService = {
   authSave,
   baseList,
   baseSave,
+  partnerList,
+  partnerSave,
   baseSelect,
   pair,
   changepass,
@@ -114,6 +116,46 @@ function baseList(id) {
     }
   );
   return ret;
+}
+function partnerList(id) {
+    let url = config.api + `/v1/admin/user/partner/list?id=${id}`;
+
+    var ret = new Promise(
+    function (resolve, reject) {
+        Vue.http.get(url).then(res => {
+        resolve(res.body);
+        }, err => {
+        reject({
+            error: true,
+            msg: err
+        });
+        });
+    }
+  );
+  return ret;
+}
+function partnerSave(loggedId, id, id_partner) {
+    let url = config.api + `/v1/admin/user/partner/save`;
+
+    let obj = {
+        loggedId,
+        id,
+        id_partner,
+    };
+
+    var ret = new Promise(
+        function (resolve, reject) {
+            Vue.http.post(url, obj, { emulateJSON: true }).then(res => {
+                resolve(res.body);
+            }, err => {
+                reject({
+                    error: true,
+                    msg: err
+                });
+            });    
+        }
+    );
+    return ret;
 }
 function baseSave(loggedId, id, id_base) {
     let url = config.api + `/v1/admin/user/base/save`;

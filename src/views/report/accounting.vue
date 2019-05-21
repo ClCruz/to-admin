@@ -88,7 +88,6 @@
           </b-col>
         </b-row>
       </b-container>
-
       <vue-friendly-iframe id="bordero" :src="url" :width="'1000px'" :height="'2000px;'" @load="iframeloaded" @document-load="iframeloaded2" v-if="executed"></vue-friendly-iframe>
     </div>
 </template>
