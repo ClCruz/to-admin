@@ -54,6 +54,14 @@
                 </v-wait>
                 <span v-if="!processing">Consultar</span>
               </b-button>
+              <b-button type="button" variant="primary" size="sm" @click="startprint" v-if="grids.default.loaded && grids.default.items.length > 0">
+                <v-wait for="inprocess">
+                    <template slot="waiting">
+                        Aguarde...
+                    </template>
+                </v-wait>
+                <span v-if="!processing">Imprimir</span>
+              </b-button>              
             </b-row>
           </b-col>
         </b-row>
@@ -121,7 +129,7 @@
         </b-row>
       </b-container>
       
-      <!-- <vue-friendly-iframe ref="reportiframe" id="partnersale" :src="url" :width="'1200px'" :height="'2000px;'" @load="iframeloaded" @document-load="iframeloaded2" v-if="form.show"></vue-friendly-iframe> -->
+      <!-- <vue-friendly-iframe ref="reportiframe" id="partnersale" :src="url" :width="'1200px'" :height="'2000px;'" @load="iframeloaded" @document-load="iframeloaded2" style="display:inline"></vue-friendly-iframe> -->
     </div>
 </template>
 
@@ -130,7 +138,6 @@ import Vue from "vue";
 import VueHead from 'vue-head';
 import HotelDatePicker from 'vue-hotel-datepicker';
 import VueFriendlyIframe from 'vue-friendly-iframe';
-import html2canvas from 'html2canvas';
 import config from "@/config";
 import { partnersaleService } from "../../components/common/services/report/partnersale";
 
@@ -149,7 +156,6 @@ const moment = extendMoment(Moment);
 
 Vue.use(VueHead);
 Vue.component('vue-friendly-iframe', VueFriendlyIframe);
-
 
 export default {
   mixins: [func],
@@ -215,21 +221,6 @@ export default {
                 this.popups.detail.cd_cpf = response[0].cd_cpf;
                 this.popups.detail.cd_email_login = response[0].cd_email_login;
                 this.popups.detail.comission_amount_formatted = response[0].comission_amount_formatted;
-                // this.popups.detail.comission = response.comission;
-                // this.popups.detail.comission_amount = response.comission_amount;
-                // this.popups.detail.client_name = response.client_name;
-                // this.popups.detail.cd_cpf = response.cd_cpf;
-                // this.popups.detail.cd_email_login = response.cd_email_login;
-                // this.popups.detail.dt_nascimento = response.dt_nascimento;
-                // this.popups.detail.ds_tipo_bilhete = response.ds_tipo_bilhete;
-                // this.popups.detail.nr_parcelas_pgto = response.nr_parcelas_pgto;
-                // this.popups.detail.isInstallment = response.isInstallment;
-                // this.popups.detail.host = response.host;
-                // this.popups.detail.Indice = response.Indice;
-                // this.popups.detail.ds_localizacao = response.ds_localizacao;
-                // this.popups.detail.vl_unitario = response.vl_unitario;
-                // this.popups.detail.vl_taxa_conveniencia = response.vl_taxa_conveniencia;
-                // console.log(this.popups.detail);
                 this.$refs.detailModal.show();
             }
           },
@@ -266,17 +257,9 @@ export default {
         }
       );      
     },
-    search2() {
-      this.form.show = true;
-      Vue.nextTick().then(response => {
-        this.executed = false;
-        this.report = eventService.partnersales(this.form.selectedDate.start, this.form.selectedDate.end, this.form.amount);
-        this.$refs.reportiframe.reinitIframe();  
-        this.executed = true;
-        this.processing = true;
-        this.$wait.start("inprocess");
-        this.showWaitAboveAll();
-      });
+    startprint() {
+      let url = partnersaleService.printurl(this.form.selectedDate.start, this.form.selectedDate.end, this.form.amount);
+      window.open(url);
     },
     iframeloaded() {
       let me = this;

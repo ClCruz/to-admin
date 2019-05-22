@@ -17,13 +17,6 @@ export const eventService = {
   borderokey,
   borderourl,
   borderohtml,
-  partnersales
-}
-function partnersales(init, end, amount) {
-    let url = config.api + `/v1/print/report/partnersale?init=${init}&end=${end}&amount=${amount}&${config.getapikeyQS()}`;
-    console.log("oi");
-    console.log(url);
-    return url;
 }
 
 function borderourl(key, id_base) {
