@@ -178,6 +178,18 @@ const adminGenreAdd = resolve => {
   }, 'admin-genre');
 };
 
+// quota partner
+const adminQuotaPartnerList = resolve => {
+  require.ensure(['./views/quota/list.vue'], () => {
+    resolve(require('./views/quota/list.vue'));
+  }, 'admin-quotapartner');
+};
+const adminQuotaPartnerAdd = resolve => {
+  require.ensure(['./views/quota/add.vue'], () => {
+    resolve(require('./views/quota/add.vue'));
+  }, 'admin-quotapartner');
+};
+
 // place
 const adminPlaceList = resolve => {
   require.ensure(['./views/place/list.vue'], () => {
@@ -379,6 +391,23 @@ const obj = new Router({
       name: 'place-edit',
       props: true,
       component: adminPlaceAdd
+    },
+    //quota
+    {
+      path: '/quota/list',
+      name: 'quotapartner-list',
+      component: adminQuotaPartnerList
+    },
+    {
+      path: '/quota/add',
+      name: 'quotapartner-add',
+      component: adminQuotaPartnerAdd
+    },
+    {
+      path: '/quota/edit/:id',
+      name: 'quotapartner-edit',
+      props: true,
+      component: adminQuotaPartnerAdd
     },
     //------
     //PLACE
