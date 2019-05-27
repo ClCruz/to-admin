@@ -11,7 +11,7 @@ export const clientService =  {
     get,
 }
 
-function add(id_base, nin, rg, name, email, phoneDDD, phone, phoneRamal, cardBin, makeCode, partner) {
+function add(id_base, nin, rg, name, email, phoneDDD, phone, phoneRamal, cardBin, makeCode, partner, id_quotapartner) {
     let url = config.api + `/v1/ticketoffice/client/add?id_base=${id_base}`;
 
     let obj = {
@@ -27,6 +27,7 @@ function add(id_base, nin, rg, name, email, phoneDDD, phone, phoneRamal, cardBin
         cardBin,
         makeCode,
         partner: partner ? 1 : 0,
+        id_quotapartner
     }
 
     var ret = new Promise(

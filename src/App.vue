@@ -265,6 +265,26 @@ export default {
           ]
         },
         {
+          title: 'Cota',
+          icon: 'fas fa-star-half-alt',
+          code: 'quotapartner-viewer',
+          //code: 'user-viewer',
+          child: [
+            {
+              href: '/quota/add',
+              title: 'Adicionar',
+              icon: 'fas fa-plus',
+              code: 'quotapartner-add'
+            },
+            {
+              href: '/quota/list',
+              title: 'Listar',
+              icon: 'fas fa-th-list',
+              code: 'quotapartner-viewer',//'user-viewer'
+            },
+          ]
+        },
+        {
           title: 'Local',
           icon: 'fas fa-map-marked-alt',
           code: 'place-viewer',
