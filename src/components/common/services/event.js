@@ -79,7 +79,8 @@ function save(id_to_admin_user, id_base,id_produtor
     ,in_obriga_cpf,qt_ingressos_por_cpf,ticketoffice_askemail
     ,imagechanged,imagebase64,free_installments
     ,max_installments,interest_rate,ticketoffice_ticketmodel
-    ,showonline,minAmount,maxAmount) {
+    ,showonline,minAmount,maxAmount
+    ,in_entrega_ingresso) {
 
     let url = config.api + `/v1/admin/event/save`;
 
@@ -94,6 +95,7 @@ function save(id_to_admin_user, id_base,id_produtor
         ,imagechanged,imagebase64,free_installments
         ,max_installments,interest_rate,ticketoffice_ticketmodel
         ,showonline,minAmount,maxAmount
+        ,in_entrega_ingresso
     };
 
 
