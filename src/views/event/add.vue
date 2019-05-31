@@ -354,6 +354,10 @@
         <input id="ticketoffice_askemail" name="ticketoffice_askemail" v-model="form.ticketoffice_askemail" type="checkbox"/>
         <label for="ticketoffice_askemail">Perguntar para enviar o bilhete por email na compra da Bilheteria</label>
       </div>
+      <div class="checkboxGroup">
+        <input id="in_entrega_ingresso" name="in_entrega_ingresso" v-model="form.in_entrega_ingresso" type="checkbox"/>
+        <label for="in_entrega_ingresso">Ingresso entregue via correios?</label>
+      </div>
     </div>
     <b-row class="mb-3">
       <b-button type="button" variant="outline-success" size="sm" @click="save">
@@ -493,6 +497,9 @@ export default {
         if (this.form.ticketoffice_askemail == '1' || this.form.ticketoffice_askemail == 1) {
           ret.push("ticketoffice_askemail");
         }
+        if (this.form.in_entrega_ingresso == '1' || this.form.in_entrega_ingresso == 1) {
+          ret.push("in_entrega_ingresso");
+        }
         return ret;
       },
       set: function (newValue) {
@@ -505,9 +512,14 @@ export default {
         let index_ticketoffice_askemail = newValue.map(function (e) {
           return e;
         }).indexOf("ticketoffice_askemail");
+        let index_in_entrega_ingresso = newValue.map(function (e) {
+          return e;
+        }).indexOf("in_entrega_ingresso");
         this.form.showInBanner = index_showInBanner == -1 ? '' : '1';
         this.form.in_obriga_cpf = index_in_obriga_cpf == -1 ? '' : '1';
         this.form.ticketoffice_askemail = index_ticketoffice_askemail == -1 ? '' : '1';
+        this.form.in_entrega_ingresso = index_in_entrega_ingresso == -1 ? '' : '1';
+        
       }
     },
     mayIsee() {
@@ -659,6 +671,7 @@ export default {
               this.form.DatIniPeca = response.DatIniPeca;
               this.form.DatFinPeca = response.DatFinPeca;
               this.form.hasPresentantion = response.hasPresentantion;
+              this.form.in_entrega_ingresso = response.in_entrega_ingresso;
 
               this.form.minAmount = response.minAmount;
               this.form.maxAmount = response.maxAmount;
@@ -744,7 +757,8 @@ export default {
           ticketoffice_ticketmodel = "",
           interest_rate = "",
           minAmount = "",
-          maxAmount = "";
+          maxAmount = "",
+          in_entrega_ingresso = "";
 
         id_base = this.form.id_base;
         showonline = this.form.showonline;
@@ -771,6 +785,7 @@ export default {
         minAmount = this.form.minAmount;
         
         maxAmount = this.form.maxAmount;
+        in_entrega_ingresso = this.form.in_entrega_ingresso == true ? 1 : 0;
 
         imagechanged = this.form.saveimage;
         imagebase64 = this.form.image;
@@ -783,7 +798,7 @@ export default {
         this.$wait.start("inprocessSave");
 
         this.showWaitAboveAll();
-        eventService.save(this.getLoggedId(), id_base, id_produtor, CodPeca, NomPeca, CodTipPeca, TemDurPeca, CenPeca, id_local_evento, ValIngresso, description, meta_description, meta_keyword, opening_time, insurance_policy, showInBanner, bannerDescription, QtIngrPorPedido, in_obriga_cpf, qt_ingressos_por_cpf, ticketoffice_askemail, imagechanged, imagebase64, free_installments, max_installments, interest_rate, ticketoffice_ticketmodel, showonline, minAmount, maxAmount).then(
+        eventService.save(this.getLoggedId(), id_base, id_produtor, CodPeca, NomPeca, CodTipPeca, TemDurPeca, CenPeca, id_local_evento, ValIngresso, description, meta_description, meta_keyword, opening_time, insurance_policy, showInBanner, bannerDescription, QtIngrPorPedido, in_obriga_cpf, qt_ingressos_por_cpf, ticketoffice_askemail, imagechanged, imagebase64, free_installments, max_installments, interest_rate, ticketoffice_ticketmodel, showonline, minAmount, maxAmount, in_entrega_ingresso).then(
 
           response => {
             this.processing = false;
@@ -1098,6 +1113,10 @@ export default {
             text: "Perguntar para enviar o bilhete por email na compra da bilheteria",
             value: "ticketoffice_askemail"
           },
+          {
+            text: "Ingresso entregue via correios?",
+            value: "in_entrega_ingresso"
+          },
         ]
       },
       selects: {
@@ -1260,6 +1279,7 @@ export default {
         DatFinPeca: '',
         minAmount: 0,
         maxAmount: 0,
+        in_entrega_ingresso: 0,
         hasPresentantion: '',
 
         free_installments: null,
