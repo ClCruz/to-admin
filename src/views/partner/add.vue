@@ -184,6 +184,17 @@
               </b-row>
               <b-row class="mb-3">
                   <b-input-group size="sm">
+                      <b-form-checkbox id="show_partner_info"
+                                      v-model="form.show_partner_info"
+                                      value="1"
+                                      unchecked-value="0">
+                      <span v-if="form.show_partner_info == 1">Mostrar informação de parceiro</span>
+                      <span v-else>Não mostrar informação de parceiro</span>
+                      </b-form-checkbox>
+                  </b-input-group>
+              </b-row>
+              <b-row class="mb-3">
+                  <b-input-group size="sm">
                       <b-form-checkbox id="active"
                                       v-model="form.active"
                                       value="1"
@@ -391,7 +402,7 @@ export default {
       this.$wait.start("inprocessSave");
       this.showWaitAboveAll();
 
-      partnerService.save(this.getLoggedId(), this.isAdd ? '' : this.id, this.form.uniquename, this.form.name, this.form.domain, this.form.selectedDate.start, this.form.selectedDate.end, this.form.type, this.form.active, this.form.fb_appid, this.form.recaptchaid, this.form.sell_email, this.form.send_sell_email, this.form.ga_id).then(
+      partnerService.save(this.getLoggedId(), this.isAdd ? '' : this.id, this.form.uniquename, this.form.name, this.form.domain, this.form.selectedDate.start, this.form.selectedDate.end, this.form.type, this.form.active, this.form.fb_appid, this.form.recaptchaid, this.form.sell_email, this.form.send_sell_email, this.form.ga_id, this.form.show_partner_info).then(
         response => {
           this.processing = false;
           this.hideWaitAboveAll();
@@ -453,6 +464,7 @@ export default {
               this.form.ga_id = response.ga_id;
               this.form.sell_email = response.sell_email;
               this.form.send_sell_email = response.send_sell_email;
+              this.form.show_partner_info = response.show_partner_info;
           }
         },
         error => {
@@ -516,6 +528,7 @@ export default {
           recaptchaid: '',
           send_sell_email: 0,
           sell_email: '',
+          show_partner_info: 0,
         }
     }
   }

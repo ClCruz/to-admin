@@ -1,17 +1,14 @@
 <template>
         <b-container>
             <b-form @submit="onSubmit">
-                <b-form-row v-if="form.partner">
+                <b-form-row class="mb-3" v-if="form.partner">
                     <b-col>
-                        <b-form-group id="namegroup"
-                                        label-for="name">
-                            <b-form-input id="name"
-                                        type="text"
-                                        v-model="form.name"
-                                        maxlength="50"
-                                        placeholder="Nome">
-                            </b-form-input>
-                        </b-form-group>
+                        <b-input-group size="sm">
+                        <b-input-group-prepend is-text>
+                            Parceiro:
+                        </b-input-group-prepend>
+                        <b-form-select v-on:change="selQuotaPartner" v-model="form.id_quotapartner" :options="selects.partners" size="sm" />
+                        </b-input-group>
                     </b-col>
                 </b-form-row>
                 <b-form-row v-if="!form.partner">
@@ -151,8 +148,9 @@ import config from '@/config';
 import { func } from '@/functions';
 import { funcOperation } from '../../components/ticketoffice/services/functions';
 import { clientService } from "../../components/ticketoffice/services/client";
+import { quotapartnerService } from "../../components/common/services/quotapartner";
 
-import {mask} from 'vue-the-mask'
+import {mask} from 'vue-the-mask';
 
 Vue.use(VeeValidate, {
     fieldsBagName: 'vvFields',
@@ -170,8 +168,12 @@ export default {
             processing: false,
             loading: false,
             result: null,
+            selects: {
+                partners: [],
+            },
             form: {
                 partner: false,
+                id_quotapartner: '',
                 code: '',
                 cpf: '',
                 rg: '',
@@ -188,6 +190,16 @@ export default {
         this.load();
     },
     methods: {
+        selQuotaPartner(item) {
+            Vue.nextTick().then(response => {
+                let index = this.selects.partners.map(function (e) {
+                    return e.id;
+                }).indexOf(item);
+                if (index != -1) {
+                    this.form.name = this.selects.partners[index].name;
+                }
+            });
+        },
         cancel() {
             if (this.$route.fullPath == "/ticketoffice/operation/reservation/seat") 
             {
@@ -207,7 +219,25 @@ export default {
                 this.form.code = this.$props["code"];
                 this.get(false);
             }
+            this.populateQuotapartners();
         },
+        populateQuotapartners() {
+            this.processing = true;
+            this.showWaitAboveAll();
+
+            quotapartnerService.select().then(
+                    response => {
+                        this.hideWaitAboveAll();
+                        this.processing = false;
+                        this.selects.partners = response;
+                },
+                error => {
+                    this.processing = false;
+                    this.hideWaitAboveAll();
+                    this.toastError("Falha na execução.");        
+                }
+            );
+        },        
         get(check) {
             if (this.processing) return;
             if (check) {
@@ -286,7 +316,9 @@ export default {
             if (this.$route.fullPath == "/ticketoffice/operation/reservation/seat") 
                 makeCode = true;
 
-            clientService.add(this.get_id_base(), this.form.cpf, this.form.rg, this.form.name, this.form.email, this.form.ddd, this.form.phone, this.form.ramal, this.form.bincard, makeCode, this.form.partner).then(
+            
+
+            clientService.add(this.get_id_base(), this.form.cpf, this.form.rg, this.form.name, this.form.email, this.form.ddd, this.form.phone, this.form.ramal, this.form.bincard, makeCode, this.form.partner, this.form.id_quotapartner).then(
                     response => {
                         this.hideWaitAboveAll();
                         this.processing = false;

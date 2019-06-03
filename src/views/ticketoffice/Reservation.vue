@@ -16,6 +16,14 @@
                 </b-input-group>
             </b-row>
             <b-row class="my-1">
+                <b-input-group size="sm">
+                    <b-input-group-prepend is-text>
+                        Parceiro:
+                    </b-input-group-prepend>
+                    <b-form-select v-on:change="selQuotaPartner" v-model="form.id_quotapartner" :options="partners" size="sm" />
+                </b-input-group>
+            </b-row>    
+            <b-row class="my-1">
                 <b-col>
                     <b-row>
                     <b-input-group size="sm">
@@ -153,6 +161,7 @@ import { funcOperation } from '../../components/ticketoffice/services/functions'
 import { bookingService } from "../../components/common/services/booking";
 import { eventService } from "../../components/ticketoffice/services/event";
 import { printService } from '../../components/ticketoffice/services/print';
+import { quotapartnerService } from "../../components/common/services/quotapartner";
 
 import {mask} from 'vue-the-mask'
 
@@ -174,8 +183,10 @@ export default {
             events: [],
             days: [],
             hours: [],
+            partners: [],
             form: {
                 cancelAll: false,
+                id_quotapartner: '',
                 reservaSearch: false,
                 codReserva: '',
                 nin: '',
@@ -227,13 +238,41 @@ export default {
                 this.toastError("Falha na execução.");        
             }
         );
+        this.populateQuotapartners();
     },
     methods: {
+        selQuotaPartner(item) {
+            // Vue.nextTick().then(response => {
+            //     let index = this.selects.partners.map(function (e) {
+            //         return e.id;
+            //     }).indexOf(item);
+            //     if (index != -1) {
+            //         this.form.name = this.selects.partners[index].name;
+            //     }
+            // });
+        },
         selectedEvent() {
             this.$nextTick(() => {
                 this.populateDays();
             });
         },
+        populateQuotapartners() {
+            this.processing = true;
+            this.showWaitAboveAll();
+
+            quotapartnerService.select().then(
+                    response => {
+                        this.hideWaitAboveAll();
+                        this.processing = false;
+                        this.partners = response;
+                },
+                error => {
+                    this.processing = false;
+                    this.hideWaitAboveAll();
+                    this.toastError("Falha na execução.");        
+                }
+            );
+        },        
         populateDays() {
             if (this.form.codPeca == null) return;
             this.days = [];
@@ -365,8 +404,9 @@ export default {
         search() {
             this.form.cancelAll = false;
             this.form.selected = [];
-            if (this.form.nin == "" && this.form.name == "" && this.form.codReserva == "" && this.form.id_apresentacao == '') {
-                this.toastError("Preencha o Nome, CPF, código da reserva ou uma sala para consultar");
+            
+            if (this.form.nin == "" && this.form.name == "" && this.form.codReserva == "" && this.form.id_apresentacao == '' && this.form.id_quotapartner == '') {
+                this.toastError("Preencha o Nome, CPF, parceiro, código da reserva ou uma sala para consultar");
                 return;
             }
             if ((this.form.codPeca != '' && this.form.codPeca != null) && (this.form.id_apresentacao == '' || this.form.id_apresentacao == null)) {
@@ -378,7 +418,7 @@ export default {
             this.processing = true;
             this.showWaitAboveAll();
 
-            bookingService.list(this.get_id_base(), this.form.nin, this.form.codReserva, this.form.id_apresentacao, this.form.name).then(
+            bookingService.list(this.get_id_base(), this.form.nin, this.form.codReserva, this.form.id_apresentacao, this.form.name, this.form.id_quotapartner).then(
                     response => {
                         this.hideWaitAboveAll();
                         this.processing = false;

@@ -153,6 +153,18 @@ const adminPartnerStaticPage = resolve => {
   }, 'admin-staticpage');
 };
 
+// report
+const adminReportAccounting = resolve => {
+  require.ensure(['./views/report/accounting.vue'], () => {
+    resolve(require('./views/report/accounting.vue'));
+  }, 'admin-report-accounting');
+};
+const adminReportPartnerSale = resolve => {
+  require.ensure(['./views/report/partnersale.vue'], () => {
+    resolve(require('./views/report/partnersale.vue'));
+  }, 'admin-report-partnersale');
+};
+
 
 // producer
 const adminProducerList = resolve => {
@@ -176,6 +188,18 @@ const adminGenreAdd = resolve => {
   require.ensure(['./views/genre/add.vue'], () => {
     resolve(require('./views/genre/add.vue'));
   }, 'admin-genre');
+};
+
+// quota partner
+const adminQuotaPartnerList = resolve => {
+  require.ensure(['./views/quota/list.vue'], () => {
+    resolve(require('./views/quota/list.vue'));
+  }, 'admin-quotapartner');
+};
+const adminQuotaPartnerAdd = resolve => {
+  require.ensure(['./views/quota/add.vue'], () => {
+    resolve(require('./views/quota/add.vue'));
+  }, 'admin-quotapartner');
 };
 
 // place
@@ -363,6 +387,18 @@ const obj = new Router({
       component: adminProducerAdd
     },
     //------
+    //Report
+    {
+      path: '/report/accounting',
+      name: 'report-accounting',
+      component: adminReportAccounting
+    },
+    {
+      path: '/report/partnersale',
+      name: 'report-partnersale',
+      component: adminReportPartnerSale
+    },
+    //------
     //GENRE
     {
       path: '/place/list',
@@ -379,6 +415,23 @@ const obj = new Router({
       name: 'place-edit',
       props: true,
       component: adminPlaceAdd
+    },
+    //quota
+    {
+      path: '/quota/list',
+      name: 'quotapartner-list',
+      component: adminQuotaPartnerList
+    },
+    {
+      path: '/quota/add',
+      name: 'quotapartner-add',
+      component: adminQuotaPartnerAdd
+    },
+    {
+      path: '/quota/edit/:id',
+      name: 'quotapartner-edit',
+      props: true,
+      component: adminQuotaPartnerAdd
     },
     //------
     //PLACE

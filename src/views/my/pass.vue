@@ -3,6 +3,7 @@
     <b-container>
       <b-row style="width: 400px;">
         <b-col>
+          <h2>Alterar Senha</h2>
           <b-row class="mb-3">
             <password labelHide="Esconder senha" labelShow="Mostrar senha" v-model="form.oldpass" placeholder="Digite sua senha antiga" :badge="false" :showStrengthMeter="false" :secureLength="7" :toggle="false" />
           </b-row>

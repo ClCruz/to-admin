@@ -10,7 +10,59 @@ export const eventService = {
   list,
   get,
   save,
-  base64
+  base64,
+  select,
+  selectDays,
+  selectDayHours,
+  borderokey,
+  borderourl,
+  borderohtml,
+}
+
+function borderourl(key, id_base) {
+    let url = config.api + `/v1/print/report/accounting?id_base=${id_base}&id=${key}&${config.getapikeyQS()}`;
+    return url;
+}
+
+function borderohtml(url) {
+    //let url = borderourl();
+
+    //let obj = { loggedId, id_evento, date, hour };
+    let obj = { };
+
+    var ret = new Promise(
+        function (resolve, reject) {
+            Vue.http.post(url, obj, { emulateJSON: true }).then(res => {
+                resolve(res.body);
+            }, err => {
+                reject({
+                    error: true,
+                    msg: err
+                });
+            });    
+        }
+    );
+    return ret;
+}
+
+function borderokey(loggedId, id_evento, date, hour, id_base) {
+    let url = config.api + `/v1/print/report/key/accounting`;
+
+    let obj = { loggedId, id_evento, date, hour };
+
+    var ret = new Promise(
+        function (resolve, reject) {
+            Vue.http.post(url, obj, { emulateJSON: true }).then(res => {
+                resolve(res.body);
+            }, err => {
+                reject({
+                    error: true,
+                    msg: err
+                });
+            });    
+        }
+    );
+    return ret;
 }
 
 function base64(id, type) {
@@ -68,6 +120,58 @@ function list(loggedId, search, currentPage, perPage) {
     }
   );
   return ret;
+}
+
+function select(loggedId,id_base) {
+    let url = config.api + `/v1/admin/event/select?loggedId=${loggedId}&id_base=${id_base}`;
+
+    var ret = new Promise(
+    function (resolve, reject) {
+        Vue.http.get(url).then(res => {
+        resolve(res.body);
+        }, err => {
+        reject({
+            error: true,
+            msg: err
+        });
+        });
+    }
+  );
+  return ret;
+}
+function selectDays(loggedId, id_base, id_evento) {
+    let url = config.api + `/v1/admin/event/selectdays?id_base=${id_base}&id_evento=${id_evento}&loggedId=${loggedId}`;
+
+    var ret = new Promise(
+        function (resolve, reject) {
+            Vue.http.get(url).then(res => {
+                resolve(res.body);
+            }, err => {
+                reject({
+                    error: true,
+                    msg: err
+                });
+            });    
+        }
+    );
+    return ret;
+}
+function selectDayHours(loggedId, id_base, id_evento, datePresentation) {
+    let url = config.api + `/v1/admin/event/selecthours?id_base=${id_base}&id_evento=${id_evento}&datePresentation=${datePresentation}&loggedId=${loggedId}`;
+
+    var ret = new Promise(
+        function (resolve, reject) {
+            Vue.http.get(url).then(res => {
+                resolve(res.body);
+            }, err => {
+                reject({
+                    error: true,
+                    msg: err
+                });
+            });    
+        }
+    );
+    return ret;
 }
 
 function save(id_to_admin_user, id_base,id_produtor

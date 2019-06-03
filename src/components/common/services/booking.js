@@ -167,7 +167,7 @@ function getCodeReservation(codCliente) {
     );
     return ret;
 }
-function list(id_base, nin, codReserva, id_apresentacao, name) {
+function list(id_base, nin, codReserva, id_apresentacao, name, id_quotapartner) {
     let url = config.api + `/v1/purchase/reservation/list`
     
         let obj = {
@@ -175,7 +175,8 @@ function list(id_base, nin, codReserva, id_apresentacao, name) {
         nin,
         codReserva,
         id_apresentacao,
-        name
+        name,
+        id_quotapartner
     };
   
     var ret = new Promise(
