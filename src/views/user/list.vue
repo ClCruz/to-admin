@@ -52,7 +52,7 @@
                 </b-button>
               </template>
         </b-table>
-        <b-btn class="mt-3" variant="outline-info" block @click="partnerClose">Fechar</b-btn>
+        <b-btn class="mt-3" variant="outline-info" block @click="baseClose">Fechar</b-btn>
       </b-modal>
       <b-modal ref="partnerModal" hide-footer title="Usuário x Parceiro" size="lg">
         <div class="d-block text-center">
@@ -417,6 +417,9 @@ export default {
           this.toastError("Falha na execução.");
         }
       );      
+    },
+    partnerClose() {
+      this.$refs.partnerModal.hide();
     },
     baseClose() {
       this.$refs.baseModal.hide();

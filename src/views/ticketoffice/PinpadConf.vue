@@ -3,34 +3,15 @@
         <div class="row">
             <div class="col">
               <b-button-group vertical>
-                <b-button @click="status" id="status" :variant="variantStatus">{{variantStatusText}}</b-button>
-                <b-button @click="sync" id="sync">Sincronizar tabelas</b-button>
-                <b-button @click="last" id="last">Último Status</b-button>
-                <b-button @click="all" id="all">Status</b-button>
-                <b-button @click="clear" id="clear">Limpar</b-button>
-                <b-button @click="fake" id="fake">Teste</b-button>
+                <b-button title="Clique para verificar o status do pinpad." @click="status" id="status" :variant="variantStatus">{{variantStatusText}}</b-button>
+                <b-button title="Clique para sincronizar as tabelas do pinpad." @click="sync" id="sync">Sincronizar tabelas</b-button>
+                <b-button title="Clique para recuperar o último status do pinpad." @click="last" id="last">Último Status</b-button>
+                <b-button title="Clique para recuperar todos status (enquanto ativo) do pinpad." @click="all" id="all">Status</b-button>
+                <b-button title="Clique para limpar os status do pinpad." @click="clear" id="clear">Limpar</b-button>
+                <b-button title="Clique para realizar uma compra no ambiente de Homologação." @click="fake" id="fake">Teste</b-button>
               </b-button-group>
             </div>
         </div>
-
-      <b-tooltip target="status" placement="topright">
-          <span>Clique para verificar o status do pinpad.</span>
-      </b-tooltip>
-      <b-tooltip target="sync" placement="topright">
-          <span>Clique para sincronizar as tabelas do pinpad.</span>
-      </b-tooltip>
-      <b-tooltip target="last" placement="topright">
-          <span>Clique para recuperar o último status do pinpad.</span>
-      </b-tooltip>
-      <b-tooltip target="all" placement="topright">
-          <span>Clique para recuperar todos status (enquanto ativo) do pinpad.</span>
-      </b-tooltip>
-      <b-tooltip target="clear" placement="topright">
-          <span>Clique para limpar os status do pinpad.</span>
-      </b-tooltip>
-      <b-tooltip target="fake" placement="topright">
-          <span>Clique para realizar uma compra no ambiente de Homologação.</span>
-      </b-tooltip>
     </div>
 </template>
 

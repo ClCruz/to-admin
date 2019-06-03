@@ -149,8 +149,6 @@ export default {
         type: 'success',
         toast: true,
         position: 'top-end',
-        customClass: 'alert__tixsme alert__sucess',
-        background: '#333',
         showConfirmButton: false,
         timer: 4000,
       }).then((result) => {
@@ -175,12 +173,47 @@ export default {
             type: String,
           }
         },
-        
         {
-          title: 'Dashboard',
-          icon: 'fas fa-chart-bar',
-          code: 'all',
-          href: '/',
+          title: 'Bilheteria',
+          icon: 'fas fa-ticket-alt',
+          code: 'ticketoffice-login',
+          href: '/ticketoffice',
+        },        
+        // {
+        //   title: 'Dashboard',
+        //   icon: 'fas fa-chart-bar',
+        //   code: 'all',
+        //   href: '/',
+        // },
+        {
+          title: 'Eventos',
+          icon: 'fas fa-puzzle-piece',
+          code: 'ev-viewer',
+          child: [{
+              href: '/event/add',
+              title: 'Adicionar',
+              icon: 'fas fa-plus',
+              code: 'ev-viewer'
+            },
+            {
+              href: '/event/list',
+              title: 'Listar',
+              icon: 'fas fa-th-list',
+              code: 'ev-viewer'
+            },
+            {
+              href: '/room/add',
+              title: 'Adicionar sala',
+              icon: 'fas fa-person-booth',
+              code: 'room-viewer'
+            },
+            {
+              href: '/room/list',
+              title: 'Listar sala',
+              icon: 'fas fa-th-list',
+              code: 'room-viewer'
+            },
+          ]
         },
         {
           title: 'Usuários',
@@ -238,12 +271,6 @@ export default {
               code: 'ad-viewer' //'all',//'user-viewer'
             },
           ]
-        },
-        {
-          title: 'Bilheteria',
-          icon: 'fas fa-ticket-alt',
-          code: 'ticketoffice-login',
-          href: '/ticketoffice',
         },
         {
           title: 'Gênero',
@@ -361,36 +388,6 @@ export default {
               title: 'Listar',
               icon: 'fas fa-th-list',
               code: 'tickettype-viewer',
-            },
-          ]
-        },
-        {
-          title: 'Eventos',
-          icon: 'fas fa-puzzle-piece',
-          code: 'ev-viewer',
-          child: [{
-              href: '/event/add',
-              title: 'Adicionar',
-              icon: 'fas fa-plus',
-              code: 'ev-viewer'
-            },
-            {
-              href: '/event/list',
-              title: 'Listar',
-              icon: 'fas fa-th-list',
-              code: 'ev-viewer'
-            },
-            {
-              href: '/room/add',
-              title: 'Adicionar sala',
-              icon: 'fas fa-person-booth',
-              code: 'room-viewer'
-            },
-            {
-              href: '/room/list',
-              title: 'Listar sala',
-              icon: 'fas fa-th-list',
-              code: 'room-viewer'
             },
           ]
         }

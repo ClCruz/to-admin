@@ -38,7 +38,7 @@
 </div>
 
 <div v-else>
-  <div class="my-3 my-md-5">
+  <div class="my-3 my-md-5" v-if="1==2">
     <div class="container">
       <div class="page-header">
         <h1 class="page-title">
