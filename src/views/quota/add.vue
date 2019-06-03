@@ -103,6 +103,9 @@ export default {
     }
   },
   methods: {
+    clipboardSuccess() {
+      this.toastSuccess("Copiado com sucesso.");
+    },
     save() {
       if (this.processing) return;
 
