@@ -42,6 +42,7 @@
               <a href="#" class="dropdown-item text-center">Mark all as read</a>
             </div>
           </div> -->
+          
           <div class="dropdown">
             <a href="#" class="nav-link pr-0 leading-none" data-toggle="dropdown">
                     <span class="avatar" :style="{ backgroundImage: 'url(\'https://avatar.tobi.sh/tobiaslins.svg?text=' + getLoggedEmail().substring(0,2) + '\')' }" style="background-size: cover"></span>
