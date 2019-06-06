@@ -153,6 +153,18 @@ const adminPartnerStaticPage = resolve => {
   }, 'admin-staticpage');
 };
 
+// report
+const adminReportAccounting = resolve => {
+  require.ensure(['./views/report/accounting.vue'], () => {
+    resolve(require('./views/report/accounting.vue'));
+  }, 'admin-report-accounting');
+};
+const adminReportPartnerSale = resolve => {
+  require.ensure(['./views/report/partnersale.vue'], () => {
+    resolve(require('./views/report/partnersale.vue'));
+  }, 'admin-report-partnersale');
+};
+
 
 // producer
 const adminProducerList = resolve => {
@@ -373,6 +385,18 @@ const obj = new Router({
       name: 'producer-edit',
       props: true,
       component: adminProducerAdd
+    },
+    //------
+    //Report
+    {
+      path: '/report/accounting',
+      name: 'report-accounting',
+      component: adminReportAccounting
+    },
+    {
+      path: '/report/partnersale',
+      name: 'report-partnersale',
+      component: adminReportPartnerSale
     },
     //------
     //GENRE

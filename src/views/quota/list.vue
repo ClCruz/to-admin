@@ -49,7 +49,7 @@
               </template>
 
               <template slot="key" slot-scope="data">
-                <span v-b-tooltip.hover :title="'Chave do parceiro -'+data.item.key+' (Clique para copiar)'" 
+                <span :title="'Chave do parceiro -'+data.item.key+' (Clique para copiar)'" 
                       style="padding-right:10px;cursor:pointer;"
                       v-clipboard:copy="data.item.key"
                       v-clipboard:success="clipboardSuccess"
@@ -99,6 +99,9 @@ export default {
     }
   },
   methods: {
+    clipboardSuccess() {
+      this.toastSuccess("Copiado com sucesso.");
+    },
     edit(item) {
       this.$router.push(`/quota/edit/${item.id}`);
     },
