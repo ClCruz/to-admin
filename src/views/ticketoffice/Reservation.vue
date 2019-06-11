@@ -20,7 +20,11 @@
                     <b-input-group-prepend is-text>
                         Parceiro:
                     </b-input-group-prepend>
-                    <b-form-select v-on:change="selQuotaPartner" v-model="form.id_quotapartner" :options="partners" size="sm" />
+                    <b-form-select v-on:change="selQuotaPartner" v-model="form.id_quotapartner" :options="partners" size="sm">
+                        <template slot="first">
+                            <option :value="''">-- Selecione --</option>
+                        </template>
+                    </b-form-select>
                 </b-input-group>
             </b-row>    
             <b-row class="my-1">
