@@ -211,5 +211,13 @@
     "ingressos.rfse.com.br": "rfse",
     "api.ingressos.rfse.com.br": "rfse",
     "compra.ingressos.rfse.com.br": "rfse",
-    "admin.ingressos.rfse.com.br": "rfse"
+    "admin.ingressos.rfse.com.br": "rfse",
+    "www.santosrockfestival.com.br": "santosrockfestival",
+    "api.santosrockfestival.com.br": "santosrockfestival",
+    "compra.santosrockfestival.com.br": "santosrockfestival",
+    "admin.santosrockfestival.com.br": "santosrockfestival",
+    "www.viveringressos.com.br": "viveringressos",
+    "api.viveringressos.com.br": "viveringressos",
+    "compra.viveringressos.com.br": "viveringressos",
+    "admin.viveringressos.com.br": "viveringressos"
 }
