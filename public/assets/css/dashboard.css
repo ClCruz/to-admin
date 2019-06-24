@@ -3043,7 +3043,7 @@ input[type="button"].btn-block {
 }
 
 .collapse:not(.show) {
-  display: none;
+  display: none !important;
 }
 
 .collapsing {
@@ -11873,10 +11873,11 @@ body.fixed-header .header {
 }
 
 .header-brand {
-  color: inherit;
+  color: rgb(110, 118, 135);
   margin-right: 1rem;
-  font-size: 1.25rem;
+  font-size: 1.1rem;
   white-space: nowrap;
+  margin-left: 0.3rem;
   font-weight: 600;
   padding: 0;
   transition: .3s opacity;
@@ -13164,7 +13165,8 @@ a.icon:hover {
 
 .nav-link,
 .nav-item {
-  padding: 0 .75rem;
+  font-size: 1rem;
+  padding: 0 1.2rem;
   min-width: 2rem;
   transition: .3s color;
   -webkit-user-select: none;
@@ -13229,10 +13231,10 @@ a.icon:hover {
 }
 
 .nav-tabs .nav-item i {
-  margin-right: .25rem;
+  margin-right: .95rem;
   line-height: 1;
-  font-size: 0.875rem;
-  width: 0.875rem;
+  font-size: 0.95rem;
+  width: 0.95rem;
   vertical-align: baseline;
   display: inline-block;
 }
@@ -20339,3 +20341,4 @@ svg {
 .fe-zoom-out:before {
   content: "\ea06";
 }
+
