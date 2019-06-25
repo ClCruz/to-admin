@@ -52,42 +52,44 @@
           </b-button>
         </b-input-group>
 
+
         <div class="row">
           <form name="day">
           <div class="col-12 form-group filter-day">
             <div class="selectgroup selectgroup-pills">
               <label class="selectgroup-item">
-                <input type="radio" name="icon-input" class="selectgroup-input" checked="false" >
+                <input type="radio" name="a" class="selectgroup-input"  >
                 <span class="selectgroup-button selectgroup-button-icon">Todos os Dias</span>
               </label>
               <label class="selectgroup-item">
-                <input type="radio" name="icon-input" class="selectgroup-input" checked="false" >
+                <input type="radio" name="a" class="selectgroup-input"  >
                 <span class="selectgroup-button selectgroup-button-icon">30 Dias</span>
               </label>
               <label class="selectgroup-item">
-                <input type="radio" name="icon-input" class="selectgroup-input" checked="false" >
+                <input type="radio" name="a" class="selectgroup-input"  >
                 <span class="selectgroup-button selectgroup-button-icon">15 Dias</span>
               </label>
               <label class="selectgroup-item">
-                <input type="radio" name="icon-input" class="selectgroup-input" checked="false" >
+                <input type="radio" name="a" class="selectgroup-input"  >
                 <span class="selectgroup-button selectgroup-button-icon">7 Dias</span>
               </label>
               <label class="selectgroup-item">
-                <input type="radio" name="icon-input" class="selectgroup-input" checked="false" >
+                <input type="radio" name="a" class="selectgroup-input"  >
                 <span class="selectgroup-button selectgroup-button-icon">Ontem</span>
               </label>
               <label class="selectgroup-item">
-                <input type="radio" name="icon-input" class="selectgroup-input" checked="checked" >
+                <input type="radio" name="a" class="selectgroup-input" checked>
                 <span class="selectgroup-button selectgroup-button-icon">Hoje</span>
               </label>
               <label class="selectgroup-item">
-                <input type="radio" name="icon-input" class="selectgroup-input" checked="false" >
+                <input type="radio" name="a" class="selectgroup-input"  >
                 <span class="selectgroup-button selectgroup-button-icon"><i class="fas fa-pencil-alt mr-2"></i>Período Personalizado</span>
               </label>
             </div>
           </div>
           </form>
         </div>
+        <hr class="mt-0 pt-0">
 
         <div class="row row-cards">
           <card-info :key="'total_sold_'+dashboard.key.total_sold" :title="'Vendas Brutas Total'" :value='dashboard.values.total_sold' :percentage="''" :status="''"></card-info>
