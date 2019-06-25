@@ -1,6 +1,6 @@
 <template>
 <div id="app" class="">
-  <div class="header py-4" v-if="isAuth">
+  <div class="header py-4" v-if="checkIsAuth()">
     <div class="container">
       <div class="d-flex">
         <a class="header-brand" href="./index.html">
@@ -47,7 +47,7 @@
               <a :href="'/my/pass'" class="nav-link"><i class="fa fa-key"></i> Mudar Senha</a>
             </li>
 
-            <linkMenu v-for="(item, index) in menuMobile" :key='index' :title="item.title" :icon="item.icon" :code="item.code" :link="item.href" :child="item.child">
+            <linkMenu v-for="(item, index) in menu" :key='index' :title="item.title" :icon="item.icon" :code="item.code" :link="item.href" :child="item.child">
             </linkMenu>
 
 
@@ -76,7 +76,7 @@
       </div>
     </template>
   </v-wait>
-  <sidebar-menu :menu="menu" v-if="isAuth" :collapsed="true" :widthCollapsed="'48px'" :width="'240px'" />
+  <sidebar-menu :menu="menu" v-if="checkIsAuth()" :collapsed="true" :widthCollapsed="'48px'" :width="'240px'" />
   <div class="p-5">
     <router-view />
   </div>
@@ -101,6 +101,14 @@ export default {
   name: 'home',
   components: {
     LinkMenu
+  },
+  mounted() {
+    if (this.getLoggedId() == null) {
+      this.goLogin();
+      return;
+    }
+    this.tryLogin(null);
+    this.setMenu();
   },
   created() {
     // Listen for swUpdated event and display refresh snackbar as required.

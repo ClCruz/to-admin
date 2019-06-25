@@ -21,10 +21,14 @@ export const func = {
             return config.info.newTemplate;
         },
         isAuth() {
-            return this.$store.getters.isAuthenticated;
+            return func.methods.ls_get('token') !== null;
+            //return this.$store.getters.isAuthenticated;
         }
     },
     methods: {
+        checkIsAuth() {
+            return func.methods.ls_get("token") !== null && func.methods.ls_get("token") != '';
+        },
         debugger() {
             debugger;
         },

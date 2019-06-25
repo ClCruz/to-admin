@@ -59,7 +59,8 @@ export default new Vuex.Store({
       return state.user
     },
     isAuthenticated (state) {
-      return state.token !== null
+      // console.log(func.methods.ls_get('token'));
+      return func.methods.ls_get('token') !== null;
     }
   }
 })
