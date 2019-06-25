@@ -208,6 +208,7 @@ img {
 svg {
   overflow: hidden;
   vertical-align: middle;
+  max-height: 220px;
 }
 
 table {

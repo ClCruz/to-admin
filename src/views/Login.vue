@@ -39,7 +39,7 @@
   </div>
 
   <div v-else>
-    <div class="my-3 my-md-5" v-if="1==2">
+    <div class="my-3 my-md-5">
       <div class="container">
         <div class="page-header">
           <h1 class="page-title">
@@ -47,14 +47,14 @@
           </h1>
         </div>
         <div class="row row-cards">
-          <card-info :title="'Vendas'" :value='43' :percentage="'6'" :status="'increase'"></card-info>
-          <card-info :title="'Vendas'" :value='43' :percentage="'6'" :status="'increase'"></card-info>
-          <card-info :title="'Vendas'" :value='43' :percentage="'6'" :status="'decrease'"></card-info>
-          <card-info :title="'Vendas'" :value='43' :percentage="'6'" :status="'decrease'"></card-info>
-          <card-info :title="'Vendas'" :value='43' :percentage="'6'" :status="'decrease'"></card-info>
-          <card-info :title="'Vendas'" :value='43' :percentage="'6'" :status="'decrease'"></card-info>
+          <card-info :title="'Vendas Brutas Total'" :value='43' :percentage="''" :status="''"></card-info>
+          <card-info :title="'Vendas Brutas Total'" :value="'R$ 120.000,00'" :size="'large'" :percentage="''" :status="''"></card-info>
+          <card-info :title="'Ticket Médio'" :value="'R$ 34,29'" :percentage="''" :status="''"></card-info>
+          <card-info :title="'Conversão de Boletos'" :value="'65%'" :percentage="''" :status="''"></card-info>
+          <card-info :title="'Boletos Aguardando Pagamento'" :value='35' :size="'large'" :percentage="''" :status="''"></card-info>
         </div>
         <div class="row">
+          <pie-chart :title="'Ocupação'" :data="[['Disponivel',177],['Vendido',36],['Gratuito',0],['Aguardando pagamento',18],['Reservado',36]]"></pie-chart>
           <div class="col-12">
             <div class="card">
               <div class="card-header">
@@ -173,6 +173,8 @@ import VueResource from "vue-resource";
 import config from "@/config";
 
 import cardInfo from "@/views/dashboard/card-info"
+import pieChart from "@/views/dashboard/pie-chart"
+
 
 import {
   func
@@ -193,7 +195,8 @@ export default {
     };
   },
   components: {
-    cardInfo
+    cardInfo,
+    pieChart
   },
   computed: {
     passwordType: function () {
@@ -226,7 +229,7 @@ export default {
             if (response.logged) {
               this.toastSuccess("Login efetuado com sucesso.");
               let ctx = this;
-              this.$store.dispatch("login", response).then(function() {
+              this.$store.dispatch("login", response).then(function () {
                 ctx.codes(ctx.$parent.setMenu);
                 ctx.login = "";
                 ctx.password = "";

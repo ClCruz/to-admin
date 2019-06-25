@@ -11,7 +11,7 @@
   <a href="javascript:void(0)" class="nav-link" data-toggle="dropdown" aria-expanded="false"><i :class="icon"></i>{{title}}</a>
   <div class="dropdown-menu dropdown-menu-arrow" x-placement="bottom-start" style="position: absolute; transform: translate3d(12px, 55px, 0px); top: 0px; left: 0px; will-change: transform;">
 
-    <a v-for="(item, index) in child" :href="item.href" class="dropdown-item">{{item.title}}</a>
+    <a v-for="(item, index) in child" :key="index" :href="item.href" class="dropdown-item">{{item.title}}</a>
   </div>
 </li>
 </template>
