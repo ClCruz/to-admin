@@ -2,90 +2,92 @@
 <div :key="iddiv">
   <div>
     <div class="my-3 my-md-5">
-      <div class="container">
+      <div class="container" id="dashboard">
         <div class="page-header">
           <h1 class="page-title">
             Dashboard
           </h1>
         </div>
 
+        <b-input-group size="sm" class="col-12 col-sm-12 p-0 pb-4">
+          <b-input-group-prepend is-text class="firstLabel">
+            Base:
+          </b-input-group-prepend>
+          <b-form-select class="mr-2 col-4" v-on:change="selBase" v-model="form.id_base" :options="selects.base" size="sm">
+            <template slot="first">
+              <option :value="''" disabled>-- Selecione --</option>
+            </template>
+          </b-form-select>
+          <b-input-group-prepend is-text class="firstLabel">
+            Evento:
+          </b-input-group-prepend>
+          <b-form-select class="mr-2 col-4" id="event" v-on:change="selEvent" v-model="form.id_evento" :options="selects.events">
+            <template slot="first">
+              <option :value="null" disabled>-- Selecione --</option>
+            </template>
+          </b-form-select>
+          <b-input-group-prepend is-text class="firstLabel">
+            Dias:
+          </b-input-group-prepend>
+          <b-form-select class="mr-2 col-1" id="days" :options="selects.days" v-on:change="selDays" v-model="form.date">
+            <template slot="first">
+              <option :value="null" disabled>-- Selecione --</option>
+            </template>
+          </b-form-select>
+          <b-input-group-prepend is-text class="firstLabel">
+            Horário:
+          </b-input-group-prepend>
+          <b-form-select class="mr-2 col-1" id="hours" :options="selects.hours" v-on:change="selHours" v-model="form.hour">
+            <template slot="first">
+              <option :value="null" disabled>-- Selecione --</option>
+            </template>
+          </b-form-select>
+          <b-button type="button" variant="primary" size="sm" @click="search">
+            <v-wait for="inprocess">
+              <template slot="waiting">
+                Aguarde...
+              </template>
+            </v-wait>
+            <span v-if="!processing">Consultar</span>
+          </b-button>
+        </b-input-group>
 
-        <b-row class="mb-3">
-          <b-input-group size="sm">
-            <b-input-group-prepend is-text>
-              Base:
-            </b-input-group-prepend>
-            <b-form-select v-on:change="selBase" v-model="form.id_base" :options="selects.base" size="sm">
-                <template slot="first">
-                    <option :value="''" disabled>-- Selecione --</option>
-                </template>
-            </b-form-select>
-          </b-input-group>
-        </b-row>
-        <b-row class="mb-3">
-          <b-input-group size="sm">
-            <b-input-group-prepend is-text class="firstLabel">
-                Evento:
-            </b-input-group-prepend>
-            <b-form-select id="event" v-on:change="selEvent" v-model="form.id_evento" :options="selects.events">
-                <template slot="first">
-                    <option :value="null" disabled>-- Selecione --</option>
-                </template>
-            </b-form-select>
-          </b-input-group>
-        </b-row>
-        <b-row class="mb-3">
-          <b-col>
-            <b-row>
-            <b-input-group size="sm">
-              <b-input-group-prepend is-text class="firstLabel">
-                  Dias:
-              </b-input-group-prepend>
-              <b-form-select id="days"
-                              :options="selects.days"
-                              v-on:change="selDays"
-                              v-model="form.date">
-                  <template slot="first">
-                      <option :value="null" disabled>-- Selecione --</option>
-                  </template>
-              </b-form-select>
-            </b-input-group>
-            </b-row>
-          </b-col>
-          <b-col>
-            <b-row>
-            <b-input-group size="sm">
-              <b-input-group-prepend is-text class="firstLabel">
-                  Horário:
-              </b-input-group-prepend>
-              <b-form-select id="hours"
-                              :options="selects.hours"
-                              v-on:change="selHours"
-                              v-model="form.hour">
-                  <template slot="first">
-                      <option :value="null" disabled>-- Selecione --</option>
-                  </template>
-              </b-form-select>
-            </b-input-group>
-            </b-row>
-          </b-col>
-        </b-row>
-        <b-row class="mb-3">
-          <b-col>
-            <b-row>
-              <b-button type="button" variant="primary" size="sm" @click="search">
-                <v-wait for="inprocess">
-                    <template slot="waiting">
-                        Aguarde...
-                    </template>
-                </v-wait>
-                <span v-if="!processing">Consultar</span>
-              </b-button>
-            </b-row>
-          </b-col>
-        </b-row>
-
-
+        <div class="row">
+          <form name="day">
+          <div class="col-12 form-group filter-day">
+            <div class="selectgroup selectgroup-pills">
+              <label class="selectgroup-item">
+                <input type="radio" name="icon-input" class="selectgroup-input" checked="false" >
+                <span class="selectgroup-button selectgroup-button-icon">Todos os Dias</span>
+              </label>
+              <label class="selectgroup-item">
+                <input type="radio" name="icon-input" class="selectgroup-input" checked="false" >
+                <span class="selectgroup-button selectgroup-button-icon">30 Dias</span>
+              </label>
+              <label class="selectgroup-item">
+                <input type="radio" name="icon-input" class="selectgroup-input" checked="false" >
+                <span class="selectgroup-button selectgroup-button-icon">15 Dias</span>
+              </label>
+              <label class="selectgroup-item">
+                <input type="radio" name="icon-input" class="selectgroup-input" checked="false" >
+                <span class="selectgroup-button selectgroup-button-icon">7 Dias</span>
+              </label>
+              <label class="selectgroup-item">
+                <input type="radio" name="icon-input" class="selectgroup-input" checked="false" >
+                <span class="selectgroup-button selectgroup-button-icon">Ontem</span>
+              </label>
+              <label class="selectgroup-item">
+                <input type="radio" name="icon-input" class="selectgroup-input" checked="checked" >
+                <span class="selectgroup-button selectgroup-button-icon">Hoje</span>
+              </label>
+              <label class="selectgroup-item">
+                <input type="radio" name="icon-input" class="selectgroup-input" checked="false" >
+                <span class="selectgroup-button selectgroup-button-icon"><i class="fas fa-pencil-alt mr-2"></i>Período Personalizado</span>
+              </label>
+            </div>
+          </div>
+          </form>
+        </div>
 
         <div class="row row-cards">
           <card-info :key="'total_sold_'+dashboard.key.total_sold" :title="'Vendas Brutas Total'" :value='dashboard.values.total_sold' :percentage="''" :status="''"></card-info>
@@ -218,7 +220,6 @@ import cardInfo from "@/views/dashboard/card-info";
 import pieChart from "@/views/dashboard/pie-chart";
 import chartBarStacked from "@/views/dashboard/chart-bar-stacked";
 
-
 import {
   func
 } from "@/functions";
@@ -267,8 +268,7 @@ export default {
     pieChart,
     chartBarStacked
   },
-  computed: {
-  },
+  computed: {},
   created() {
     this.populateBases();
   },
@@ -294,7 +294,7 @@ export default {
       );
     },
     populateEvents() {
-      
+
       if (this.form.id_base == '') {
         return;
       }
@@ -303,7 +303,7 @@ export default {
       this.selects.hours = [];
 
       this.showWaitAboveAll();
-      eventService.select(this.getLoggedId(),this.form.id_base).then(
+      eventService.select(this.getLoggedId(), this.form.id_base).then(
         response => {
           this.selects.events = response;
           if (response.length == 1) {
@@ -314,7 +314,7 @@ export default {
         },
         error => {
           this.hideWaitAboveAll();
-          this.toastError("Falha na execução.");        
+          this.toastError("Falha na execução.");
         }
       );
     },
@@ -326,7 +326,7 @@ export default {
       this.selects.hours = [];
 
       this.showWaitAboveAll();
-      eventService.selectDays(this.getLoggedId(),this.form.id_base, this.form.id_evento).then(
+      eventService.selectDays(this.getLoggedId(), this.form.id_base, this.form.id_evento).then(
         response => {
           this.selects.days = response;
           if (response.length == 1) {
@@ -337,7 +337,7 @@ export default {
         },
         error => {
           this.hideWaitAboveAll();
-          this.toastError("Falha na execução.");        
+          this.toastError("Falha na execução.");
         }
       );
     },
@@ -348,7 +348,7 @@ export default {
       this.selects.hours = [];
 
       this.showWaitAboveAll();
-      eventService.selectDayHours(this.getLoggedId(),this.form.id_base, this.form.id_evento, this.form.date).then(
+      eventService.selectDayHours(this.getLoggedId(), this.form.id_base, this.form.id_evento, this.form.date).then(
         response => {
           this.selects.hours = response;
           if (response.length == 1) {
@@ -359,7 +359,7 @@ export default {
         },
         error => {
           this.hideWaitAboveAll();
-          this.toastError("Falha na execução.");        
+          this.toastError("Falha na execução.");
         }
       );
     },
