@@ -1,5 +1,5 @@
 <template>
-<div class="col-6 col-sm-4 col-lg-2" :class="{'col-lg-3 col-sm-6 col-6': size == 'large'}">
+<div class="col-12 col-sm-4 col-lg-2" :class="{'col-lg-3 col-sm-6 col-6': size == 'large'}">
   <div class="card">
     <div class="card-body p-3 text-center">
       <div class="text-right" :class="{'text-green': status == 'increase', 'text-red': status == 'decrease'}">

@@ -20347,8 +20347,26 @@ svg {
   margin-bottom: 0
 }
 
+.selectgroup-button-icon {
+  padding-left: 1rem;
+  padding-right: 1rem;
+  font-size: 0.8rem;
+  padding-top: .3rem;
+  padding-bottom: .3rem;
+}
 
+.card-title {
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+.selectgroup-button {
+  line-height: 1.4rem;
+  padding: 0.1rem 0.8rem;
+}
 .selectgroup {
   display: flex;
   align-content: center;
+}
+.page-title {
+  font-weight: bold;
 }
