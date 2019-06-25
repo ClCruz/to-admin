@@ -20343,3 +20343,12 @@ svg {
   content: "\ea06";
 }
 
+.card-header .form-group {
+  margin-bottom: 0
+}
+
+
+.selectgroup {
+  display: flex;
+  align-content: center;
+}

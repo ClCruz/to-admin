@@ -1,5 +1,5 @@
 <template>
-<div class="col-lg-5 col-xl-4">
+<div class="col-lg-4 col-12 col-xl-4">
   <div class="card">
     <div class="card-header">
       <h3 class="card-title">{{title}}</h3>

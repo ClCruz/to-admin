@@ -55,6 +55,7 @@
         </div>
         <div class="row">
           <pie-chart :title="'Ocupação'" :data="[['Disponivel',177],['Vendido',36],['Gratuito',0],['Aguardando pagamento',18],['Reservado',36]]"></pie-chart>
+          <chart-bar-stacked :title="'Vendas por horário'" :data="{'web':['web',26,10,2,3,1,3,10,10,65,62,63,68,56,93,77,80,85,54,63,78,60,91,86,57],'ticketoffice':['ticketoffice',0,0,0,0,0,0,0,0,32,0,0,29,73,97,62,85,12,142,21,48,45,37,3,0]}"></chart-bar-stacked>
           <div class="col-12">
             <div class="card">
               <div class="card-header">
@@ -174,6 +175,7 @@ import config from "@/config";
 
 import cardInfo from "@/views/dashboard/card-info"
 import pieChart from "@/views/dashboard/pie-chart"
+import chartBarStacked from "@/views/dashboard/chart-bar-stacked"
 
 
 import {
@@ -196,7 +198,8 @@ export default {
   },
   components: {
     cardInfo,
-    pieChart
+    pieChart,
+    chartBarStacked
   },
   computed: {
     passwordType: function () {
