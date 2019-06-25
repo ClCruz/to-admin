@@ -14,7 +14,9 @@
 <script>
 // import config from '@/config';
 import c3 from "c3";
-import {format} from "d3";
+import {
+  format
+} from "d3";
 import $ from 'jquery';
 
 export default {
@@ -28,7 +30,7 @@ export default {
     title: String
   },
 
-// [["Disponivel",177],["Vendido",36],["Gratuito",0],["Aguardando pagamento",18],["Reservado",36]]
+  // [["Disponivel",177],["Vendido",36],["Gratuito",0],["Aguardando pagamento",18],["Reservado",36]]
 
   mounted() {
     c3.generate({
@@ -37,13 +39,17 @@ export default {
         columns: this.data,
         type: 'pie', // default type of chart
       },
+      color: {
+        pattern: ['rgb(73,129,204)', 'rgb(244,111,155)', 'rgb(251,150,77)','rgb(55,202,186)',  'rgb(126,208,66)']
+      },
       pie: {
         label: {
-            format: function (value, ratio, id) {
-                return format('')(value);
-            }
+          format: function (value, ratio, id) {
+            return format('')(value);
+          }
         }
-    }
+      },
+
     });
   }
 };

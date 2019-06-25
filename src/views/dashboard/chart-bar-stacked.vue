@@ -155,7 +155,7 @@ export default {
         },
         colors: {
           'web': '#467fcf',
-          'ticketoffice': '#fd9644'
+          'ticketoffice': 'rgb(244,111,155)'
         }
       },
       axis: {
