@@ -88,9 +88,9 @@
 
 
         <div class="row row-cards">
-          <card-info :title="'Vendas Brutas Total'" :value='43' :percentage="''" :status="''"></card-info>
-          <card-info :title="'Vendas Brutas Total'" :value="'R$ 120.000,00'" :size="'large'" :percentage="''" :status="''"></card-info>
-          <card-info :title="'Ticket Médio'" :value="'R$ 34,29'" :percentage="''" :status="''"></card-info>
+          <card-info :key="'total_sold_'+dashboard.key.total_sold" :title="'Vendas Brutas Total'" :value='dashboard.values.total_sold' :percentage="''" :status="''"></card-info>
+          <card-info :key="'total_soldamountformatted_'+dashboard.key.total_soldamountformatted" :title="'Vendas Brutas Total'" :value="dashboard.values.total_soldamountformatted" :size="'large'" :percentage="''" :status="''"></card-info>
+          <card-info :key="'averageticket_formatted_'+dashboard.key.averageticket_formatted" :title="'Ticket Médio'" :value="dashboard.values.averageticket_formatted" :percentage="''" :status="''"></card-info>
           <card-info :title="'Conversão de Boletos'" :value="'65%'" :percentage="''" :status="''"></card-info>
           <card-info :title="'Boletos Aguardando Pagamento'" :value='35' :size="'large'" :percentage="''" :status="''"></card-info>
         </div>
@@ -226,6 +226,8 @@ import {
 import { userService } from '../../components/common/services/user';
 import { eventService } from "../../components/common/services/event";
 
+import { dashboardService } from "../../components/common/services/dashboard";
+
 
 export default {
   mixins: [func],
@@ -245,6 +247,19 @@ export default {
         days: [],
         hours: []
       },
+      dashboard: {
+        key: {
+          total_sold: 1,
+          total_soldamountformatted: 1,
+          averageticket_formatted: 1,
+        },
+        values: {
+          loaded: false,
+          total_sold: 0,
+          total_soldamountformatted: '',
+          averageticket_formatted: '',
+        },
+      }
     };
   },
   components: {
@@ -266,6 +281,10 @@ export default {
 
           if (this.validateJSON(response)) {
             this.selects.base = response;
+            if (response.length == 1) {
+              this.form.id_base = response[0].value;
+              this.populateEvents();
+            }
           }
         },
         error => {
@@ -287,6 +306,10 @@ export default {
       eventService.select(this.getLoggedId(),this.form.id_base).then(
         response => {
           this.selects.events = response;
+          if (response.length == 1) {
+            this.form.id_evento = response[0].value;
+            this.populateDays();
+          }
           this.hideWaitAboveAll();
         },
         error => {
@@ -306,6 +329,10 @@ export default {
       eventService.selectDays(this.getLoggedId(),this.form.id_base, this.form.id_evento).then(
         response => {
           this.selects.days = response;
+          if (response.length == 1) {
+            this.form.date = response[0].value;
+            this.populateHours();
+          }
           this.hideWaitAboveAll();
         },
         error => {
@@ -324,6 +351,10 @@ export default {
       eventService.selectDayHours(this.getLoggedId(),this.form.id_base, this.form.id_evento, this.form.date).then(
         response => {
           this.selects.hours = response;
+          if (response.length == 1) {
+            this.form.hour = response[0].value;
+            this.search();
+          }
           this.hideWaitAboveAll();
         },
         error => {
@@ -369,7 +400,66 @@ export default {
 
     },
     search() {
-
+      let type = 'all';
+      // dashboardService.purchasebyboleto(this.getLoggedId(), this.form.id_evento, '', this.form.date, this.form.hour, type, '', '').then(
+      //   response => {
+      //     if (this.validateJSON(response))
+      //     {
+              
+      //     }
+      //   },
+      //   error => { this.toastError("Falha na execução."); }
+      // );
+      // dashboardService.purchasebychannel(this.getLoggedId(), this.form.id_evento, '', this.form.date, this.form.hour, type, '', '').then(
+      //   response => {
+      //     if (this.validateJSON(response))
+      //     {
+              
+      //     }
+      //   },
+      //   error => { this.toastError("Falha na execução."); }
+      // );
+      // dashboardService.purchasebypaymenttype(this.getLoggedId(), this.form.id_evento, '', this.form.date, this.form.hour, type, '', '').then(
+      //   response => {
+      //     if (this.validateJSON(response))
+      //     {
+              
+      //     }
+      //   },
+      //   error => { this.toastError("Falha na execução."); }
+      // );
+      // dashboardService.purchasebytimetable(this.getLoggedId(), this.form.id_evento, '', this.form.date, this.form.hour, type, '', '').then(
+      //   response => {
+      //     if (this.validateJSON(response))
+      //     {
+              
+      //     }
+      //   },
+      //   error => { this.toastError("Falha na execução."); }
+      // );
+      // dashboardService.purchaseoccupation(this.getLoggedId(), this.form.id_evento, '', this.form.date, this.form.hour, type, '', '').then(
+      //   response => {
+      //     if (this.validateJSON(response))
+      //     {
+              
+      //     }
+      //   },
+      //   error => { this.toastError("Falha na execução."); }
+      // );
+      dashboardService.purchasevalues(this.getLoggedId(), this.form.id_evento, '', this.form.date, this.form.hour, type, '', '').then(
+        response => {
+          if (this.validateJSON(response))
+          {
+              this.dashboard.values.total_sold = response.total_sold;
+              this.dashboard.values.total_soldamountformatted = 'R$ '+response.total_soldamountformatted;
+              this.dashboard.values.averageticket_formatted = 'R$ '+response.averageticket_formatted;
+              this.dashboard.key.total_sold++;
+              this.dashboard.key.total_soldamountformatted++;
+              this.dashboard.key.averageticket_formatted++;
+          }
+        },
+        error => { this.toastError("Falha na execução."); }
+      );
     },
   }
 }
