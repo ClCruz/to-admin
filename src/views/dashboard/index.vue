@@ -13,7 +13,7 @@
           <b-input-group-prepend is-text class="firstLabel">
             Base:
           </b-input-group-prepend>
-          <b-form-select class="mr-2 col-4" v-on:change="selBase" v-model="form.id_base" :options="selects.base" size="sm">
+          <b-form-select class="mr-2 col-12 col-md-4" v-on:change="selBase" v-model="form.id_base" :options="selects.base" size="sm">
             <template slot="first">
               <option :value="''" disabled>-- Selecione --</option>
             </template>
@@ -21,7 +21,7 @@
           <b-input-group-prepend is-text class="firstLabel">
             Evento:
           </b-input-group-prepend>
-          <b-form-select class="mr-2 col-4" id="event" v-on:change="selEvent" v-model="form.id_evento" :options="selects.events">
+          <b-form-select class="mr-2 col-6 col-md-4" id="event" v-on:change="selEvent" v-model="form.id_evento" :options="selects.events">
             <template slot="first">
               <option :value="null" disabled>-- Selecione --</option>
             </template>
@@ -29,7 +29,7 @@
           <b-input-group-prepend is-text class="firstLabel">
             Dias:
           </b-input-group-prepend>
-          <b-form-select class="mr-2 col-1" id="days" :options="selects.days" v-on:change="selDays" v-model="form.date">
+          <b-form-select class="mr-2 col-6 col-md-1" id="days" :options="selects.days" v-on:change="selDays" v-model="form.date">
             <template slot="first">
               <option :value="null" disabled>-- Selecione --</option>
             </template>
@@ -37,7 +37,7 @@
           <b-input-group-prepend is-text class="firstLabel">
             Horário:
           </b-input-group-prepend>
-          <b-form-select class="mr-2 col-1" id="hours" :options="selects.hours" v-on:change="selHours" v-model="form.hour">
+          <b-form-select class="mr-2 col-6 col-md-1" id="hours" :options="selects.hours" v-on:change="selHours" v-model="form.hour">
             <template slot="first">
               <option :value="null" disabled>-- Selecione --</option>
             </template>
