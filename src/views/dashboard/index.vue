@@ -97,8 +97,8 @@
         <hr class="mt-0 pt-0">
 
         <div class="row row-cards">
-          <card-info v-if="dashboard.values.loaded" :key="'total_sold_'+dashboard.values.key.total_sold" :title="'Vendas Brutas'" :value='dashboard.values.total_sold' :percentage="dashboard.values.per_total_diff_formatted+'%'" :status="dashboard.values.typeofdiff"></card-info>
-          <card-info v-if="dashboard.values.loaded" :key="'total_soldamountformatted_'+dashboard.values.key.total_soldamountformatted" :title="'Vendas Brutas'" :value="dashboard.values.total_soldamountformatted" :size="'large'" :percentage="dashboard.values.perAmount_total_formatted+'%'" :status="dashboard.values.typeofdiffAmount"></card-info>
+          <card-info v-if="dashboard.values.loaded" :key="'total_sold_'+dashboard.values.key.total_sold" :title="'Vendas Brutas'" :value='dashboard.values.total_sold' :percentage="dashboard.values.per_total_diff_formatted" :status="dashboard.values.typeofdiff"></card-info>
+          <card-info v-if="dashboard.values.loaded" :key="'total_soldamountformatted_'+dashboard.values.key.total_soldamountformatted" :title="'Vendas Brutas'" :value="dashboard.values.total_soldamountformatted" :size="'large'" :percentage="dashboard.values.perAmount_total_formatted" :status="dashboard.values.typeofdiffAmount"></card-info>
           <card-info v-if="dashboard.values.loaded" :key="'averageticket_formatted_'+dashboard.values.key.averageticket_formatted" :title="'Ticket Médio'" :value="dashboard.values.averageticket_formatted" :size="'large'" :percentage="''" :status="''"></card-info>
           <card-info v-if="dashboard.boletos.loaded" :key="'ok_conversionformatted'+dashboard.boletos.key.ok_conversionformatted" :title="'Conversão de Boletos'" :value="dashboard.boletos.ok_conversionformatted" :percentage="''" :status="''"></card-info>
           <card-info v-if="dashboard.boletos.loaded" :key="'awaiting_payment'+dashboard.boletos.key.awaiting_payment" :title="'Boletos pendentes'" :value='dashboard.boletos.awaiting_payment' :percentage="''" :status="''"></card-info>
@@ -246,14 +246,37 @@ export default {
   },
   computed: {},
   created() {
-    this.populateBases();
+    this.closer();
     //  this.$refs.dtpicker.hideDatepicker();
-  },
+  },    
   methods: {
-    toggleDate() {
+      toggleDate() {
 
       this.$refs.dtpicker.hideDatepicker();
       this.$refs.dtpicker.toggleDatepicker();
+      },
+    closer() {
+      this.showWaitAboveAll();
+      dashboardService.closer(this.getLoggedId()).then(
+        response => {
+          this.hideWaitAboveAll();
+          if (this.validateJSON(response)) {
+            if (response!=null) {
+              this.form.id_base = response.id_base;
+              this.form.id_evento = response.id_evento;
+              this.form.date = response.date;
+              this.form.hour = response.hour;
+            }
+          }
+          Vue.nextTick().then(response => {
+            this.populateBases();
+          });
+        },
+        error => {
+          this.hideWaitAboveAll();
+          this.populateBases();
+        }
+      );
     },
     populateBases() {
       this.showWaitAboveAll();
@@ -266,6 +289,13 @@ export default {
             if (response.length == 1) {
               this.form.id_base = response[0].value;
               this.populateEvents();
+            }
+            else {
+              if (this.form.id_base != '') {
+                Vue.nextTick().then(response => {
+                  this.populateEvents();
+                });
+              }
             }
           }
         },
@@ -292,6 +322,13 @@ export default {
             this.form.id_evento = response[0].value;
             this.populateDays();
           }
+          else {
+            if (this.form.date != '') {
+              Vue.nextTick().then(response => {
+                this.populateDays();
+              });
+            }
+          }
           this.hideWaitAboveAll();
         },
         error => {
@@ -315,6 +352,13 @@ export default {
             this.form.date = response[0].value;
             this.populateHours();
           }
+          else {
+            if (this.form.hour != '') {
+              Vue.nextTick().then(response => {
+                this.populateHours();
+              });
+            }
+          }
           this.hideWaitAboveAll();
         },
         error => {
@@ -336,6 +380,13 @@ export default {
           if (response.length == 1) {
             this.form.hour = response[0].value;
             this.search('today');
+          }
+          else {
+            if (this.form.hour != '') {
+              Vue.nextTick().then(response => {
+                this.search('today');
+              });
+            }
           }
           this.hideWaitAboveAll();
         },
@@ -461,19 +512,21 @@ export default {
       );
       dashboardService.purchasevalues(this.getLoggedId(), this.form.id_evento, '', this.form.date, this.form.hour, type, '', '').then(
         response => {
-          if (this.validateJSON(response)) {
-            this.dashboard.values.loaded = true;
-            this.dashboard.values.total_sold = response.total_sold;
-            this.dashboard.values.total_soldamountformatted = 'R$ ' + (response.total_soldamountformatted == "" ? "-" : response.total_soldamountformatted);
-            this.dashboard.values.averageticket_formatted = 'R$ ' + (response.averageticket_formatted == "" ? "-" : response.averageticket_formatted);
-            this.dashboard.values.typeofdiff = response.typeofdiff;
-            this.dashboard.values.typeofdiffAmount = response.typeofdiffAmount;
-            this.dashboard.values.per_total_diff_formatted = response.per_total_diff_formatted;
-            this.dashboard.values.perAmount_total_formatted = response.perAmount_total_formatted;
+          if (this.validateJSON(response))
+          {
+              this.dashboard.values.loaded = true;
+              this.dashboard.values.total_sold = response.total_sold;
+              this.dashboard.values.total_soldamountformatted = 'R$ '+(response.total_soldamountformatted == "" ? "-" :response.total_soldamountformatted);
+              this.dashboard.values.averageticket_formatted = 'R$ '+(response.averageticket_formatted == "" ? "-" : response.averageticket_formatted);
+              this.dashboard.values.typeofdiff = response.typeofdiff;
+              this.dashboard.values.typeofdiffAmount = response.typeofdiffAmount;
+              this.dashboard.values.per_total_diff_formatted = response.per_total_diff_formatted == '' ? "" : response.per_total_diff_formatted+'%';
+              this.dashboard.values.perAmount_total_formatted = response.perAmount_total_formatted == '' ? "" : response.per_total_diff_formatted+'%';
 
-            this.dashboard.values.key.total_sold++;
-            this.dashboard.values.key.total_soldamountformatted++;
-            this.dashboard.values.key.averageticket_formatted++;
+
+              this.dashboard.values.key.total_sold++;
+              this.dashboard.values.key.total_soldamountformatted++;
+              this.dashboard.values.key.averageticket_formatted++;
           }
         },
         error => {
@@ -483,6 +536,7 @@ export default {
     },
   }
 }
+
 </script>
 
 <style lang="scss">
