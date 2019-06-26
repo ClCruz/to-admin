@@ -53,29 +53,26 @@ export default {
     filterAll() {
       this.chart.load({
         columns: [
-          this.originalValues.web,
-          this.originalValues.ticketoffice
+          
         ]
       });
     },
     filterWeb() {
       this.chart.load({
         columns: [
-          this.originalValues.web
         ]
       });
       this.chart.load({
-        unload: ['ticketoffice'],
+        unload: [''],
       });
     },
     filterTicketoffice() {
       this.chart.load({
         columns: [
-          this.originalValues.ticketoffice
         ]
       });
       this.chart.load({
-        unload: ['web'],
+        unload: [''],
       });
     },
   },
