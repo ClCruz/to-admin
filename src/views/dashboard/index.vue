@@ -52,41 +52,46 @@
           </b-button>
         </b-input-group>
 
-
         <div class="row">
           <form name="day">
-          <div class="col-12 form-group filter-day">
-            <div class="selectgroup selectgroup-pills">
-              <label class="selectgroup-item">
+            <div class="col-12 form-group filter-day">
+              <div class="selectgroup selectgroup-pills">
+                <label class="selectgroup-item">
                 <input type="radio" name="icon-input" class="selectgroup-input"  >
                 <span class="selectgroup-button selectgroup-button-icon" @click="search('all');">Todos os Dias</span>
               </label>
-              <label class="selectgroup-item">
+                <label class="selectgroup-item">
                 <input type="radio" name="icon-input" class="selectgroup-input"  >
                 <span class="selectgroup-button selectgroup-button-icon" @click="search('thirty');">30 Dias</span>
               </label>
-              <label class="selectgroup-item">
+                <label class="selectgroup-item">
                 <input type="radio" name="icon-input" class="selectgroup-input"  >
                 <span class="selectgroup-button selectgroup-button-icon" @click="search('fifteen');">15 Dias</span>
               </label>
-              <label class="selectgroup-item">
+                <label class="selectgroup-item">
                 <input type="radio" name="icon-input" class="selectgroup-input"  >
                 <span class="selectgroup-button selectgroup-button-icon" @click="search('seven');">7 Dias</span>
               </label>
-              <label class="selectgroup-item">
+                <label class="selectgroup-item">
                 <input type="radio" name="icon-input" class="selectgroup-input"  >
                 <span class="selectgroup-button selectgroup-button-icon" @click="search('yesterday');">Ontem</span>
               </label>
-              <label class="selectgroup-item">
+                <label class="selectgroup-item">
                 <input type="radio" name="icon-input" class="selectgroup-input" checked >
                 <span class="selectgroup-button selectgroup-button-icon" @click="search('today');">Hoje</span>
               </label>
-              <label class="selectgroup-item">
-                <input type="radio" name="a" class="selectgroup-input"  >
-                <span class="selectgroup-button selectgroup-button-icon"><i class="fas fa-pencil-alt mr-2"></i>Período Personalizado</span>
+                <label class="selectgroup-itx'em">
+          <HotelDatePicker :id="datepicker.id" ref="dtpicker" :format="datepicker.format" :minNights="datepicker.minNights"
+          :maxNights="datepicker.maxNights"
+          :hoveringTooltip="datepicker.hoveringTooltip"
+          :i18n="datepicker.ptBr"
+          :displayClearButton="datepicker.displayClearButton"
+          :startDate="datepicker.startDate"
+          :endDate="datepicker.endDate"
+          ></HotelDatePicker>
               </label>
+              </div>
             </div>
-          </div>
           </form>
         </div>
         <hr class="mt-0 pt-0">
@@ -122,21 +127,47 @@ import cardInfo from "@/views/dashboard/card-info";
 import pieChart from "@/views/dashboard/pie-chart";
 import pieChartWithFilter from "@/views/dashboard/pie-chart-with-filter";
 import chartBarStacked from "@/views/dashboard/chart-bar-stacked";
+import HotelDatePicker from 'vue-hotel-datepicker';
 
 import {
   func
 } from "@/functions";
 
-import { userService } from '../../components/common/services/user';
-import { eventService } from "../../components/common/services/event";
+import {
+  userService
+} from '../../components/common/services/user';
+import {
+  eventService
+} from "../../components/common/services/event";
 
-import { dashboardService } from "../../components/common/services/dashboard";
-
+import {
+  dashboardService
+} from "../../components/common/services/dashboard";
 
 export default {
   mixins: [func],
   data() {
     return {
+      datepickerHidden: true,
+      datepicker: {
+        id: 1,
+        format: 'DD/MM/YYYY',
+        minNights: 0,
+        maxNights: 300,
+        hoveringTooltip: true,
+        displayClearButton: true,
+        startDate: new Date('2018-01-01'),
+        endDate: new Date('2055-01-01'),
+        startingDateValue: new Date(),
+        ptBr: {
+          night: 'Dia',
+          nights: 'Dias',
+          'day-names': ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab'],
+          'check-in': 'Início',
+          'check-out': 'Fim',
+          'month-names': ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'],
+        },
+      },
       iddiv: 1,
       processing: false,
       form: {
@@ -204,19 +235,26 @@ export default {
           },
         },
       }
-    };
+    }
   },
   components: {
     cardInfo,
     pieChart,
     chartBarStacked,
-    pieChartWithFilter
+    pieChartWithFilter,
+    HotelDatePicker
   },
   computed: {},
   created() {
     this.populateBases();
+    //  this.$refs.dtpicker.hideDatepicker();
   },
   methods: {
+    toggleDate() {
+
+      this.$refs.dtpicker.hideDatepicker();
+      this.$refs.dtpicker.toggleDatepicker();
+    },
     populateBases() {
       this.showWaitAboveAll();
       userService.baseSelect(this.getLoggedId()).then(
@@ -361,86 +399,136 @@ export default {
 
       dashboardService.purchasebyboleto(this.getLoggedId(), this.form.id_evento, '', this.form.date, this.form.hour, type, '', '').then(
         response => {
-          if (this.validateJSON(response))
-          {
-              this.dashboard.boletos.loaded = true;
-              this.dashboard.boletos.awaiting_payment = response.awaiting_payment;
-              this.dashboard.boletos.ok_conversionformatted = response.ok_conversionformatted == null ? 'N/A' : (response.ok_conversionformatted+' %');
-              this.dashboard.boletos.key.awaiting_payment++;
-              this.dashboard.boletos.key.ok_conversionformatted++;
+          if (this.validateJSON(response)) {
+            this.dashboard.boletos.loaded = true;
+            this.dashboard.boletos.awaiting_payment = response.awaiting_payment;
+            this.dashboard.boletos.ok_conversionformatted = response.ok_conversionformatted == null ? 'N/A' : (response.ok_conversionformatted + ' %');
+            this.dashboard.boletos.key.awaiting_payment++;
+            this.dashboard.boletos.key.ok_conversionformatted++;
           }
         },
-        error => { this.toastError("Falha na execução."); }
+        error => {
+          this.toastError("Falha na execução.");
+        }
       );
       dashboardService.purchasebychannel(this.getLoggedId(), this.form.id_evento, '', this.form.date, this.form.hour, type, '', '').then(
         response => {
-          if (this.validateJSON(response))
-          {
-              this.dashboard.bychannel.loaded = true;
-              this.dashboard.bychannel.result = response;
-              this.dashboard.bychannel.key.id++;
+          if (this.validateJSON(response)) {
+            this.dashboard.bychannel.loaded = true;
+            this.dashboard.bychannel.result = response;
+            this.dashboard.bychannel.key.id++;
           }
         },
-        error => { this.toastError("Falha na execução."); }
+        error => {
+          this.toastError("Falha na execução.");
+        }
       );
       dashboardService.purchasebypaymenttype(this.getLoggedId(), this.form.id_evento, '', this.form.date, this.form.hour, type, '', '').then(
         response => {
-          if (this.validateJSON(response))
-          {
-              this.dashboard.bypaymenttype.loaded = true;
-              this.dashboard.bypaymenttype.result = response;
-              this.dashboard.bypaymenttype.key.id++;              
+          if (this.validateJSON(response)) {
+            this.dashboard.bypaymenttype.loaded = true;
+            this.dashboard.bypaymenttype.result = response;
+            this.dashboard.bypaymenttype.key.id++;
           }
         },
-        error => { this.toastError("Falha na execução."); }
+        error => {
+          this.toastError("Falha na execução.");
+        }
       );
       dashboardService.purchasebytimetable(this.getLoggedId(), this.form.id_evento, '', this.form.date, this.form.hour, type, '', '').then(
         response => {
-          if (this.validateJSON(response))
-          {
-              this.dashboard.timetable.loaded = true;
-              this.dashboard.timetable.result = response;
-              this.dashboard.timetable.key.id++;              
+          if (this.validateJSON(response)) {
+            this.dashboard.timetable.loaded = true;
+            this.dashboard.timetable.result = response;
+            this.dashboard.timetable.key.id++;
           }
         },
-        error => { this.toastError("Falha na execução."); }
+        error => {
+          this.toastError("Falha na execução.");
+        }
       );
       dashboardService.purchaseoccupation(this.getLoggedId(), this.form.id_evento, '', this.form.date, this.form.hour, type, '', '').then(
         response => {
-          if (this.validateJSON(response))
-          {
-              this.dashboard.occupation.loaded = true;
-              this.dashboard.occupation.result = response;
-              this.dashboard.occupation.key.id++;
+          if (this.validateJSON(response)) {
+            this.dashboard.occupation.loaded = true;
+            this.dashboard.occupation.result = response;
+            this.dashboard.occupation.key.id++;
           }
         },
-        error => { this.toastError("Falha na execução."); }
+        error => {
+          this.toastError("Falha na execução.");
+        }
       );
       dashboardService.purchasevalues(this.getLoggedId(), this.form.id_evento, '', this.form.date, this.form.hour, type, '', '').then(
         response => {
-          if (this.validateJSON(response))
-          {
-              this.dashboard.values.loaded = true;
-              this.dashboard.values.total_sold = response.total_sold;
-              this.dashboard.values.total_soldamountformatted = 'R$ '+(response.total_soldamountformatted == "" ? "-" :response.total_soldamountformatted);
-              this.dashboard.values.averageticket_formatted = 'R$ '+(response.averageticket_formatted == "" ? "-" : response.averageticket_formatted);
-              this.dashboard.values.typeofdiff = response.typeofdiff;
-              this.dashboard.values.typeofdiffAmount = response.typeofdiffAmount;
-              this.dashboard.values.per_total_diff_formatted = response.per_total_diff_formatted;
-              this.dashboard.values.perAmount_total_formatted = response.perAmount_total_formatted;
+          if (this.validateJSON(response)) {
+            this.dashboard.values.loaded = true;
+            this.dashboard.values.total_sold = response.total_sold;
+            this.dashboard.values.total_soldamountformatted = 'R$ ' + (response.total_soldamountformatted == "" ? "-" : response.total_soldamountformatted);
+            this.dashboard.values.averageticket_formatted = 'R$ ' + (response.averageticket_formatted == "" ? "-" : response.averageticket_formatted);
+            this.dashboard.values.typeofdiff = response.typeofdiff;
+            this.dashboard.values.typeofdiffAmount = response.typeofdiffAmount;
+            this.dashboard.values.per_total_diff_formatted = response.per_total_diff_formatted;
+            this.dashboard.values.perAmount_total_formatted = response.perAmount_total_formatted;
 
-
-              this.dashboard.values.key.total_sold++;
-              this.dashboard.values.key.total_soldamountformatted++;
-              this.dashboard.values.key.averageticket_formatted++;
+            this.dashboard.values.key.total_sold++;
+            this.dashboard.values.key.total_soldamountformatted++;
+            this.dashboard.values.key.averageticket_formatted++;
           }
         },
-        error => { this.toastError("Falha na execução."); }
+        error => {
+          this.toastError("Falha na execução.");
+        }
       );
     },
   }
 }
 </script>
 
-<style scoped>
+<style lang="scss">
+#dashboard {
+  
+.datepicker__dummy-wrapper {
+  border-radius: 12px;
+  height: 26px !important;
+
+  .datepicker__input {
+    font-size: 14px;
+    color: rgb(154, 160, 172);
+    /* padding-right: 0; */
+    /* padding-left: 10px; */
+    font-size: 11px;
+    color: #9aa0ac;
+    line-height: 2.2;
+    height: 26px;
+  }
+
+  .datepicker__clear-button {
+    margin: 8px -2px 0 0;
+    font-size: 14px;
+    height: 22px !important;
+  }
+
+
+  .datepicker__input:first-child {
+    /* text-indent: 22px; */
+    /* padding-left: 20px; */
+    /* padding-right: 80px; */
+    background: transparent url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjE4IiB2aWV3Qm94PSIwIDAgOCAxOCI+CiAgICA8cGF0aCBmaWxsPSIjOTU5OUFBIiBmaWxsLXJ1bGU9Im5vbnplcm8iIGQ9Ik0uMTE5LjcxOGw3LjE1OCA3LjQwNy0uMDMzLS41NTEtNi43MzcgOC44ODlhLjQyNS40MjUgMCAwIDAgLjA4LjU5My40Mi40MiAwIDAgMCAuNTktLjA4bDYuNzM3LTguODg5YS40MjUuNDI1IDAgMCAwLS4wMzMtLjU1MUwuNzIzLjEyOEEuNDIuNDIgMCAwIDAgLjEyOC4xMmEuNDI1LjQyNSAwIDAgMC0uMDA5LjU5OHoiLz4KPC9zdmc+Cg==) no-repeat 100%/5px !important;
+  }
+}
+
+.datepicker__wrapper {
+  background: transparent url('/assets/icons/edit.svg') no-repeat 14px/13px !important;
+  height: 22px !important;
+}
+
+
+  .datepicker__clear-button svg {
+    width: 10px !important;
+    top: -10px !important;
+  }
+
+
+}
 </style>
