@@ -37,7 +37,7 @@
       </div>
     </div>
   </div>
-  <dashboard v-if="!!checkIsAuth() && mayIseedashboard"></dashboard>
+  <dashboard :key="dashboardid" v-if="!!checkIsAuth() && mayIseedashboard"></dashboard>
 </div>
 </template>
 
@@ -59,6 +59,8 @@ export default {
   data() {
     return {
       iddiv: 1,
+      dashboardid: 1,
+      logged: false,
       processing: false,
       login: null,
       password: null,
@@ -103,11 +105,18 @@ export default {
               this.toastSuccess("Login efetuado com sucesso.");
               let ctx = this;
               this.$store.dispatch("login", response).then(function () {
-                ctx.codes(ctx.$parent.setMenu);
+                ctx.ls_add("codes", JSON.stringify(response.codes));
+                ctx.$parent.setMenu();
+                //ctx.codes(ctx.$parent.setMenu);
                 ctx.login = "";
                 ctx.password = "";
-                ctx.iddiv++;
-                ctx.goHome();
+                Vue.nextTick().then(response => {
+                  ctx.iddiv++;
+                  ctx.dashboardid++;
+                });
+                ctx.$router.push("/dashboard");
+                //ctx.goHome();
+                //this.logged = true;
               });
               //this.$router.push("/");
             } else {

@@ -76,6 +76,12 @@ const adminLogin = resolve => {
   }, 'admin');
 };
 
+const adminMyHome = resolve => {
+  require.ensure(['./views/myhome.vue'], () => {
+    resolve(require('./views/myhome.vue'));
+  }, 'admin-myhome');
+};
+
 // presentation
 const adminPresentationAdd = resolve => {
   require.ensure(['./views/presentation/add.vue'], () => {
@@ -268,6 +274,11 @@ const obj = new Router({
       }
     },
     //------
+    {
+      path: '/dashboard',
+      name: 'dashboard',
+      component: adminMyHome
+    },
     //USER
     {
       path: '/user/list',

@@ -27,6 +27,7 @@ export const func = {
     },
     methods: {
         checkIsAuth() {
+            //console.log(func.methods.ls_get("token"));
             return func.methods.ls_get("token") !== null && func.methods.ls_get("token") != '';
         },
         debugger() {
@@ -252,6 +253,7 @@ export const func = {
         },
         mayI() {
             //arguments
+            debugger;
             let anyOk = false;
             let obj = JSON.parse(this.ls_get("codes"));
             if (arguments.length > 0) {
@@ -260,11 +262,14 @@ export const func = {
                 }
             }
 
-            for (var i=0; i < arguments.length; i++) {
-                let index = obj.map(function(e) { return e.code; }).indexOf(arguments[i]);
-                anyOk = index != -1;
-                if (anyOk)
-                    break;
+            if (obj!= null && obj!=undefined && obj.length>0)
+            {
+                for (var i=0; i < arguments.length; i++) {
+                    let index = obj.map(function(e) { return e.code; }).indexOf(arguments[i]);
+                    anyOk = index != -1;
+                    if (anyOk)
+                        break;
+                }
             }
             return anyOk;
         },
