@@ -379,7 +379,7 @@ export default {
         },
         error => { this.toastError("Falha na execução."); }
       );
-      dashboardService.purchasebypaymenttype(this.getLoggedId(), this.form.id_evento, '', this.form.date, this.form.hour, 'all', '', '').then(
+      dashboardService.purchasebypaymenttype(this.getLoggedId(), this.form.id_evento, '', this.form.date, this.form.hour, type, '', '').then(
         response => {
           if (this.validateJSON(response))
           {
