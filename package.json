@@ -13,6 +13,7 @@
     "c3": "^0.7.1",
     "d3": "^5.9.2",
     "datatables": "^1.10.18",
+    "epic-spinners": "^1.1.0",
     "filepond": "^3.7.6",
     "filepond-plugin-file-validate-type": "^1.2.1",
     "filepond-plugin-image-preview": "^3.1.6",

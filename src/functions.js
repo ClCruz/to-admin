@@ -271,9 +271,9 @@ export const func = {
         codes(after) {
             if (this.getLoggedId() == '' || this.getLoggedId() == null || this.getLoggedId() == undefined)
                 return;
-            this.showWaitAboveAll();
+            // this.showWaitAboveAll();
             authService.codes(this.getLoggedId()).then(response => {
-                this.hideWaitAboveAll();
+                // this.hideWaitAboveAll();
                 this.ls_add("codes", JSON.stringify(response));
                 if (after != null && after != undefined)
                 {
@@ -281,7 +281,7 @@ export const func = {
                 }
                     
 
-            }, error => { this.hideWaitAboveAll(); });            
+            }, error => { });            
         },
         tryLogin(callback) {
             if (this.ls_get('token') == null) return;

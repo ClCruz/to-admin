@@ -27,7 +27,7 @@
             </template>
           </b-form-select>
           <b-input-group-prepend is-text class="firstLabel">
-            Dias:
+            Dia:
           </b-input-group-prepend>
           <b-form-select class="mr-2 col-6 col-md-1" id="days" :options="selects.days" v-on:change="selDays" v-model="form.date">
             <template slot="first">
@@ -80,6 +80,7 @@
                 <input type="radio" name="icon-input" class="selectgroup-input" checked >
                 <span class="selectgroup-button selectgroup-button-icon" @click="search('today');">Hoje</span>
               </label>
+
                 <label class="selectgroup-itx'em">
           <HotelDatePicker :id="datepicker.id" ref="dtpicker" :format="datepicker.format" :minNights="datepicker.minNights"
           :maxNights="datepicker.maxNights"
@@ -91,26 +92,31 @@
           ></HotelDatePicker>
               </label>
               </div>
+
             </div>
           </form>
         </div>
         <hr class="mt-0 pt-0">
 
-        <div class="row row-cards">
-          <card-info v-if="dashboard.values.loaded" :key="'total_sold_'+dashboard.values.key.total_sold" :title="'Vendas Brutas'" :value='dashboard.values.total_sold' :percentage="dashboard.values.per_total_diff_formatted" :status="dashboard.values.typeofdiff"></card-info>
-          <card-info v-if="dashboard.values.loaded" :key="'total_soldamountformatted_'+dashboard.values.key.total_soldamountformatted" :title="'Vendas Brutas'" :value="dashboard.values.total_soldamountformatted" :size="'large'" :percentage="dashboard.values.perAmount_total_formatted" :status="dashboard.values.typeofdiffAmount"></card-info>
-          <card-info v-if="dashboard.values.loaded" :key="'averageticket_formatted_'+dashboard.values.key.averageticket_formatted" :title="'Ticket Médio'" :value="dashboard.values.averageticket_formatted" :size="'large'" :percentage="''" :status="''"></card-info>
-          <card-info v-if="dashboard.boletos.loaded" :key="'ok_conversionformatted'+dashboard.boletos.key.ok_conversionformatted" :title="'Conversão de Boletos'" :value="dashboard.boletos.ok_conversionformatted" :percentage="''" :status="''"></card-info>
-          <card-info v-if="dashboard.boletos.loaded" :key="'awaiting_payment'+dashboard.boletos.key.awaiting_payment" :title="'Boletos pendentes'" :value='dashboard.boletos.awaiting_payment' :percentage="''" :status="''"></card-info>
-        </div>
-        <div class="row">
-          <pie-chart v-if="dashboard.occupation.loaded" :key="'occupation_'+dashboard.occupation.key.id" :title="'Ocupação'" :data="dashboard.occupation.result"></pie-chart>
-          <chart-bar-stacked v-if="dashboard.timetable.loaded" :key="'timetable_'+dashboard.timetable.key.id" :title="'Vendas por horário'" :data="dashboard.timetable.result"></chart-bar-stacked>
-        </div>
-        <div class="row">
-          <pie-chart-with-filter :hasFilter="true" v-if="dashboard.bychannel.loaded" :key="'bypaymenttype_'+dashboard.bypaymenttype.key.id" :title="'Vendas por forma de pagamento'" :data="dashboard.bypaymenttype.result"></pie-chart-with-filter>
-          <pie-chart v-if="dashboard.bychannel.loaded" :key="'bychannel_'+dashboard.bychannel.key.id" :title="'Vendas por canal'" :data="dashboard.bychannel.result"></pie-chart>
-        </div>
+        <half-circle-spinner v-if="!isLoaded" :size="60" color="#ddd"></half-circle-spinner>
+        <template v-else>
+
+          <div class="row row-cards">
+            <card-info v-if="dashboard.values.loaded" :key="'total_sold_'+dashboard.values.key.total_sold" :title="'Vendas Brutas'" :value='dashboard.values.total_sold' :percentage="dashboard.values.per_total_diff_formatted" :status="dashboard.values.typeofdiff"></card-info>
+            <card-info v-if="dashboard.values.loaded" :key="'total_soldamountformatted_'+dashboard.values.key.total_soldamountformatted" :title="'Vendas Brutas'" :value="dashboard.values.total_soldamountformatted" :size="'large'" :percentage="dashboard.values.perAmount_total_formatted" :status="dashboard.values.typeofdiffAmount"></card-info>
+            <card-info v-if="dashboard.values.loaded" :key="'averageticket_formatted_'+dashboard.values.key.averageticket_formatted" :title="'Ticket Médio'" :value="dashboard.values.averageticket_formatted" :size="'large'" :percentage="''" :status="''"></card-info>
+            <card-info v-if="dashboard.boletos.loaded" :key="'ok_conversionformatted'+dashboard.boletos.key.ok_conversionformatted" :title="'Conversão de Boletos'" :value="dashboard.boletos.ok_conversionformatted" :percentage="''" :status="''"></card-info>
+            <card-info v-if="dashboard.boletos.loaded" :key="'awaiting_payment'+dashboard.boletos.key.awaiting_payment" :title="'Boletos pendentes'" :value='dashboard.boletos.awaiting_payment' :percentage="''" :status="''"></card-info>
+          </div>
+          <div class="row">
+            <pie-chart v-if="dashboard.occupation.loaded" :key="'occupation_'+dashboard.occupation.key.id" :title="'Ocupação'" :data="dashboard.occupation.result"></pie-chart>
+            <chart-bar-stacked v-if="dashboard.timetable.loaded" :key="'timetable_'+dashboard.timetable.key.id" :title="'Vendas por horário'" :data="dashboard.timetable.result"></chart-bar-stacked>
+          </div>
+          <div class="row">
+            <pie-chart-with-filter :hasFilter="true" v-if="dashboard.bychannel.loaded" :key="'bypaymenttype_'+dashboard.bypaymenttype.key.id" :title="'Vendas por forma de pagamento'" :data="dashboard.bypaymenttype.result"></pie-chart-with-filter>
+            <pie-chart v-if="dashboard.bychannel.loaded" :key="'bychannel_'+dashboard.bychannel.key.id" :title="'Vendas por canal'" :data="dashboard.bychannel.result"></pie-chart>
+          </div>
+        </template>
       </div>
     </div>
 
@@ -128,6 +134,15 @@ import pieChart from "@/views/dashboard/pie-chart";
 import pieChartWithFilter from "@/views/dashboard/pie-chart-with-filter";
 import chartBarStacked from "@/views/dashboard/chart-bar-stacked";
 import HotelDatePicker from 'vue-hotel-datepicker';
+import {
+  HollowDotsSpinner
+} from 'epic-spinners'
+import {
+  SemipolarSpinner
+} from 'epic-spinners'
+import {
+  HalfCircleSpinner
+} from 'epic-spinners'
 
 import {
   func
@@ -148,6 +163,7 @@ export default {
   mixins: [func],
   data() {
     return {
+      isLoaded: false,
       datepickerHidden: true,
       datepicker: {
         id: 1,
@@ -156,7 +172,7 @@ export default {
         maxNights: 300,
         hoveringTooltip: true,
         displayClearButton: true,
-        startDate: new Date('2018-01-01'),
+        startDate: new Date(),
         endDate: new Date('2055-01-01'),
         startingDateValue: new Date(),
         ptBr: {
@@ -242,26 +258,28 @@ export default {
     pieChart,
     chartBarStacked,
     pieChartWithFilter,
-    HotelDatePicker
+    HotelDatePicker,
+    HollowDotsSpinner,
+    HalfCircleSpinner
   },
   computed: {},
   created() {
+    this.hideWaitAboveAll();
     this.closer();
     //  this.$refs.dtpicker.hideDatepicker();
-  },    
+  },
   methods: {
-      toggleDate() {
+    toggleDate() {
 
       this.$refs.dtpicker.hideDatepicker();
       this.$refs.dtpicker.toggleDatepicker();
-      },
+    },
     closer() {
-      this.showWaitAboveAll();
       dashboardService.closer(this.getLoggedId()).then(
         response => {
-          this.hideWaitAboveAll();
+          // this.hideWaitAboveAll();
           if (this.validateJSON(response)) {
-            if (response!=null) {
+            if (response != null) {
               this.form.id_base = response.id_base;
               this.form.id_evento = response.id_evento;
               this.form.date = response.date;
@@ -273,13 +291,12 @@ export default {
           });
         },
         error => {
-          this.hideWaitAboveAll();
+          // this.hideWaitAboveAll();
           this.populateBases();
         }
       );
     },
     populateBases() {
-      this.showWaitAboveAll();
       userService.baseSelect(this.getLoggedId()).then(
         response => {
           this.hideWaitAboveAll();
@@ -289,8 +306,7 @@ export default {
             if (response.length == 1) {
               this.form.id_base = response[0].value;
               this.populateEvents();
-            }
-            else {
+            } else {
               if (this.form.id_base != '') {
                 Vue.nextTick().then(response => {
                   this.populateEvents();
@@ -300,7 +316,6 @@ export default {
           }
         },
         error => {
-          this.hideWaitAboveAll();
           this.toastError("Falha na execução.");
         }
       );
@@ -314,25 +329,22 @@ export default {
       this.selects.days = [];
       this.selects.hours = [];
 
-      this.showWaitAboveAll();
       eventService.select(this.getLoggedId(), this.form.id_base).then(
         response => {
           this.selects.events = response;
           if (response.length == 1) {
             this.form.id_evento = response[0].value;
             this.populateDays();
-          }
-          else {
+          } else {
             if (this.form.date != '') {
               Vue.nextTick().then(response => {
                 this.populateDays();
               });
             }
           }
-          this.hideWaitAboveAll();
         },
         error => {
-          this.hideWaitAboveAll();
+          // this.hideWaitAboveAll();
           this.toastError("Falha na execução.");
         }
       );
@@ -344,25 +356,21 @@ export default {
       this.selects.days = [];
       this.selects.hours = [];
 
-      this.showWaitAboveAll();
       eventService.selectDays(this.getLoggedId(), this.form.id_base, this.form.id_evento).then(
         response => {
           this.selects.days = response;
           if (response.length == 1) {
             this.form.date = response[0].value;
             this.populateHours();
-          }
-          else {
+          } else {
             if (this.form.hour != '') {
               Vue.nextTick().then(response => {
                 this.populateHours();
               });
             }
           }
-          this.hideWaitAboveAll();
         },
         error => {
-          this.hideWaitAboveAll();
           this.toastError("Falha na execução.");
         }
       );
@@ -373,25 +381,22 @@ export default {
       }
       this.selects.hours = [];
 
-      this.showWaitAboveAll();
       eventService.selectDayHours(this.getLoggedId(), this.form.id_base, this.form.id_evento, this.form.date).then(
         response => {
           this.selects.hours = response;
           if (response.length == 1) {
             this.form.hour = response[0].value;
             this.search('today');
-          }
-          else {
+          } else {
             if (this.form.hour != '') {
               Vue.nextTick().then(response => {
                 this.search('today');
               });
             }
           }
-          this.hideWaitAboveAll();
+          // this.hideWaitAboveAll();
         },
         error => {
-          this.hideWaitAboveAll();
           this.toastError("Falha na execução.");
         }
       );
@@ -445,6 +450,7 @@ export default {
       });
     },
     search(type) {
+      this.isLoaded = false;
       if (this.form.id_evento == "" || this.form.date == "" || this.form.hour == "")
         return;
 
@@ -512,75 +518,109 @@ export default {
       );
       dashboardService.purchasevalues(this.getLoggedId(), this.form.id_evento, '', this.form.date, this.form.hour, type, '', '').then(
         response => {
-          if (this.validateJSON(response))
-          {
-              this.dashboard.values.loaded = true;
-              this.dashboard.values.total_sold = response.total_sold;
-              this.dashboard.values.total_soldamountformatted = 'R$ '+(response.total_soldamountformatted == "" ? "-" :response.total_soldamountformatted);
-              this.dashboard.values.averageticket_formatted = 'R$ '+(response.averageticket_formatted == "" ? "-" : response.averageticket_formatted);
-              this.dashboard.values.typeofdiff = response.typeofdiff;
-              this.dashboard.values.typeofdiffAmount = response.typeofdiffAmount;
-              this.dashboard.values.per_total_diff_formatted = response.per_total_diff_formatted == '' ? "" : response.per_total_diff_formatted+'%';
-              this.dashboard.values.perAmount_total_formatted = response.perAmount_total_formatted == '' ? "" : response.per_total_diff_formatted+'%';
+          if (this.validateJSON(response)) {
+            this.dashboard.values.loaded = true;
+            this.dashboard.values.total_sold = response.total_sold;
+            this.dashboard.values.total_soldamountformatted = 'R$ ' + (response.total_soldamountformatted == "" ? "-" : response.total_soldamountformatted);
+            this.dashboard.values.averageticket_formatted = 'R$ ' + (response.averageticket_formatted == "" ? "-" : response.averageticket_formatted);
+            this.dashboard.values.typeofdiff = response.typeofdiff;
+            this.dashboard.values.typeofdiffAmount = response.typeofdiffAmount;
+            this.dashboard.values.per_total_diff_formatted = response.per_total_diff_formatted == '' ? "" : response.per_total_diff_formatted + '%';
+            this.dashboard.values.perAmount_total_formatted = response.perAmount_total_formatted == '' ? "" : response.per_total_diff_formatted + '%';
 
+            this.dashboard.values.key.total_sold++;
+            this.dashboard.values.key.total_soldamountformatted++;
+            this.dashboard.values.key.averageticket_formatted++;
 
-              this.dashboard.values.key.total_sold++;
-              this.dashboard.values.key.total_soldamountformatted++;
-              this.dashboard.values.key.averageticket_formatted++;
+            this.isLoaded = true;
+
           }
         },
         error => {
           this.toastError("Falha na execução.");
         }
       );
+
     },
   }
 }
-
 </script>
 
 <style lang="scss">
 #dashboard {
-  
-.datepicker__dummy-wrapper {
-  border-radius: 12px;
-  height: 26px !important;
 
-  .datepicker__input {
-    font-size: 14px;
-    color: rgb(154, 160, 172);
-    /* padding-right: 0; */
-    /* padding-left: 10px; */
-    font-size: 11px;
-    color: #9aa0ac;
-    line-height: 2.2;
-    height: 26px;
+  .datepicker__dummy-wrapper {
+    border-radius: 12px;
+    height: 26px !important;
+
+    .datepicker__input {
+      font-size: 14px;
+      color: rgb(154, 160, 172);
+      /* padding-right: 0; */
+      /* padding-left: 10px; */
+      font-size: 11px;
+      color: #9aa0ac;
+      line-height: 2.2;
+      height: 26px;
+    }
+
+    .datepicker__clear-button {
+      margin: 8px -2px 0 0;
+      font-size: 14px;
+      height: 22px !important;
+    }
+
+    .datepicker__input:first-child {
+      /* text-indent: 22px; */
+      /* padding-left: 20px; */
+      /* padding-right: 80px; */
+      background: transparent url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjE4IiB2aWV3Qm94PSIwIDAgOCAxOCI+CiAgICA8cGF0aCBmaWxsPSIjOTU5OUFBIiBmaWxsLXJ1bGU9Im5vbnplcm8iIGQ9Ik0uMTE5LjcxOGw3LjE1OCA3LjQwNy0uMDMzLS41NTEtNi43MzcgOC44ODlhLjQyNS40MjUgMCAwIDAgLjA4LjU5My40Mi40MiAwIDAgMCAuNTktLjA4bDYuNzM3LTguODg5YS40MjUuNDI1IDAgMCAwLS4wMzMtLjU1MUwuNzIzLjEyOEEuNDIuNDIgMCAwIDAgLjEyOC4xMmEuNDI1LjQyNSAwIDAgMC0uMDA5LjU5OHoiLz4KPC9zdmc+Cg==) no-repeat 100%/5px !important;
+    }
   }
 
-  .datepicker__clear-button {
-    margin: 8px -2px 0 0;
-    font-size: 14px;
+  .datepicker__wrapper {
+    background: transparent url('/assets/icons/edit.svg') no-repeat 14px/13px !important;
     height: 22px !important;
   }
-
-
-  .datepicker__input:first-child {
-    /* text-indent: 22px; */
-    /* padding-left: 20px; */
-    /* padding-right: 80px; */
-    background: transparent url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjE4IiB2aWV3Qm94PSIwIDAgOCAxOCI+CiAgICA8cGF0aCBmaWxsPSIjOTU5OUFBIiBmaWxsLXJ1bGU9Im5vbnplcm8iIGQ9Ik0uMTE5LjcxOGw3LjE1OCA3LjQwNy0uMDMzLS41NTEtNi43MzcgOC44ODlhLjQyNS40MjUgMCAwIDAgLjA4LjU5My40Mi40MiAwIDAgMCAuNTktLjA4bDYuNzM3LTguODg5YS40MjUuNDI1IDAgMCAwLS4wMzMtLjU1MUwuNzIzLjEyOEEuNDIuNDIgMCAwIDAgLjEyOC4xMmEuNDI1LjQyNSAwIDAgMC0uMDA5LjU5OHoiLz4KPC9zdmc+Cg==) no-repeat 100%/5px !important;
-  }
-}
-
-.datepicker__wrapper {
-  background: transparent url('/assets/icons/edit.svg') no-repeat 14px/13px !important;
-  height: 22px !important;
-}
-
 
   .datepicker__clear-button svg {
     width: 10px !important;
     top: -10px !important;
+  }
+
+  @media (max-width: 800px) {
+
+  .input-group-prepend, .input-group-append, .input-group-btn, .input-group-text {
+    margin-bottom: 2px;
+    margin-top: 2px;
+    font-weight: bold;
+    padding-left: 0;
+    background: transparent;
+    border: none;
+  }
+
+  .input-group {
+    display: block;
+  }
+
+  select {
+    border-radius: 4px;
+    width: 50%;
+    display: flex;
+  }
+  }
+
+    .input-group-prepend, .input-group-append, .input-group-btn, .input-group-text { 
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
+    font-weight: bold;
+    color: hsl(0, 0%, 13%);
+
+    }
+  select {
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+    color: hsl(0,0%,29%);
   }
 
 

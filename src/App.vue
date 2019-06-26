@@ -3,8 +3,9 @@
   <div class="header py-4" v-if="checkIsAuth()">
     <div class="container">
       <div class="d-flex">
-        <a class="header-brand" href="./index.html">
-        Administrativo 
+        <a class="header-brand" href="./index.html" style="color: #333; font-weight: regular; font-size: 13px">
+          <img src="/assets/images/logo.png" alt="Logo Ticketoffice" style="width: 40px">
+          
         </a>
         <div class="d-flex order-lg-2 ml-auto">
           <div class="dropdown">
@@ -62,17 +63,10 @@
   <v-wait for="loadingAboveAll">
     <template slot="waiting">
       <div id="aboveAll">
-        <div class="sk-cube-grid">
-          <div class="sk-cube sk-cube1"></div>
-          <div class="sk-cube sk-cube2"></div>
-          <div class="sk-cube sk-cube3"></div>
-          <div class="sk-cube sk-cube4"></div>
-          <div class="sk-cube sk-cube5"></div>
-          <div class="sk-cube sk-cube6"></div>
-          <div class="sk-cube sk-cube7"></div>
-          <div class="sk-cube sk-cube8"></div>
-          <div class="sk-cube sk-cube9"></div>
-        </div>
+       <semipolar-spinner
+  :size="64"
+  color="rgb(244,111,155)"
+/>
       </div>
     </template>
   </v-wait>
@@ -92,6 +86,7 @@ import LinkMenu from "./components/ticketoffice/LinkMenu";
 import {
   func
 } from "@/functions";
+import { SemipolarSpinner } from 'epic-spinners'
 
 Vue.use(VueSidebarMenu);
 Vue.use(VueHead);
@@ -100,7 +95,8 @@ export default {
   mixins: [func],
   name: 'home',
   components: {
-    LinkMenu
+    LinkMenu,
+    SemipolarSpinner
   },
   mounted() {
     if (this.getLoggedId() == null) {
@@ -111,6 +107,7 @@ export default {
     this.setMenu();
   },
   created() {
+    
     // Listen for swUpdated event and display refresh snackbar as required.
     document.addEventListener('swUpdated', this.showRefreshUI, {
       once: true
@@ -459,103 +456,32 @@ export default {
   top: 0;
   left: 0;
   width: 100%;
-  height: 100%;
+  height: 100vh;
   z-index: 60000;
-  background-color: rgb(137, 137, 137, 0.9);
+  background-color: rgb(137, 137, 137, 0.3);
   transition: 0.2;
 }
+.half-circle-spinner {
+     position: absolute;
+    margin-left: auto;
+    margin-right: auto;
+    left: 0;
+    right: 0;
+ 
+}
+.semipolar-spinner {
+      position: absolute;
+    margin-left: auto;
+    margin-right: auto;
+    left: 0;
+    right: 0;
+    top: 50%;
+
+}
+
+
 </style>
 <style lang="scss">
-.sk-cube-grid {
-  width: 60px;
-  height: 60px;
-  margin: 340px auto;
-}
-
-.sk-cube-grid .sk-cube {
-  width: 33%;
-  height: 33%;
-  background-color: rgb(75, 114, 224);
-  float: left;
-  -webkit-animation: sk-cubeGridScaleDelay 3s infinite ease-in-out;
-  animation: sk-cubeGridScaleDelay 3s infinite ease-in-out;
-}
-
-.sk-cube-grid .sk-cube1 {
-  -webkit-animation-delay: 0.2s;
-  animation-delay: 0.2s;
-}
-
-.sk-cube-grid .sk-cube2 {
-  -webkit-animation-delay: 0.3s;
-  animation-delay: 0.3s;
-}
-
-.sk-cube-grid .sk-cube3 {
-  -webkit-animation-delay: 0.4s;
-  animation-delay: 0.4s;
-}
-
-.sk-cube-grid .sk-cube4 {
-  -webkit-animation-delay: 0.1s;
-  animation-delay: 0.1s;
-}
-
-.sk-cube-grid .sk-cube5 {
-  -webkit-animation-delay: 0.2s;
-  animation-delay: 0.2s;
-}
-
-.sk-cube-grid .sk-cube6 {
-  -webkit-animation-delay: 0.3s;
-  animation-delay: 0.3s;
-}
-
-.sk-cube-grid .sk-cube7 {
-  -webkit-animation-delay: 0s;
-  animation-delay: 0s;
-}
-
-.sk-cube-grid .sk-cube8 {
-  -webkit-animation-delay: 0.1s;
-  animation-delay: 0.1s;
-}
-
-.sk-cube-grid .sk-cube9 {
-  -webkit-animation-delay: 0.2s;
-  animation-delay: 0.2s;
-}
-
-@-webkit-keyframes sk-cubeGridScaleDelay {
-
-  0%,
-  70%,
-  100% {
-    -webkit-transform: scale3D(1, 1, 1);
-    transform: scale3D(1, 1, 1);
-  }
-
-  35% {
-    -webkit-transform: scale3D(0, 0, 1);
-    transform: scale3D(0, 0, 1);
-  }
-}
-
-@keyframes sk-cubeGridScaleDelay {
-
-  0%,
-  70%,
-  100% {
-    -webkit-transform: scale3D(1, 1, 1);
-    transform: scale3D(1, 1, 1);
-  }
-
-  35% {
-    -webkit-transform: scale3D(0, 0, 1);
-    transform: scale3D(0, 0, 1);
-  }
-}
-
 .ql-editor {
   max-height: 140px !important;
 }
@@ -588,7 +514,7 @@ export default {
 
 @media (min-width: 900px) {
   .header-brand {
-    display: none;
+    /* display: none; */
   }
 }
 
@@ -772,5 +698,13 @@ $dropDownBg: #fff;
     color: $itemColor !important;
     background-color: $darkenBg !important;
   }
+}
+
+.vsm-list {
+  border-right: 1px solid rgba(0, 40, 100, 0.12);
+}
+
+.py-4 {
+    padding-bottom: 0.8rem !important;
 }
 </style>
