@@ -42,7 +42,7 @@
               <option :value="null" disabled>-- Selecione --</option>
             </template>
           </b-form-select>
-          <b-button type="button" variant="primary" size="sm" @click="search('today')">
+          <b-button type="button" variant="primary" size="sm" @click="search('today')" v-if="1==2">
             <v-wait for="inprocess">
               <template slot="waiting">
                 Aguarde...
@@ -99,6 +99,9 @@
         <div class="row">
           <pie-chart v-if="dashboard.occupation.loaded" :key="'occupation_'+dashboard.occupation.key.id" :title="'Ocupação'" :data="dashboard.occupation.result"></pie-chart>
           <chart-bar-stacked v-if="dashboard.timetable.loaded" :key="'timetable_'+dashboard.timetable.key.id" :title="'Vendas por horário'" :data="dashboard.timetable.result"></chart-bar-stacked>
+        </div>
+        <div class="row">
+          <pie-chart v-if="dashboard.bychannel.loaded" :key="'bychannel_'+dashboard.bychannel.key.id" :title="'Ocupação'" :data="dashboard.bychannel.result"></pie-chart>
         </div>
       </div>
     </div>
@@ -161,6 +164,13 @@ export default {
           }
         },
         occupation: {
+          loaded: false,
+          result: [],
+          key: {
+            id: 1
+          }
+        },
+        bychannel: {
           loaded: false,
           result: [],
           key: {
@@ -281,6 +291,13 @@ export default {
         }
       );
     },
+    clear() {
+      this.dashboard.values.loaded = false;
+      this.dashboard.boletos.loaded = false;
+      this.dashboard.occupation.loaded = false;
+      this.dashboard.bychannel.loaded = false;
+      this.dashboard.timetable.loaded = false;
+    },
     selBase() {
       Vue.nextTick().then(response => {
         this.selects.events = [];
@@ -298,6 +315,7 @@ export default {
       Vue.nextTick().then(response => {
         this.selects.days = [];
         this.selects.hours = [];
+        this.clear();
 
         this.form.date = "";
         this.form.hour = "";
@@ -308,6 +326,7 @@ export default {
     selDays() {
       Vue.nextTick().then(response => {
         this.selects.hours = [];
+        this.clear();
 
         this.form.hour = "";
 
@@ -315,7 +334,10 @@ export default {
       });
     },
     selHours() {
-
+      Vue.nextTick().then(response => {
+        this.clear();
+        this.search("today");
+      });
     },
     search(type) {
       dashboardService.purchasebyboleto(this.getLoggedId(), this.form.id_evento, '', this.form.date, this.form.hour, type, '', '').then(
@@ -331,15 +353,18 @@ export default {
         },
         error => { this.toastError("Falha na execução."); }
       );
-      // dashboardService.purchasebychannel(this.getLoggedId(), this.form.id_evento, '', this.form.date, this.form.hour, type, '', '').then(
-      //   response => {
-      //     if (this.validateJSON(response))
-      //     {
-              
-      //     }
-      //   },
-      //   error => { this.toastError("Falha na execução."); }
-      // );
+      dashboardService.purchasebychannel(this.getLoggedId(), this.form.id_evento, '', this.form.date, this.form.hour, type, '', '').then(
+        response => {
+          if (this.validateJSON(response))
+          {
+            console.log(response);
+              this.dashboard.bychannel.loaded = true;
+              this.dashboard.bychannel.result = response;
+              this.dashboard.bychannel.key.id++;
+          }
+        },
+        error => { this.toastError("Falha na execução."); }
+      );
       // dashboardService.purchasebypaymenttype(this.getLoggedId(), this.form.id_evento, '', this.form.date, this.form.hour, type, '', '').then(
       //   response => {
       //     if (this.validateJSON(response))

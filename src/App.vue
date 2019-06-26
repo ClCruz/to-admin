@@ -412,7 +412,7 @@ export default {
 
       this.menu = menuHelper;
       this.menuMobile = menuHelper;
-      console.log(this.menu);
+      //console.log(this.menu);
       this.setMenuMobile();
     },
     setMenuMobile() {},
