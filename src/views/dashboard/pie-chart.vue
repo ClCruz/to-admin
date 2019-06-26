@@ -3,22 +3,6 @@
   <div class="card">
     <div class="card-header">
       <h3 class="card-title">{{title}}</h3>
-      <div class="form-group" v-if="hasFilter">
-        <div class="selectgroup selectgroup-pills">
-          <label class="selectgroup-item">
-            <input type="radio" name="icon-input" value="1" class="selectgroup-input" checked="true" @click="filterAll()">
-              <span class="selectgroup-button selectgroup-button-icon">Todos</span>
-            </label>
-          <label class="selectgroup-item">
-            <input type="radio" name="icon-input" value="2" class="selectgroup-input" @click="filterWeb()">
-              <span class="selectgroup-button selectgroup-button-icon"><i class="fab fa-chrome"></i> Web </span>
-            </label>
-          <label class="selectgroup-item">
-            <input type="radio" name="icon-input" value="3" class="selectgroup-input" @click="filterTicketoffice()">
-              <span class="selectgroup-button selectgroup-button-icon"><i class="fas fa-ticket-alt"></i> Bilheteria</span>
-            </label>
-        </div>
-      </div>
     </div>
     <div class="card-body">
       <div :id="'chart-donut_'+key" class="c3"></div>
@@ -36,18 +20,15 @@ import {
 import $ from 'jquery';
 
 export default {
-  name: "CardInfo",
+  name: "PieChart",
   computed: {
     key() {
       return this.$vnode.key;
     }
 
   },
-  props: {
-    data: Array,
-    title: String,
-    hasFilter: Boolean
-  },
+    props: ['data', 'title'],
+
   // [["Disponivel",177],["Vendido",36],["Gratuito",0],["Aguardando pagamento",18],["Reservado",36]]
   methods: {
     filterAll() {

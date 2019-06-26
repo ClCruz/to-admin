@@ -103,8 +103,8 @@
           <chart-bar-stacked v-if="dashboard.timetable.loaded" :key="'timetable_'+dashboard.timetable.key.id" :title="'Vendas por horário'" :data="dashboard.timetable.result"></chart-bar-stacked>
         </div>
         <div class="row">
-          <pie-chart v-if="dashboard.bychannel.loaded" :key="'bychannel_'+dashboard.bychannel.key.id" :title="'Ocupação'" :data="dashboard.bychannel.result"></pie-chart>
           <pie-chart-with-filter :hasFilter="true" v-if="dashboard.bychannel.loaded" :key="'bypaymenttype_'+dashboard.bypaymenttype.key.id" :title="'Vendas por forma de pagamento'" :data="dashboard.bypaymenttype.result"></pie-chart-with-filter>
+          <pie-chart v-if="dashboard.bychannel.loaded" :key="'bychannel_'+dashboard.bychannel.key.id" :title="'Vendas por canal'" :data="dashboard.bychannel.result"></pie-chart>
         </div>
       </div>
     </div>
@@ -379,7 +379,7 @@ export default {
         },
         error => { this.toastError("Falha na execução."); }
       );
-      dashboardService.purchasebypaymenttype(this.getLoggedId(), this.form.id_evento, '', this.form.date, this.form.hour, type, '', '').then(
+      dashboardService.purchasebypaymenttype(this.getLoggedId(), this.form.id_evento, '', this.form.date, this.form.hour, 'all', '', '').then(
         response => {
           if (this.validateJSON(response))
           {

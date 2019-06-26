@@ -1,8 +1,8 @@
 <template>
-<div class="col-lg-4 col-12 col-xl-4">
+<div class="col-lg-5 col-12 col-xl-5">
   <div class="card">
     <div class="card-header">
-      <h3 class="card-title">{{title}}</h3>
+      <h3 class="card-title pr-3">{{title}}</h3>
       <div class="form-group" v-if="hasFilter">
         <div class="selectgroup selectgroup-pills">
           <label class="selectgroup-item">
@@ -36,48 +36,45 @@ import {
 import $ from 'jquery';
 
 export default {
-  name: "CardInfo",
+  name: "pieChartWithFilter",
   computed: {
     key() {
       return this.$vnode.key;
     }
 
   },
-  props: {
-    data: Array,
-    title: String,
-    hasFilter: Boolean
+  data() {
+    return {
+      chart: null,
+      originalValues: null,
+    }
+
   },
+  props: ['data', 'title', 'hasFilter'],
   // [["Disponivel",177],["Vendido",36],["Gratuito",0],["Aguardando pagamento",18],["Reservado",36]]
   methods: {
     filterAll() {
+      this.chart.unload();
       this.chart.load({
-        columns: [
-          
-        ]
+        columns: this.data.all
+
       });
     },
     filterWeb() {
+      this.chart.unload();
       this.chart.load({
-        columns: [
-        ]
-      });
-      this.chart.load({
-        unload: [''],
+        columns: this.data.web
       });
     },
     filterTicketoffice() {
+      this.chart.unload();
       this.chart.load({
-        columns: [
-        ]
-      });
-      this.chart.load({
-        unload: [''],
+        columns: this.data.ticketoffice
       });
     },
   },
   mounted() {
-    c3.generate({
+    this.chart = c3.generate({
       bindto: '#chart-donut_' + this.key, // id of chart wrapper
       data: {
         columns: this.data.all,
@@ -95,6 +92,8 @@ export default {
       },
 
     });
+
+    this.chart;
   }
 };
 </script>
