@@ -37,8 +37,7 @@
       </div>
     </div>
   </div>
-
-  <dashboard v-if="!!checkIsAuth()"></dashboard>
+  <dashboard v-if="!!checkIsAuth() && mayIseedashboard"></dashboard>
 </div>
 </template>
 
@@ -77,6 +76,9 @@ export default {
         return "password";
       }
     },
+    mayIseedashboard() {
+      return this.mayI('dashboard-home-viewer');
+    }
   },
   created() {
     if (this.isAuth) {

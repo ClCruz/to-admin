@@ -57,27 +57,27 @@
             <div class="col-12 form-group filter-day">
               <div class="selectgroup selectgroup-pills">
                 <label class="selectgroup-item">
-                <input type="radio" name="icon-input" class="selectgroup-input"  >
+                <input type="radio" name="icon-input" class="selectgroup-input" value="all" v-model="form.searchtype">
                 <span class="selectgroup-button selectgroup-button-icon" @click="search('all');">Todos os Dias</span>
               </label>
                 <label class="selectgroup-item">
-                <input type="radio" name="icon-input" class="selectgroup-input"  >
+                <input type="radio" name="icon-input" class="selectgroup-input" value="thirty" v-model="form.searchtype">
                 <span class="selectgroup-button selectgroup-button-icon" @click="search('thirty');">30 Dias</span>
               </label>
                 <label class="selectgroup-item">
-                <input type="radio" name="icon-input" class="selectgroup-input"  >
+                <input type="radio" name="icon-input" class="selectgroup-input" value="fifteen" v-model="form.searchtype">
                 <span class="selectgroup-button selectgroup-button-icon" @click="search('fifteen');">15 Dias</span>
               </label>
                 <label class="selectgroup-item">
-                <input type="radio" name="icon-input" class="selectgroup-input"  >
+                <input type="radio" name="icon-input" class="selectgroup-input" value="seven" v-model="form.searchtype">
                 <span class="selectgroup-button selectgroup-button-icon" @click="search('seven');">7 Dias</span>
               </label>
                 <label class="selectgroup-item">
-                <input type="radio" name="icon-input" class="selectgroup-input"  >
+                <input type="radio" name="icon-input" class="selectgroup-input" value="yesterday" v-model="form.searchtype">
                 <span class="selectgroup-button selectgroup-button-icon" @click="search('yesterday');">Ontem</span>
               </label>
                 <label class="selectgroup-item">
-                <input type="radio" name="icon-input" class="selectgroup-input" checked >
+                <input type="radio" name="icon-input" class="selectgroup-input" value="today" v-model="form.searchtype">
                 <span class="selectgroup-button selectgroup-button-icon" @click="search('today');">Hoje</span>
               </label>
 
@@ -89,6 +89,9 @@
           :displayClearButton="datepicker.displayClearButton"
           :startDate="datepicker.startDate"
           :endDate="datepicker.endDate"
+          :startingDateValue="datepicker.startingDateValue"
+          v-on:check-in-changed="startchanged"
+          v-on:check-out-changed="endchanged"
           ></HotelDatePicker>
               </label>
               </div>
@@ -144,6 +147,11 @@ import {
   HalfCircleSpinner
 } from 'epic-spinners'
 
+import Moment from 'moment';
+import { extendMoment } from 'moment-range';
+
+const moment = extendMoment(Moment);
+
 import {
   func
 } from "@/functions";
@@ -169,7 +177,7 @@ export default {
         id: 1,
         format: 'DD/MM/YYYY',
         minNights: 0,
-        maxNights: 300,
+        maxNights: 50,
         hoveringTooltip: true,
         displayClearButton: true,
         startDate: new Date(),
@@ -187,10 +195,15 @@ export default {
       iddiv: 1,
       processing: false,
       form: {
+        searchtype: 'today',
         id_base: '',
         id_evento: '',
         date: '',
         hour: '',
+        selectedDate: {
+          start: moment(new Date()).format("DD/MM/YYYY"),
+          end: '',
+        }
       },
       selects: {
         base: [],
@@ -269,8 +282,29 @@ export default {
     //  this.$refs.dtpicker.hideDatepicker();
   },
   methods: {
+    startchanged(date) {
+      this.form.selectedDate.start = moment(date).isValid() ? moment(date).format("DD/MM/YYYY") : '';
+      this.checkifpersonalized();
+    },
+    endchanged(date) {
+      this.form.selectedDate.end = moment(date).isValid() ? moment(date).add(1,'days').format("DD/MM/YYYY") : '';
+      this.checkifpersonalized();
+    },
+    checkifpersonalized() {
+      // debugger;
+      Vue.nextTick().then(response => {
+        if (this.form.selectedDate.start != '' && this.form.selectedDate.end != '') {
+          // this.form.searchtype = '';
+          this.search('');
+        }
+        else {
+          if (this.form.selectedDate.start == '' && this.form.selectedDate.end == '' && this.form.searchtype == '') {
+            this.search('today');
+          }
+        }
+      });
+    },
     toggleDate() {
-
       this.$refs.dtpicker.hideDatepicker();
       this.$refs.dtpicker.toggleDatepicker();
     },
@@ -454,7 +488,17 @@ export default {
       if (this.form.id_evento == "" || this.form.date == "" || this.form.hour == "")
         return;
 
-      dashboardService.purchasebyboleto(this.getLoggedId(), this.form.id_evento, '', this.form.date, this.form.hour, type, '', '').then(
+      this.form.searchtype = type;
+
+      let init = '';
+      let end = '';
+
+      if (this.form.searchtype == '') {
+        init = this.form.selectedDate.start;
+        end = this.form.selectedDate.end;
+      }
+
+      dashboardService.purchasebyboleto(this.getLoggedId(), this.form.id_evento, '', this.form.date, this.form.hour, type, init, end).then(
         response => {
           if (this.validateJSON(response)) {
             this.dashboard.boletos.loaded = true;
@@ -468,7 +512,7 @@ export default {
           this.toastError("Falha na execução.");
         }
       );
-      dashboardService.purchasebychannel(this.getLoggedId(), this.form.id_evento, '', this.form.date, this.form.hour, type, '', '').then(
+      dashboardService.purchasebychannel(this.getLoggedId(), this.form.id_evento, '', this.form.date, this.form.hour, type, init, end).then(
         response => {
           if (this.validateJSON(response)) {
             this.dashboard.bychannel.loaded = true;
@@ -480,7 +524,7 @@ export default {
           this.toastError("Falha na execução.");
         }
       );
-      dashboardService.purchasebypaymenttype(this.getLoggedId(), this.form.id_evento, '', this.form.date, this.form.hour, type, '', '').then(
+      dashboardService.purchasebypaymenttype(this.getLoggedId(), this.form.id_evento, '', this.form.date, this.form.hour, type, init, end).then(
         response => {
           if (this.validateJSON(response)) {
             this.dashboard.bypaymenttype.loaded = true;
@@ -492,7 +536,7 @@ export default {
           this.toastError("Falha na execução.");
         }
       );
-      dashboardService.purchasebytimetable(this.getLoggedId(), this.form.id_evento, '', this.form.date, this.form.hour, type, '', '').then(
+      dashboardService.purchasebytimetable(this.getLoggedId(), this.form.id_evento, '', this.form.date, this.form.hour, type, init, end).then(
         response => {
           if (this.validateJSON(response)) {
             this.dashboard.timetable.loaded = true;
@@ -504,7 +548,7 @@ export default {
           this.toastError("Falha na execução.");
         }
       );
-      dashboardService.purchaseoccupation(this.getLoggedId(), this.form.id_evento, '', this.form.date, this.form.hour, type, '', '').then(
+      dashboardService.purchaseoccupation(this.getLoggedId(), this.form.id_evento, '', this.form.date, this.form.hour, type, init, end).then(
         response => {
           if (this.validateJSON(response)) {
             this.dashboard.occupation.loaded = true;
@@ -516,7 +560,7 @@ export default {
           this.toastError("Falha na execução.");
         }
       );
-      dashboardService.purchasevalues(this.getLoggedId(), this.form.id_evento, '', this.form.date, this.form.hour, type, '', '').then(
+      dashboardService.purchasevalues(this.getLoggedId(), this.form.id_evento, '', this.form.date, this.form.hour, type, init, end).then(
         response => {
           if (this.validateJSON(response)) {
             this.dashboard.values.loaded = true;
