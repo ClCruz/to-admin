@@ -13,6 +13,24 @@ export const dashboardService = {
   purchasebytimetable,
   purchaseoccupation,
   purchasevalues,
+  closer
+}
+function closer(loggedId) {
+    let url = config.api + `/v1/dashboard/closer?loggedId=${loggedId}`;
+
+    var ret = new Promise(
+    function (resolve, reject) {
+        Vue.http.get(url).then(res => {
+        resolve(res.body);
+        }, err => {
+        reject({
+            error: true,
+            msg: err
+        });
+        });
+    }
+  );
+  return ret;
 }
 
 function purchasebyboleto(loggedId, id_evento, id_apresentacao, date, hour, periodtype, customPeriodInit, customPeriodEnd) {
