@@ -4669,6 +4669,11 @@ input[type="button"].btn-block {
   border-radius: 3px;
 }
 
+.card .h1 {
+  padding-top: 6px;
+  font-size: 1.7rem;
+}
+
 .card > hr {
   margin-right: 0;
   margin-left: 0;
@@ -20362,6 +20367,20 @@ svg {
 .selectgroup-button {
   line-height: 1.4rem;
   padding: 0.1rem 0.8rem;
+}
+
+
+#pie-chart-with-filter .selectgroup-button-icon {
+  padding-left: .8rem;
+  padding-right: .8rem;
+  font-size: 0.75rem;
+  padding-top: .3rem;
+  padding-bottom: .3rem;
+}
+
+#pie-chart-with-filter .selectgroup-button {
+  line-height: 1.4rem;
+  padding: 0.1rem 0.6rem;
 }
 .selectgroup {
   display: flex;

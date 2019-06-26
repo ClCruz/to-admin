@@ -13,7 +13,7 @@
           <b-input-group-prepend is-text class="firstLabel">
             Base:
           </b-input-group-prepend>
-          <b-form-select class="mr-2 col-12 col-md-4" v-on:change="selBase" v-model="form.id_base" :options="selects.base" size="sm">
+          <b-form-select class="mr-2 col-12 col-md-2" v-on:change="selBase" v-model="form.id_base" :options="selects.base" size="sm">
             <template slot="first">
               <option :value="''" disabled>-- Selecione --</option>
             </template>
@@ -21,7 +21,7 @@
           <b-input-group-prepend is-text class="firstLabel">
             Evento:
           </b-input-group-prepend>
-          <b-form-select class="mr-2 col-6 col-md-4" id="event" v-on:change="selEvent" v-model="form.id_evento" :options="selects.events">
+          <b-form-select class="mr-2 col-6 col-md-6" id="event" v-on:change="selEvent" v-model="form.id_evento" :options="selects.events">
             <template slot="first">
               <option :value="null" disabled>-- Selecione --</option>
             </template>

@@ -1,19 +1,19 @@
 <template>
-<div class="col-lg-5 col-12 col-xl-5">
+<div class="col-lg-5 col-12 col-xl-5" id="pie-chart-with-filter">
   <div class="card">
-    <div class="card-header">
-      <h3 class="card-title pr-3">{{title}}</h3>
-      <div class="form-group" v-if="hasFilter">
+    <div class="card-header pr-0">
+      <h3 class="card-title col-4 mr-3">{{title}}</h3>
+      <div class="form-group col-8" v-if="hasFilter">
         <div class="selectgroup selectgroup-pills">
           <label class="selectgroup-item">
             <input type="radio" name="icon-input" value="1" class="selectgroup-input" checked="true" @click="filterAll()">
               <span class="selectgroup-button selectgroup-button-icon">Todos</span>
             </label>
           <label class="selectgroup-item">
-            <input type="radio" name="icon-input" value="2" class="selectgroup-input" @click="filterWeb()">
+            <input type="radio" name="icon-input" value="2" class="selectgroup-input" @click="filterWeb()"  v-if="data.web.length !== 0">
               <span class="selectgroup-button selectgroup-button-icon"><i class="fab fa-chrome"></i> Web </span>
             </label>
-          <label class="selectgroup-item">
+          <label class="selectgroup-item" v-if="data.ticketoffice.length !== 0">
             <input type="radio" name="icon-input" value="3" class="selectgroup-input" @click="filterTicketoffice()">
               <span class="selectgroup-button selectgroup-button-icon"><i class="fas fa-ticket-alt"></i> Bilheteria</span>
             </label>
