@@ -5,7 +5,7 @@
       <h3 class="card-title">{{title}}</h3>
     </div>
     <div class="card-body">
-      <div id="chart-donut" class="c3"></div>
+      <div :id="'chart-donut_'+key" class="c3"></div>
     </div>
   </div>
 </div>
@@ -21,7 +21,12 @@ import $ from 'jquery';
 
 export default {
   name: "CardInfo",
-  computed: {},
+  computed: {
+    key() {
+      return this.$vnode.key;
+    }
+
+  },
   methods: {
 
   },
@@ -29,12 +34,11 @@ export default {
     data: Array,
     title: String
   },
-
   // [["Disponivel",177],["Vendido",36],["Gratuito",0],["Aguardando pagamento",18],["Reservado",36]]
 
   mounted() {
     c3.generate({
-      bindto: '#chart-donut', // id of chart wrapper
+      bindto: '#chart-donut_'+this.key, // id of chart wrapper
       data: {
         columns: this.data,
         type: 'pie', // default type of chart

@@ -42,7 +42,7 @@
               <option :value="null" disabled>-- Selecione --</option>
             </template>
           </b-form-select>
-          <b-button type="button" variant="primary" size="sm" @click="search">
+          <b-button type="button" variant="primary" size="sm" @click="search('today')" v-if="1==2">
             <v-wait for="inprocess">
               <template slot="waiting">
                 Aguarde...
@@ -58,28 +58,28 @@
           <div class="col-12 form-group filter-day">
             <div class="selectgroup selectgroup-pills">
               <label class="selectgroup-item">
-                <input type="radio" name="a" class="selectgroup-input"  >
-                <span class="selectgroup-button selectgroup-button-icon">Todos os Dias</span>
+                <input type="radio" name="icon-input" class="selectgroup-input"  >
+                <span class="selectgroup-button selectgroup-button-icon" @click="search('all');">Todos os Dias</span>
               </label>
               <label class="selectgroup-item">
-                <input type="radio" name="a" class="selectgroup-input"  >
-                <span class="selectgroup-button selectgroup-button-icon">30 Dias</span>
+                <input type="radio" name="icon-input" class="selectgroup-input"  >
+                <span class="selectgroup-button selectgroup-button-icon" @click="search('thirty');">30 Dias</span>
               </label>
               <label class="selectgroup-item">
-                <input type="radio" name="a" class="selectgroup-input"  >
-                <span class="selectgroup-button selectgroup-button-icon">15 Dias</span>
+                <input type="radio" name="icon-input" class="selectgroup-input"  >
+                <span class="selectgroup-button selectgroup-button-icon" @click="search('fifteen');">15 Dias</span>
               </label>
               <label class="selectgroup-item">
-                <input type="radio" name="a" class="selectgroup-input"  >
-                <span class="selectgroup-button selectgroup-button-icon">7 Dias</span>
+                <input type="radio" name="icon-input" class="selectgroup-input"  >
+                <span class="selectgroup-button selectgroup-button-icon" @click="search('seven');">7 Dias</span>
               </label>
               <label class="selectgroup-item">
-                <input type="radio" name="a" class="selectgroup-input"  >
-                <span class="selectgroup-button selectgroup-button-icon">Ontem</span>
+                <input type="radio" name="icon-input" class="selectgroup-input"  >
+                <span class="selectgroup-button selectgroup-button-icon" @click="search('yesterday');">Ontem</span>
               </label>
               <label class="selectgroup-item">
-                <input type="radio" name="a" class="selectgroup-input" checked>
-                <span class="selectgroup-button selectgroup-button-icon">Hoje</span>
+                <input type="radio" name="icon-input" class="selectgroup-input" checked >
+                <span class="selectgroup-button selectgroup-button-icon" @click="search('today');">Hoje</span>
               </label>
               <label class="selectgroup-item">
                 <input type="radio" name="a" class="selectgroup-input"  >
@@ -92,119 +92,18 @@
         <hr class="mt-0 pt-0">
 
         <div class="row row-cards">
-          <card-info :key="'total_sold_'+dashboard.key.total_sold" :title="'Vendas Brutas Total'" :value='dashboard.values.total_sold' :percentage="''" :status="''"></card-info>
-          <card-info :key="'total_soldamountformatted_'+dashboard.key.total_soldamountformatted" :title="'Vendas Brutas Total'" :value="dashboard.values.total_soldamountformatted" :size="'large'" :percentage="''" :status="''"></card-info>
-          <card-info :key="'averageticket_formatted_'+dashboard.key.averageticket_formatted" :title="'Ticket Médio'" :value="dashboard.values.averageticket_formatted" :percentage="''" :status="''"></card-info>
-          <card-info :title="'Conversão de Boletos'" :value="'65%'" :percentage="''" :status="''"></card-info>
-          <card-info :title="'Boletos Aguardando Pagamento'" :value='35' :size="'large'" :percentage="''" :status="''"></card-info>
+          <card-info v-if="dashboard.values.loaded" :key="'total_sold_'+dashboard.values.key.total_sold" :title="'Vendas Brutas'" :value='dashboard.values.total_sold' :percentage="''" :status="''"></card-info>
+          <card-info v-if="dashboard.values.loaded" :key="'total_soldamountformatted_'+dashboard.values.key.total_soldamountformatted" :title="'Vendas Brutas'" :value="dashboard.values.total_soldamountformatted" :size="'large'" :percentage="''" :status="''"></card-info>
+          <card-info v-if="dashboard.values.loaded" :key="'averageticket_formatted_'+dashboard.values.key.averageticket_formatted" :title="'Ticket Médio'" :value="dashboard.values.averageticket_formatted" :size="'large'" :percentage="''" :status="''"></card-info>
+          <card-info v-if="dashboard.boletos.loaded" :key="'ok_conversionformatted'+dashboard.boletos.key.ok_conversionformatted" :title="'Conversão de Boletos'" :value="dashboard.boletos.ok_conversionformatted" :percentage="''" :status="''"></card-info>
+          <card-info v-if="dashboard.boletos.loaded" :key="'awaiting_payment'+dashboard.boletos.key.awaiting_payment" :title="'Boletos pendentes'" :value='dashboard.boletos.awaiting_payment' :percentage="''" :status="''"></card-info>
         </div>
         <div class="row">
-          <pie-chart :title="'Ocupação'" :data="[['Disponivel',177],['Vendido',36],['Gratuito',0],['Aguardando pagamento',18],['Reservado',36]]"></pie-chart>
-          <chart-bar-stacked :title="'Vendas por horário'" :data="{'web':['web',26,10,2,3,1,3,10,10,65,62,63,68,56,93,77,80,85,54,63,78,60,91,86,57],'ticketoffice':['ticketoffice',0,0,0,0,0,0,0,0,32,0,0,29,73,97,62,85,12,142,21,48,45,37,3,0]}"></chart-bar-stacked>
-          <div class="col-12">
-            <div class="card">
-              <div class="card-header">
-                <h3 class="card-title">Ultimas Vendas</h3>
-              </div>
-              <div class="table-responsive">
-                <table class="table table-hover table-outline table-vcenter text-nowrap card-table">
-                  <thead>
-                    <tr>
-                      <th class="w-1">Cod. Venda</th>
-                      <th class="w-3">Evento</th>
-                      <th>Cliente</th>
-                      <th>Data de Compra</th>
-                      <th class="text-center">Valor</th>
-                      <th class="text-center">Forma de Pag.</th>
-                      <th>Status</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td><span class="text-muted">001401</span></td>
-                      <td>
-                        <div>Captain Marvel</div>
-                      </td>
-                      <td>
-                        <div>Elizabeth Martin</div>
-
-                      </td>
-                      <td>
-                        <div class="clearfix">
-                          20:05
-                          <div class="small text-muted">
-                            Mar 7, 2019
-                          </div>
-                        </div>
-                      </td>
-                      <td>R$ 50.03</td>
-
-                      <td class="text-center">
-                        <i class="payment payment-visa"></i>
-                      </td>
-
-                      <td>
-                        <span class="status-icon bg-success"></span> Finalizado
-                      </td>
-                    </tr>
-                    <tr>
-                      <td><span class="text-muted">001401</span></td>
-                      <td>
-                        <div>Captain Marvel</div>
-                      </td>
-                      <td>
-                        <div>Elizabeth Martin</div>
-
-                      </td>
-                      <td>
-                        <div class="clearfix">
-                          20:05
-                          <div class="small text-muted">
-                            Mar 7, 2019
-                          </div>
-                        </div>
-                      </td>
-                      <td>R$ 50.03</td>
-
-                      <td class="text-center">
-                        <i class="payment payment-visa"></i>
-                      </td>
-
-                      <td>
-                        <span class="status-icon bg-danger"></span> Cancelada
-                      </td>
-                    </tr>
-                    <tr>
-                      <td><span class="text-muted">001401</span></td>
-                      <td>
-                        <div>Captain Marvel</div>
-                      </td>
-                      <td>
-                        <div>Elizabeth Martin</div>
-                      </td>
-                      <td>
-                        <div class="clearfix">
-                          20:05
-                          <div class="small text-muted">
-                            Mar 7, 2019
-                          </div>
-                        </div>
-                      </td>
-                      <td>R$ 70</td>
-
-                      <td class="text-center">
-                        <i class="payment payment-mastercard"></i>
-                      </td>
-
-                      <td>
-                        <span class="status-icon bg-warning"></span> Aguardando Pag.
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
+          <pie-chart v-if="dashboard.occupation.loaded" :key="'occupation_'+dashboard.occupation.key.id" :title="'Ocupação'" :data="dashboard.occupation.result"></pie-chart>
+          <chart-bar-stacked v-if="dashboard.timetable.loaded" :key="'timetable_'+dashboard.timetable.key.id" :title="'Vendas por horário'" :data="dashboard.timetable.result"></chart-bar-stacked>
+        </div>
+        <div class="row">
+          <pie-chart v-if="dashboard.bychannel.loaded" :key="'bychannel_'+dashboard.bychannel.key.id" :title="'Ocupação'" :data="dashboard.bychannel.result"></pie-chart>
         </div>
       </div>
     </div>
@@ -251,16 +150,45 @@ export default {
         hours: []
       },
       dashboard: {
-        key: {
-          total_sold: 1,
-          total_soldamountformatted: 1,
-          averageticket_formatted: 1,
+        boletos: {
+          key: {
+            awaiting_payment: 1,
+            ok_conversionformatted: 1
+          },
+          awaiting_payment: '',
+          ok_conversionformatted: '',
+        },
+        timetable: {
+          loaded: false,
+          result: {},
+          key: {
+            id: 1
+          }
+        },
+        occupation: {
+          loaded: false,
+          result: [],
+          key: {
+            id: 1
+          }
+        },
+        bychannel: {
+          loaded: false,
+          result: [],
+          key: {
+            id: 1
+          }
         },
         values: {
           loaded: false,
-          total_sold: 0,
+          total_sold: '',
           total_soldamountformatted: '',
           averageticket_formatted: '',
+          key: {
+            total_sold: 1,
+            total_soldamountformatted: 1,
+            averageticket_formatted: 1,
+          },
         },
       }
     };
@@ -355,7 +283,7 @@ export default {
           this.selects.hours = response;
           if (response.length == 1) {
             this.form.hour = response[0].value;
-            this.search();
+            this.search('today');
           }
           this.hideWaitAboveAll();
         },
@@ -364,6 +292,13 @@ export default {
           this.toastError("Falha na execução.");
         }
       );
+    },
+    clear() {
+      this.dashboard.values.loaded = false;
+      this.dashboard.boletos.loaded = false;
+      this.dashboard.occupation.loaded = false;
+      this.dashboard.bychannel.loaded = false;
+      this.dashboard.timetable.loaded = false;
     },
     selBase() {
       Vue.nextTick().then(response => {
@@ -382,6 +317,7 @@ export default {
       Vue.nextTick().then(response => {
         this.selects.days = [];
         this.selects.hours = [];
+        this.clear();
 
         this.form.date = "";
         this.form.hour = "";
@@ -392,6 +328,7 @@ export default {
     selDays() {
       Vue.nextTick().then(response => {
         this.selects.hours = [];
+        this.clear();
 
         this.form.hour = "";
 
@@ -399,28 +336,37 @@ export default {
       });
     },
     selHours() {
-
+      Vue.nextTick().then(response => {
+        this.clear();
+        this.search("today");
+      });
     },
-    search() {
-      let type = 'all';
-      // dashboardService.purchasebyboleto(this.getLoggedId(), this.form.id_evento, '', this.form.date, this.form.hour, type, '', '').then(
-      //   response => {
-      //     if (this.validateJSON(response))
-      //     {
-              
-      //     }
-      //   },
-      //   error => { this.toastError("Falha na execução."); }
-      // );
-      // dashboardService.purchasebychannel(this.getLoggedId(), this.form.id_evento, '', this.form.date, this.form.hour, type, '', '').then(
-      //   response => {
-      //     if (this.validateJSON(response))
-      //     {
-              
-      //     }
-      //   },
-      //   error => { this.toastError("Falha na execução."); }
-      // );
+    search(type) {
+      dashboardService.purchasebyboleto(this.getLoggedId(), this.form.id_evento, '', this.form.date, this.form.hour, type, '', '').then(
+        response => {
+          if (this.validateJSON(response))
+          {
+              this.dashboard.boletos.loaded = true;
+              this.dashboard.boletos.awaiting_payment = response.awaiting_payment;
+              this.dashboard.boletos.ok_conversionformatted = response.ok_conversionformatted == null ? 'N/A' : (response.ok_conversionformatted+' %');
+              this.dashboard.boletos.key.awaiting_payment++;
+              this.dashboard.boletos.key.ok_conversionformatted++;
+          }
+        },
+        error => { this.toastError("Falha na execução."); }
+      );
+      dashboardService.purchasebychannel(this.getLoggedId(), this.form.id_evento, '', this.form.date, this.form.hour, type, '', '').then(
+        response => {
+          if (this.validateJSON(response))
+          {
+            console.log(response);
+              this.dashboard.bychannel.loaded = true;
+              this.dashboard.bychannel.result = response;
+              this.dashboard.bychannel.key.id++;
+          }
+        },
+        error => { this.toastError("Falha na execução."); }
+      );
       // dashboardService.purchasebypaymenttype(this.getLoggedId(), this.form.id_evento, '', this.form.date, this.form.hour, type, '', '').then(
       //   response => {
       //     if (this.validateJSON(response))
@@ -430,34 +376,39 @@ export default {
       //   },
       //   error => { this.toastError("Falha na execução."); }
       // );
-      // dashboardService.purchasebytimetable(this.getLoggedId(), this.form.id_evento, '', this.form.date, this.form.hour, type, '', '').then(
-      //   response => {
-      //     if (this.validateJSON(response))
-      //     {
-              
-      //     }
-      //   },
-      //   error => { this.toastError("Falha na execução."); }
-      // );
-      // dashboardService.purchaseoccupation(this.getLoggedId(), this.form.id_evento, '', this.form.date, this.form.hour, type, '', '').then(
-      //   response => {
-      //     if (this.validateJSON(response))
-      //     {
-              
-      //     }
-      //   },
-      //   error => { this.toastError("Falha na execução."); }
-      // );
+      dashboardService.purchasebytimetable(this.getLoggedId(), this.form.id_evento, '', this.form.date, this.form.hour, type, '', '').then(
+        response => {
+          if (this.validateJSON(response))
+          {
+              this.dashboard.timetable.loaded = true;
+              this.dashboard.timetable.result = response;
+              this.dashboard.timetable.key.id++;              
+          }
+        },
+        error => { this.toastError("Falha na execução."); }
+      );
+      dashboardService.purchaseoccupation(this.getLoggedId(), this.form.id_evento, '', this.form.date, this.form.hour, type, '', '').then(
+        response => {
+          if (this.validateJSON(response))
+          {
+              this.dashboard.occupation.loaded = true;
+              this.dashboard.occupation.result = response;
+              this.dashboard.occupation.key.id++;
+          }
+        },
+        error => { this.toastError("Falha na execução."); }
+      );
       dashboardService.purchasevalues(this.getLoggedId(), this.form.id_evento, '', this.form.date, this.form.hour, type, '', '').then(
         response => {
           if (this.validateJSON(response))
           {
+              this.dashboard.values.loaded = true;
               this.dashboard.values.total_sold = response.total_sold;
-              this.dashboard.values.total_soldamountformatted = 'R$ '+response.total_soldamountformatted;
-              this.dashboard.values.averageticket_formatted = 'R$ '+response.averageticket_formatted;
-              this.dashboard.key.total_sold++;
-              this.dashboard.key.total_soldamountformatted++;
-              this.dashboard.key.averageticket_formatted++;
+              this.dashboard.values.total_soldamountformatted = 'R$ '+(response.total_soldamountformatted == "" ? "-" :response.total_soldamountformatted);
+              this.dashboard.values.averageticket_formatted = 'R$ '+(response.averageticket_formatted == "" ? "-" : response.averageticket_formatted);
+              this.dashboard.values.key.total_sold++;
+              this.dashboard.values.key.total_soldamountformatted++;
+              this.dashboard.values.key.averageticket_formatted++;
           }
         },
         error => { this.toastError("Falha na execução."); }
