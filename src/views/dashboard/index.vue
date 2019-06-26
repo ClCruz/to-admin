@@ -104,6 +104,7 @@
         </div>
         <div class="row">
           <pie-chart v-if="dashboard.bychannel.loaded" :key="'bychannel_'+dashboard.bychannel.key.id" :title="'Ocupação'" :data="dashboard.bychannel.result"></pie-chart>
+          <pie-chart-with-filter :hasFilter="true" v-if="dashboard.bychannel.loaded" :key="'bypaymenttype_'+dashboard.bypaymenttype.key.id" :title="'Vendas por forma de pagamento'" :data="dashboard.bypaymenttype.result"></pie-chart-with-filter>
         </div>
       </div>
     </div>
@@ -119,6 +120,7 @@ import config from "@/config";
 
 import cardInfo from "@/views/dashboard/card-info";
 import pieChart from "@/views/dashboard/pie-chart";
+import pieChartWithFilter from "@/views/dashboard/pie-chart-with-filter";
 import chartBarStacked from "@/views/dashboard/chart-bar-stacked";
 
 import {
@@ -179,6 +181,13 @@ export default {
             id: 1
           }
         },
+        bypaymenttype: {
+          loaded: false,
+          result: [],
+          key: {
+            id: 1
+          }
+        },
         values: {
           loaded: false,
           total_sold: '',
@@ -196,7 +205,8 @@ export default {
   components: {
     cardInfo,
     pieChart,
-    chartBarStacked
+    chartBarStacked,
+    pieChartWithFilter
   },
   computed: {},
   created() {
@@ -342,6 +352,9 @@ export default {
       });
     },
     search(type) {
+      if (this.form.id_evento == "" || this.form.date == "" || this.form.hour == "")
+        return;
+
       dashboardService.purchasebyboleto(this.getLoggedId(), this.form.id_evento, '', this.form.date, this.form.hour, type, '', '').then(
         response => {
           if (this.validateJSON(response))
@@ -359,7 +372,6 @@ export default {
         response => {
           if (this.validateJSON(response))
           {
-            console.log(response);
               this.dashboard.bychannel.loaded = true;
               this.dashboard.bychannel.result = response;
               this.dashboard.bychannel.key.id++;
@@ -367,15 +379,17 @@ export default {
         },
         error => { this.toastError("Falha na execução."); }
       );
-      // dashboardService.purchasebypaymenttype(this.getLoggedId(), this.form.id_evento, '', this.form.date, this.form.hour, type, '', '').then(
-      //   response => {
-      //     if (this.validateJSON(response))
-      //     {
-              
-      //     }
-      //   },
-      //   error => { this.toastError("Falha na execução."); }
-      // );
+      dashboardService.purchasebypaymenttype(this.getLoggedId(), this.form.id_evento, '', this.form.date, this.form.hour, type, '', '').then(
+        response => {
+          if (this.validateJSON(response))
+          {
+              this.dashboard.bypaymenttype.loaded = true;
+              this.dashboard.bypaymenttype.result = response;
+              this.dashboard.bypaymenttype.key.id++;              
+          }
+        },
+        error => { this.toastError("Falha na execução."); }
+      );
       dashboardService.purchasebytimetable(this.getLoggedId(), this.form.id_evento, '', this.form.date, this.form.hour, type, '', '').then(
         response => {
           if (this.validateJSON(response))
