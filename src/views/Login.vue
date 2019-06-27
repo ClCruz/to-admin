@@ -7,6 +7,9 @@
           <div class="row mt-6 pt-6">
             <div class="col col-login mx-auto mt-6 pt-6">
               <div class="card">
+                <div class="card-header justify-content-center" style="height: 80px">
+                <img src="/assets/images/logo.png" class="h-100" alt="">
+                </div>
                 <div class="card-body p-6">
                   <div class="card-title">Faça login na sua conta administrativa</div>
                   <div class="form-group">

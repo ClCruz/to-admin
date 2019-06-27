@@ -252,6 +252,8 @@ export const func = {
             return this.ls_get("email");
         },
         mayI() {
+            //arguments
+            // debugger;
             let anyOk = false;
             let obj = JSON.parse(this.ls_get("codes"));
             if (arguments.length > 0) {
