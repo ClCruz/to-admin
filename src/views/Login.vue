@@ -6,25 +6,24 @@
         <div class="container">
           <div class="row mt-6 pt-6">
             <div class="col col-login mx-auto mt-6 pt-6">
-
               <div class="card">
-                <div style="height: 90px" class="card-header text-center justify-content-center">
-                  <img src="/assets/images/logo.png" class="h-100" alt="Logo ticket office">
-              </div>
-                  <div class="card-body p-6">
-                    <div class="card-title">Faça login na sua conta administrativa</div>
-                    <div class="form-group">
-                      <label class="form-label">Usuário</label>
-                      <b-form-input v-model="login" @keyup.enter.native="doLogin" maxlength="100"></b-form-input>
-                    </div>
-                    <div class="form-group">
-                      <label class="form-label">
+                <div class="card-header justify-content-center" style="height: 80px">
+                <img src="/assets/images/logo.png" class="h-100" alt="">
+                </div>
+                <div class="card-body p-6">
+                  <div class="card-title">Faça login na sua conta administrativa</div>
+                  <div class="form-group">
+                    <label class="form-label">Usuário</label>
+                    <b-form-input v-model="login" @keyup.enter.native="doLogin" maxlength="100"></b-form-input>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">
                         Senha
                       </label>
-                      <b-form-input @keyup.enter.native="doLogin" v-model="password" :type="passwordType" maxlength="50"></b-form-input>
-                    </div>
-                    <div class="form-footer">
-                      <button type="submit" class="btn btn-primary btn-block" @click="doLogin">
+                    <b-form-input @keyup.enter.native="doLogin" v-model="password" :type="passwordType" maxlength="50"></b-form-input>
+                  </div>
+                  <div class="form-footer">
+                    <button type="submit" class="btn btn-primary btn-block" @click="doLogin">
                       <v-wait for="inprocess">
                         <template slot="waiting">
                           Entrando...
@@ -32,7 +31,6 @@
                       </v-wait>
                       <span v-if="!processing">Entrar</span>
                   </button>
-                    </div>
                   </div>
                 </div>
               </div>
@@ -41,8 +39,9 @@
         </div>
       </div>
     </div>
-    <dashboard v-if="!!checkIsAuth() && mayIseedashboard"></dashboard>
   </div>
+  <dashboard :key="dashboardid" v-if="!!checkIsAuth() && mayIseedashboard"></dashboard>
+</div>
 </template>
 
 <script>
@@ -63,6 +62,8 @@ export default {
   data() {
     return {
       iddiv: 1,
+      dashboardid: 1,
+      logged: false,
       processing: false,
       login: null,
       password: null,
@@ -107,11 +108,18 @@ export default {
               this.toastSuccess("Login efetuado com sucesso.");
               let ctx = this;
               this.$store.dispatch("login", response).then(function () {
-                ctx.codes(ctx.$parent.setMenu);
+                ctx.ls_add("codes", JSON.stringify(response.codes));
+                ctx.$parent.setMenu();
+                //ctx.codes(ctx.$parent.setMenu);
                 ctx.login = "";
                 ctx.password = "";
-                ctx.iddiv++;
-                ctx.goHome();
+                Vue.nextTick().then(response => {
+                  ctx.iddiv++;
+                  ctx.dashboardid++;
+                });
+                ctx.$router.push("/dashboard");
+                //ctx.goHome();
+                //this.logged = true;
               });
               //this.$router.push("/");
             } else {
