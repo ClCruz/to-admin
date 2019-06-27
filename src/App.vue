@@ -10,9 +10,9 @@
         <div class="d-flex order-lg-2 ml-auto">
           <div class="dropdown">
             <a href="#" class="nav-link pr-0 leading-none" data-toggle="dropdown">
-              <span class="avatar" :style="{ backgroundImage: 'url(\'https://avatar.tobi.sh/tobiaslins.svg?text=' + getLoggedEmail().substring(0,2) + '\')' }" style="background-size: cover"></span>
-              <span class="ml-3 d-none d-lg-block  text-left">
-                <span class="text-default">{{this.getLoggedEmail() == null ? "Carregando..." : this.getLoggedEmail()}}</span>
+              <!-- <span class="avatar" :style="{ backgroundImage: 'url(\'https://avatar.tobi.sh/tobiaslins.svg?text=' + getLoggedEmail().substring(0,2) + '\')' }" style="background-size: cover"></span> -->
+              <span class="ml-3 d-none d-lg-block  text-left pt-2">
+                <span class="text-default" style="font-size: 13px; font-weight:">{{this.getLoggedEmail() == null ? "Carregando..." : this.getLoggedEmail()}}</span>
                 <!-- <small class="text-muted d-block mt-1">Administrador</small> -->
               </span>
             </a>
@@ -65,7 +65,7 @@
       <div id="aboveAll">
        <semipolar-spinner
   :size="64"
-  color="rgb(244,111,155)"
+  color="rgb(73,130,204)"
 />
       </div>
     </template>

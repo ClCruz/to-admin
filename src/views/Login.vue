@@ -6,21 +6,25 @@
         <div class="container">
           <div class="row mt-6 pt-6">
             <div class="col col-login mx-auto mt-6 pt-6">
+
               <div class="card">
-                <div class="card-body p-6">
-                  <div class="card-title">Faça login na sua conta administrativa</div>
-                  <div class="form-group">
-                    <label class="form-label">Usuário</label>
-                    <b-form-input v-model="login" @keyup.enter.native="doLogin" maxlength="100"></b-form-input>
-                  </div>
-                  <div class="form-group">
-                    <label class="form-label">
+                <div style="height: 90px" class="card-header text-center justify-content-center">
+                  <img src="/assets/images/logo.png" class="h-100" alt="Logo ticket office">
+              </div>
+                  <div class="card-body p-6">
+                    <div class="card-title">Faça login na sua conta administrativa</div>
+                    <div class="form-group">
+                      <label class="form-label">Usuário</label>
+                      <b-form-input v-model="login" @keyup.enter.native="doLogin" maxlength="100"></b-form-input>
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">
                         Senha
                       </label>
-                    <b-form-input @keyup.enter.native="doLogin" v-model="password" :type="passwordType" maxlength="50"></b-form-input>
-                  </div>
-                  <div class="form-footer">
-                    <button type="submit" class="btn btn-primary btn-block" @click="doLogin">
+                      <b-form-input @keyup.enter.native="doLogin" v-model="password" :type="passwordType" maxlength="50"></b-form-input>
+                    </div>
+                    <div class="form-footer">
+                      <button type="submit" class="btn btn-primary btn-block" @click="doLogin">
                       <v-wait for="inprocess">
                         <template slot="waiting">
                           Entrando...
@@ -28,6 +32,7 @@
                       </v-wait>
                       <span v-if="!processing">Entrar</span>
                   </button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -36,9 +41,8 @@
         </div>
       </div>
     </div>
+    <dashboard v-if="!!checkIsAuth() && mayIseedashboard"></dashboard>
   </div>
-  <dashboard v-if="!!checkIsAuth() && mayIseedashboard"></dashboard>
-</div>
 </template>
 
 <script>
