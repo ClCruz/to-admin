@@ -1,95 +1,76 @@
 <template>
 <div id="app" class="">
-
-  <div class="header py-4" v-if="isAuth">
+  <div class="header py-4" v-if="checkIsAuth()">
     <div class="container">
       <div class="d-flex">
-        <a class="header-brand" href="./index.html">
-                <!-- <img src="./demo/brand/tabler.svg" class="header-brand-img" alt="tabler logo"> -->
-              </a>
-        <div class="d-flex order-lg-2 ml-auto">
-          <!-- <div class="nav-item d-none d-md-flex">
-            <a href="https://github.com/tabler/tabler" class="btn btn-sm btn-outline-primary" target="_blank">Source code</a>
-          </div> -->
-          <!-- <div class="dropdown d-none d-md-flex">
-            <a class="nav-link icon" data-toggle="dropdown">
-                    <i class="fe fe-bell"></i>
-                    <span class="nav-unread"></span>
-                  </a>
-            <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
-              <a href="#" class="dropdown-item d-flex">
-                      <span class="avatar mr-3 align-self-center" style="background-image: url(demo/faces/male/41.jpg)"></span>
-                      <div>
-                        <strong>Nathan</strong> pushed new commit: Fix page load performance issue.
-                        <div class="small text-muted">10 minutes ago</div>
-                      </div>
-                    </a>
-              <a href="#" class="dropdown-item d-flex">
-                      <span class="avatar mr-3 align-self-center" style="background-image: url(demo/faces/female/1.jpg)"></span>
-                      <div>
-                        <strong>Alice</strong> started new task: Tabler UI design.
-                        <div class="small text-muted">1 hour ago</div>
-                      </div>
-                    </a>
-              <a href="#" class="dropdown-item d-flex">
-                      <span class="avatar mr-3 align-self-center" style="background-image: url(demo/faces/female/18.jpg)"></span>
-                      <div>
-                        <strong>Rose</strong> deployed new version of NodeJS REST Api V3
-                        <div class="small text-muted">2 hours ago</div>
-                      </div>
-                    </a>
-              <div class="dropdown-divider"></div>
-              <a href="#" class="dropdown-item text-center">Mark all as read</a>
-            </div>
-          </div> -->
+        <a class="header-brand" href="./index.html" style="color: #333; font-weight: regular; font-size: 13px">
+          <img src="/assets/images/logo.png" alt="Logo Ticketoffice" style="width: 40px">
           
+        </a>
+        <div class="d-flex order-lg-2 ml-auto">
           <div class="dropdown">
             <a href="#" class="nav-link pr-0 leading-none" data-toggle="dropdown">
-                    <span class="avatar" :style="{ backgroundImage: 'url(\'https://avatar.tobi.sh/tobiaslins.svg?text=' + getLoggedEmail().substring(0,2) + '\')' }" style="background-size: cover"></span>
-                    <span class="ml-3 d-none d-lg-block  text-left">
-                      <span class="text-default">{{this.getLoggedEmail() == null ? "Carregando..." : this.getLoggedEmail()}}</span>
-                      <!-- <small class="text-muted d-block mt-1">Administrador</small> -->
-                    </span>
-                  </a>
+              <!-- <span class="avatar" :style="{ backgroundImage: 'url(\'https://avatar.tobi.sh/tobiaslins.svg?text=' + getLoggedEmail().substring(0,2) + '\')' }" style="background-size: cover"></span> -->
+              <span class="ml-3 d-none d-lg-block  text-left pt-2">
+                <span class="text-default" style="font-size: 13px; font-weight:">{{this.getLoggedEmail() == null ? "Carregando..." : this.getLoggedEmail()}}</span>
+                <!-- <small class="text-muted d-block mt-1">Administrador</small> -->
+              </span>
+            </a>
             <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
               <a class="dropdown-item" href="/my/info">
-                      <i class="dropdown-icon fe fe-user"></i> Informações de Perfil
-                    </a>
+              <i class="dropdown-icon fe fe-user"></i> Informações de Perfil
+              </a>
               <a class="dropdown-item" href="/my/pass">
-                      <i class="dropdown-icon fas fa-key"></i> Mudar Senha
-                    </a>
+              <i class="dropdown-icon fas fa-key"></i> Mudar Senha
+              </a>
               <a class="dropdown-item" href="/logout">
-                      <i class="dropdown-icon fe fe-log-out"></i> Sair
-                    </a>
+              <i class="dropdown-icon fe fe-log-out"></i> Sair
+              </a>
             </div>
           </div>
         </div>
         <a href="#" class="header-toggler d-lg-none ml-3 ml-lg-0" data-toggle="collapse" data-target="#headerMenuCollapse">
-                <span class="header-toggler-icon"></span>
-              </a>
+        <span class="header-toggler-icon"></span>
+        </a>
       </div>
     </div>
   </div>
+  <div class="header d-lg-flex p-0 collapse" id="headerMenuCollapse" style="">
+    <div class="container">
+      <div class="row align-items-center">
 
+        <div class="col-lg order-lg-first">
+          <ul class="nav nav-tabs border-0 flex-column flex-lg-row">
+            <li class="nav-item">
+              <a :href="'/my/info'" class="nav-link"><i class="fas fa-user"></i>  Informações de Perfil</a>
+            </li>
+            <li class="nav-item">
+              <a :href="'/my/pass'" class="nav-link"><i class="fa fa-key"></i> Mudar Senha</a>
+            </li>
+
+            <linkMenu v-for="(item, index) in menu" :key='index' :title="item.title" :icon="item.icon" :code="item.code" :link="item.href" :child="item.child">
+            </linkMenu>
+
+
+            <li class="nav-item">
+              <a :href="'/logout'" class="nav-link"><i class="fas fa-sign-out-alt"></i> Sair</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
   <v-wait for="loadingAboveAll">
     <template slot="waiting">
       <div id="aboveAll">
-        <div class="sk-cube-grid">
-          <div class="sk-cube sk-cube1"></div>
-          <div class="sk-cube sk-cube2"></div>
-          <div class="sk-cube sk-cube3"></div>
-          <div class="sk-cube sk-cube4"></div>
-          <div class="sk-cube sk-cube5"></div>
-          <div class="sk-cube sk-cube6"></div>
-          <div class="sk-cube sk-cube7"></div>
-          <div class="sk-cube sk-cube8"></div>
-          <div class="sk-cube sk-cube9"></div>
-        </div>
+       <semipolar-spinner
+  :size="64"
+  color="rgb(73,130,204)"
+/>
       </div>
     </template>
   </v-wait>
-
-  <sidebar-menu :menu="menu" v-if="isAuth" :collapsed="true" :widthCollapsed="'48px'" :width="'240px'" />
+  <sidebar-menu :menu="menu" v-if="checkIsAuth()" :collapsed="true" :widthCollapsed="'48px'" :width="'240px'" />
   <div class="p-5">
     <router-view />
   </div>
@@ -101,9 +82,11 @@ import Vue from "vue";
 import VueHead from 'vue-head';
 import VueSidebarMenu from 'vue-sidebar-menu'
 import config from "@/config";
+import LinkMenu from "./components/ticketoffice/LinkMenu";
 import {
   func
 } from "@/functions";
+import { SemipolarSpinner } from 'epic-spinners'
 
 Vue.use(VueSidebarMenu);
 Vue.use(VueHead);
@@ -111,7 +94,20 @@ Vue.use(VueHead);
 export default {
   mixins: [func],
   name: 'home',
+  components: {
+    LinkMenu,
+    SemipolarSpinner
+  },
+  mounted() {
+    if (this.getLoggedId() == null) {
+      this.goLogin();
+      return;
+    }
+    this.tryLogin(null);
+    this.setMenu();
+  },
   created() {
+    
     // Listen for swUpdated event and display refresh snackbar as required.
     document.addEventListener('swUpdated', this.showRefreshUI, {
       once: true
@@ -167,19 +163,11 @@ export default {
     },
     setMenu() {
       let menuHelper = [{
-          header: true,
-          title: 'TicketOffice - Administrador',
-          code: 'all',
-          theme: {
-            type: String,
-          }
-        },
-        {
           title: 'Bilheteria',
           icon: 'fas fa-ticket-alt',
           code: 'ticketoffice-login',
           href: '/ticketoffice',
-        },        
+        },
         // {
         //   title: 'Dashboard',
         //   icon: 'fas fa-chart-bar',
@@ -297,8 +285,7 @@ export default {
           icon: 'fas fa-star-half-alt',
           code: 'quotapartner-viewer',
           //code: 'user-viewer',
-          child: [
-            {
+          child: [{
               href: '/quota/add',
               title: 'Adicionar',
               icon: 'fas fa-plus',
@@ -308,7 +295,7 @@ export default {
               href: '/quota/list',
               title: 'Listar',
               icon: 'fas fa-th-list',
-              code: 'quotapartner-viewer',//'user-viewer'
+              code: 'quotapartner-viewer', //'user-viewer'
             },
           ]
         },
@@ -421,7 +408,11 @@ export default {
       }
 
       this.menu = menuHelper;
+      this.menuMobile = menuHelper;
+      //console.log(this.menu);
+      this.setMenuMobile();
     },
+    setMenuMobile() {},
     removeOrNot(y, element, who) {
       //console.log("Title: " + element.title + ' / ' + element.code + " -- " + y);
       if (element.code != 'all') {
@@ -450,6 +441,7 @@ export default {
   data() {
     return {
       menu: [],
+      menuMobile: [],
       refreshing: false,
       registration: null,
       updateExists: false,
@@ -464,103 +456,32 @@ export default {
   top: 0;
   left: 0;
   width: 100%;
-  height: 100%;
+  height: 100vh;
   z-index: 60000;
-  background-color: rgb(137, 137, 137, 0.9);
+  background-color: rgb(137, 137, 137, 0.3);
   transition: 0.2;
 }
+.half-circle-spinner {
+     position: absolute;
+    margin-left: auto;
+    margin-right: auto;
+    left: 0;
+    right: 0;
+ 
+}
+.semipolar-spinner {
+      position: absolute;
+    margin-left: auto;
+    margin-right: auto;
+    left: 0;
+    right: 0;
+    top: 50%;
+
+}
+
+
 </style>
 <style lang="scss">
-.sk-cube-grid {
-  width: 60px;
-  height: 60px;
-  margin: 340px auto;
-}
-
-.sk-cube-grid .sk-cube {
-  width: 33%;
-  height: 33%;
-  background-color: rgb(75, 114, 224);
-  float: left;
-  -webkit-animation: sk-cubeGridScaleDelay 3s infinite ease-in-out;
-  animation: sk-cubeGridScaleDelay 3s infinite ease-in-out;
-}
-
-.sk-cube-grid .sk-cube1 {
-  -webkit-animation-delay: 0.2s;
-  animation-delay: 0.2s;
-}
-
-.sk-cube-grid .sk-cube2 {
-  -webkit-animation-delay: 0.3s;
-  animation-delay: 0.3s;
-}
-
-.sk-cube-grid .sk-cube3 {
-  -webkit-animation-delay: 0.4s;
-  animation-delay: 0.4s;
-}
-
-.sk-cube-grid .sk-cube4 {
-  -webkit-animation-delay: 0.1s;
-  animation-delay: 0.1s;
-}
-
-.sk-cube-grid .sk-cube5 {
-  -webkit-animation-delay: 0.2s;
-  animation-delay: 0.2s;
-}
-
-.sk-cube-grid .sk-cube6 {
-  -webkit-animation-delay: 0.3s;
-  animation-delay: 0.3s;
-}
-
-.sk-cube-grid .sk-cube7 {
-  -webkit-animation-delay: 0s;
-  animation-delay: 0s;
-}
-
-.sk-cube-grid .sk-cube8 {
-  -webkit-animation-delay: 0.1s;
-  animation-delay: 0.1s;
-}
-
-.sk-cube-grid .sk-cube9 {
-  -webkit-animation-delay: 0.2s;
-  animation-delay: 0.2s;
-}
-
-@-webkit-keyframes sk-cubeGridScaleDelay {
-
-  0%,
-  70%,
-  100% {
-    -webkit-transform: scale3D(1, 1, 1);
-    transform: scale3D(1, 1, 1);
-  }
-
-  35% {
-    -webkit-transform: scale3D(0, 0, 1);
-    transform: scale3D(0, 0, 1);
-  }
-}
-
-@keyframes sk-cubeGridScaleDelay {
-
-  0%,
-  70%,
-  100% {
-    -webkit-transform: scale3D(1, 1, 1);
-    transform: scale3D(1, 1, 1);
-  }
-
-  35% {
-    -webkit-transform: scale3D(0, 0, 1);
-    transform: scale3D(0, 0, 1);
-  }
-}
-
 .ql-editor {
   max-height: 140px !important;
 }
@@ -589,6 +510,19 @@ export default {
 .v-sidebar-menu {
   z-index: 1000;
   display: block !important;
+}
+
+@media (min-width: 900px) {
+  .header-brand {
+    /* display: none; */
+  }
+}
+
+@media (max-width: 900px) {
+  .v-sidebar-menu,
+  .avatar {
+    display: none !important;
+  }
 }
 
 .vsm-link {
@@ -653,15 +587,15 @@ $dropDownBg: #fff;
 .v-sidebar-menu {
   background-color: $baseBg !important;
 
-        margin-top: 65px;
-  & .vsm-list {
-  }
+  margin-top: 65px;
+
+  & .vsm-list {}
 
   & .vsm-link {
     color: $itemColor !important;
     text-align: left;
     border-left: 1px solid #eee;
-    
+
   }
 
   & .vsm-title {
@@ -764,5 +698,13 @@ $dropDownBg: #fff;
     color: $itemColor !important;
     background-color: $darkenBg !important;
   }
+}
+
+.vsm-list {
+  border-right: 1px solid rgba(0, 40, 100, 0.12);
+}
+
+.py-4 {
+    padding-bottom: 0.8rem !important;
 }
 </style>

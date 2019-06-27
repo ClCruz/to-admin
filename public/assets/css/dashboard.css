@@ -208,6 +208,7 @@ img {
 svg {
   overflow: hidden;
   vertical-align: middle;
+  max-height: 220px;
 }
 
 table {
@@ -3043,7 +3044,7 @@ input[type="button"].btn-block {
 }
 
 .collapse:not(.show) {
-  display: none;
+  display: none !important;
 }
 
 .collapsing {
@@ -3621,7 +3622,7 @@ input[type="button"].btn-block {
   color: #495057;
   text-align: center;
   white-space: nowrap;
-  background-color: #fbfbfc;
+  background-color: white;
   border: 1px solid rgba(0, 40, 100, 0.12);
   border-radius: 3px;
 }
@@ -4653,7 +4654,6 @@ input[type="button"].btn-block {
 .navbar-dark .navbar-text a:hover, .navbar-dark .navbar-text a:focus {
   color: #fff;
 }
-
 .card {
   position: relative;
   display: -ms-flexbox;
@@ -4666,6 +4666,11 @@ input[type="button"].btn-block {
   background-clip: border-box;
   border: 1px solid rgba(0, 40, 100, 0.12);
   border-radius: 3px;
+}
+
+.card .h1 {
+  padding-top: 6px;
+  font-size: 1.7rem;
 }
 
 .card > hr {
@@ -11873,10 +11878,11 @@ body.fixed-header .header {
 }
 
 .header-brand {
-  color: inherit;
+  color: rgb(110, 118, 135);
   margin-right: 1rem;
-  font-size: 1.25rem;
+  font-size: 1.1rem;
   white-space: nowrap;
+  margin-left: 0.3rem;
   font-weight: 600;
   padding: 0;
   transition: .3s opacity;
@@ -13164,7 +13170,8 @@ a.icon:hover {
 
 .nav-link,
 .nav-item {
-  padding: 0 .75rem;
+  font-size: 1rem;
+  padding: 0 1.2rem;
   min-width: 2rem;
   transition: .3s color;
   -webkit-user-select: none;
@@ -13229,10 +13236,10 @@ a.icon:hover {
 }
 
 .nav-tabs .nav-item i {
-  margin-right: .25rem;
+  margin-right: .95rem;
   line-height: 1;
-  font-size: 0.875rem;
-  width: 0.875rem;
+  font-size: 0.95rem;
+  width: 0.95rem;
   vertical-align: baseline;
   display: inline-block;
 }
@@ -20339,3 +20346,70 @@ svg {
 .fe-zoom-out:before {
   content: "\ea06";
 }
+
+.card-header .form-group {
+  margin-bottom: 0
+}
+
+.selectgroup-button-icon {
+  padding-left: 1rem;
+  padding-right: 1rem;
+  font-size: 0.8rem;
+  padding-top: .3rem;
+  padding-bottom: .3rem;
+}
+
+.card-title {
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+.selectgroup-button {
+  line-height: 1.4rem;
+  padding: 0.1rem 0.8rem;
+}
+
+
+#pie-chart-with-filter .selectgroup-button-icon {
+  padding-left: .8rem;
+  padding-right: .8rem;
+  font-size: 0.75rem;
+  padding-top: .3rem;
+  padding-bottom: .3rem;
+}
+
+#pie-chart-with-filter .selectgroup-button {
+  line-height: 1.4rem;
+  padding: 0.1rem 0.6rem;
+}
+.selectgroup {
+  display: flex;
+  align-content: center;
+}
+.page-title {
+  font-weight: bold;
+}
+
+#dashboard .input-group {
+  border: none;
+}
+
+
+#dashboard select {
+    height: 2rem;
+    padding: 0.375rem 0.4rem;
+    font-size: 0.9375rem;
+    font-weight: 400;
+    line-height: 1.2;
+    color: #495057;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid rgba(0, 40, 100, 0.12);
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
+  }
+
+  .filter-day .selectgroup-input {
+    color: #666;
+  }
+
+
