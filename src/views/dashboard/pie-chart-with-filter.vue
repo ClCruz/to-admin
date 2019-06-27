@@ -85,6 +85,7 @@ export default {
       },
       pie: {
         label: {
+          threshold: 0.000001,
           format: function (value, ratio, id) {
             return format('')(value);
           }
@@ -97,3 +98,8 @@ export default {
   }
 };
 </script>
+<style>
+.c3-chart-arc text {
+    fill: black;
+}
+</style>
