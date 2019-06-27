@@ -82,17 +82,27 @@
               </label>
 
                 <label class="selectgroup-itx'em">
-          <HotelDatePicker :id="datepicker.id" ref="dtpicker" :format="datepicker.format" :minNights="datepicker.minNights"
-          :maxNights="datepicker.maxNights"
-          :hoveringTooltip="datepicker.hoveringTooltip"
-          :i18n="datepicker.ptBr"
-          :displayClearButton="datepicker.displayClearButton"
-          :startDate="datepicker.startDate"
-          :endDate="datepicker.endDate"
-          :startingDateValue="datepicker.startingDateValue"
-          v-on:check-in-changed="startchanged"
-          v-on:check-out-changed="endchanged"
-          ></HotelDatePicker>
+<date-range-picker
+        ref="picker"
+        :ranges="datepicker.ranges"
+        v-model="datepicker.dateRange"
+        @update="updateValues"
+        @toggle="checkOpen"
+        :opens="datepicker.opens"
+        :minDate="datepicker.minDate" :maxDate="datepicker.maxDate"
+        :singleDatePicker="datepicker.singleDatePicker"
+        :timePicker="datepicker.timePicker"
+        :timePicker24Hour="datepicker.timePicker24Hour"
+        :showWeekNumbers="datepicker.showWeekNumbers"
+        :showDropdowns="datepicker.showDropdowns"
+        :autoApply="datepicker.autoApply"
+        :linkedCalendars="datepicker.linkedCalendars"
+        :locale-data="datepicker.localeData"
+>
+    <div slot="input" slot-scope="picker" style="min-width: 350px;">
+        {{ picker.startDate | date }} - {{ picker.endDate | date }}
+    </div>
+</date-range-picker>
               </label>
               </div>
 
@@ -136,7 +146,11 @@ import cardInfo from "@/views/dashboard/card-info";
 import pieChart from "@/views/dashboard/pie-chart";
 import pieChartWithFilter from "@/views/dashboard/pie-chart-with-filter";
 import chartBarStacked from "@/views/dashboard/chart-bar-stacked";
-import HotelDatePicker from 'vue-hotel-datepicker';
+// import HotelDatePicker from 'vue-hotel-datepicker';
+import DateRangePicker from 'vue2-daterange-picker';
+//you need to import the CSS manually (in case you want to override it)
+import 'vue2-daterange-picker/dist/vue2-daterange-picker.css';
+
 import {
   HollowDotsSpinner
 } from 'epic-spinners'
@@ -169,32 +183,62 @@ import {
 
 export default {
   mixins: [func],
+  filters: {
+    date (value) {
+      if (!value)
+        return ''
+      //let options = {year: 'numeric', month: 'short', day: 'numeric'};
+      // console.log(value);
+      return moment(value).format("DD/MM/YYYY");// Intl.DateTimeFormat('pt-BR', options).format(value)
+    }
+  },
   data() {
     return {
       isLoaded: false,
       datepickerHidden: true,
       datepicker: {
-        id: 1,
-        format: 'DD/MM/YYYY',
-        minNights: 0,
-        maxNights: 50,
-        hoveringTooltip: true,
-        displayClearButton: true,
-        startDate: new Date(),
-        endDate: new Date('2055-01-01'),
-        startingDateValue: new Date(),
-        ptBr: {
-          night: 'Dia',
-          nights: 'Dias',
-          'day-names': ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab'],
-          'check-in': 'Início',
-          'check-out': 'Fim',
-          'month-names': ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'],
+        minDate: moment(new Date()).add(-90,'days').toDate(),
+        opens: 'center',
+        maxDate: moment(new Date()).add(0,'days').toDate(),
+        // minDate: '',
+        // maxDate: '',
+        dateRange: {
+          startDate: '',
+          endDate: '',
         },
+        show_ranges: false,
+        singleDatePicker: false,
+        timePicker: false,
+        timePicker24Hour: true,
+        showDropdowns: true,
+        autoApply: false,
+        showWeekNumbers: false,
+        linkedCalendars: true,
+        localeData: {
+          direction: 'ltr',
+          format: moment.localeData().longDateFormat('L'),
+          separator: ' - ',
+          applyLabel: 'Escolher',
+          cancelLabel: 'Cancelar',
+          weekLabel: 'S',
+          customRangeLabel: 'Customizado',
+          daysOfWeek: ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sab"],//moment.weekdaysMin(),
+          monthNames: ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"],//moment.monthsShort(),
+          firstDay: moment.localeData().firstDayOfWeek()
+        },
+
+        ranges: false,
+        opens: "center",
+        dateFormat: '',
+        alwaysShowCalendars: true,
       },
       iddiv: 1,
       processing: false,
       form: {
+        range: {
+          startDate: null,
+          endDate: null,
+        },
         searchtype: 'today',
         id_base: '',
         id_evento: '',
@@ -271,17 +315,33 @@ export default {
     pieChart,
     chartBarStacked,
     pieChartWithFilter,
-    HotelDatePicker,
+    // HotelDatePicker,
+    DateRangePicker,
     HollowDotsSpinner,
     HalfCircleSpinner
   },
   computed: {},
   created() {
-    this.hideWaitAboveAll();
+    // console.log(moment.monthsShort());
+    // console.log(moment.weekdaysMin());
+    // this.hideWaitAboveAll();
     this.closer();
     //  this.$refs.dtpicker.hideDatepicker();
   },
   methods: {
+    updateValues (values) {
+      // debugger;
+      this.datepicker.dateRange.startDate = values.startDate;
+      this.datepicker.dateRange.endDate = values.endDate;
+
+      // this.datepicker.dateRange.startDate = moment(values.startDate).format('DD/MM/YYYY');
+      // this.datepicker.dateRange.endDate = moment(values.endDate).format('DD/MM/YYYY');
+      if (this.datepicker.dateRange.startDate!='' && this.datepicker.dateRange.startDate!=null && this.datepicker.dateRange.endDate!='' && this.datepicker.dateRange.endDate!=null) {
+        this.search('');
+      }
+    },
+    checkOpen (open) {
+    },
     startchanged(date) {
       this.form.selectedDate.start = moment(date).isValid() ? moment(date).format("DD/MM/YYYY") : '';
       this.checkifpersonalized();
@@ -484,6 +544,7 @@ export default {
       });
     },
     search(type) {
+      // return;
       this.isLoaded = false;
       if (this.form.id_evento == "" || this.form.date == "" || this.form.hour == "")
         return;
@@ -494,8 +555,12 @@ export default {
       let end = '';
 
       if (this.form.searchtype == '') {
-        init = this.form.selectedDate.start;
-        end = this.form.selectedDate.end;
+        init = moment(this.datepicker.dateRange.startDate).format('DD/MM/YYYY');
+        end = moment(this.datepicker.dateRange.endDate).format('DD/MM/YYYY');
+      }
+      else {
+        this.datepicker.dateRange.startDate = null;
+        this.datepicker.dateRange.endDate = null;
       }
 
       dashboardService.purchasebyboleto(this.getLoggedId(), this.form.id_evento, '', this.form.date, this.form.hour, type, init, end).then(
