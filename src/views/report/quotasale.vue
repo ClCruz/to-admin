@@ -277,7 +277,7 @@ export default {
       );      
     },
     startprint() {
-      let url = partnersaleService.printurl(this.form.selectedDate.start, this.form.selectedDate.end, this.form.amount);
+      let url = quotapartnerService.printurl(this.form.selectedDate.start, this.form.selectedDate.end, this.form.amount, this.form.id_quotapartner);
       window.open(url);
     },
     iframeloaded() {

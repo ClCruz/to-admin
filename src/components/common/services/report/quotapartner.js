@@ -10,7 +10,12 @@ export const quotapartnerService = {
   list,
   detail,
   select,
+  printurl,
 }
+function printurl(init, end, amount, id_quotapartner) {
+    let url = config.api + `/v1/print/report/quotasale?id_quotapartner=${id_quotapartner}&init=${init}&end=${end}&amount=${amount}&${config.getapikeyQS()}`;
+    return url;
+  }
 function select(loggedId) {
     let url = config.api + `/v1/admin/quotapartner/select?loggedId=${loggedId}`;
 
