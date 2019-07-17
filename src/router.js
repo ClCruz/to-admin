@@ -170,6 +170,11 @@ const adminReportPartnerSale = resolve => {
     resolve(require('./views/report/partnersale.vue'));
   }, 'admin-report-partnersale');
 };
+const adminReportQuotaSale = resolve => {
+  require.ensure(['./views/report/quotasale.vue'], () => {
+    resolve(require('./views/report/quotasale.vue'));
+  }, 'admin-report-quotasale');
+};
 
 
 // producer
@@ -408,6 +413,11 @@ const obj = new Router({
       path: '/report/partnersale',
       name: 'report-partnersale',
       component: adminReportPartnerSale
+    },
+    {
+      path: '/report/quotasale',
+      name: 'report-quotasale',
+      component: adminReportQuotaSale
     },
     //------
     //GENRE

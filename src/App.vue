@@ -240,6 +240,12 @@ export default {
               icon: 'fas fa-chart-pie',
               code: 'report-partnersale'
             },
+            {
+              href: '/report/quotasale',
+              title: 'Venda para cota',
+              icon: 'fas fa-chart-pie',
+              code: 'report-quotasale'
+            },
           ]
         },
         {

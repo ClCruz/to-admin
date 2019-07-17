@@ -11,7 +11,28 @@ export const quotapartnerService = {
   list,
   select,
   save,
+  report,
 }
+
+function report(loggedId, start, end, amount, id_quotapartner) {
+    let url = config.api + `/v1/admin/report/quotasale/list?loggedId=${loggedId}&start=${start}&end=${end}&amount=${amount}&id_quotapartner=${id_quotapartner}`;
+    //url = config.system.applyPagination(url, currentPage, perPage);
+  
+    var ret = new Promise(
+      function (resolve, reject) {
+          Vue.http.get(url).then(res => {
+            resolve(res.body);
+          }, err => {
+            reject({
+                error: true,
+                msg: err
+            });
+          });
+      }
+    );
+    return ret;
+  }
+  
 
 function list(loggedId, search, currentPage, perPage) {
     let url = config.api + `/v1/admin/quotapartner/list?loggedId=${loggedId}&search=${search}`;
