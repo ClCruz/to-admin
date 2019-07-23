@@ -411,7 +411,7 @@ export default {
 
             if (response.success) {
               this.toastSuccess("Salvo com sucesso");
-              //this.$router.push(`/ad/list`);
+              this.$router.push(`/ad/list`);
             } else {
               this.toastError(response.msg);
             }
