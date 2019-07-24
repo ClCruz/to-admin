@@ -192,7 +192,21 @@
                         <b-row class="mb-3">
                             <b-input-group size="sm">
                                 <b-input-group-prepend is-text>
-                                    Cor primária:
+                                    URL da Imagem de fundo:
+                                </b-input-group-prepend>
+                                <b-form-input id="scss_image_background"
+                                            type="text"
+                                            name="scss_image_background"
+                                            maxlength="50"
+                                            v-model="form.scss_image_background"
+                                            placeholder="Digite a URL da imagem de fundo">
+                                </b-form-input>
+                            </b-input-group>
+                        </b-row>
+                        <b-row class="mb-3">
+                            <b-input-group size="sm">
+                                <b-input-group-prepend is-text>
+                                    Cor do fundo da header/footer:
                                 </b-input-group-prepend>
                                 <input v-model="form.scss_colors_primary" class="form__input__element">
                                 <swatches colors="text-advanced" popover-to="left" v-model="form.scss_colors_primary"></swatches>
@@ -201,10 +215,19 @@
                         <b-row class="mb-3">
                             <b-input-group size="sm">
                                 <b-input-group-prepend is-text>
-                                    Cor secundaria:
+                                    Cor de destaque:
                                 </b-input-group-prepend>
                                 <input v-model="form.scss_colors_secondary" class="form__input__element">
                                 <swatches colors="text-advanced" popover-to="left" v-model="form.scss_colors_secondary"></swatches>
+                            </b-input-group>
+                        </b-row>
+                        <b-row class="mb-3">
+                            <b-input-group size="sm">
+                                <b-input-group-prepend is-text>
+                                    Cor do texto:
+                                </b-input-group-prepend>
+                                <input v-model="form.scss_colors_text" class="form__input__element">
+                                <swatches colors="text-advanced" popover-to="left" v-model="form.scss_colors_text"></swatches>
                             </b-input-group>
                         </b-row>
 
@@ -677,7 +700,7 @@ export default {
       this.$wait.start("inprocess");
       this.showWaitAboveAll();
 
-      partnerService.scaffolder(this.getLoggedId(), this.id, this.form.json_meta_description, this.form.json_meta_keywords, this.form.json_template, this.form.json_info_title, this.form.json_info_cnpj, this.form.json_info_companyname, this.form.json_info_companyaddress, this.form.json_ga, this.form.scss_colors_primary, this.form.scss_colors_secondary, this.form.changedImage, this.form.imagebase64, generate).then(
+      partnerService.scaffolder(this.getLoggedId(), this.id, this.form.json_meta_description, this.form.json_meta_keywords, this.form.json_template, this.form.json_info_title, this.form.json_info_cnpj, this.form.json_info_companyname, this.form.json_info_companyaddress, this.form.json_ga, this.form.scss_colors_primary, this.form.scss_colors_secondary, this.form.changedImage, this.form.imagebase64, generate, this.form.scss_colors_text, this.form.scss_image_background).then(
         response => {
           this.processing = false;
           this.hideWaitAboveAll();
@@ -788,6 +811,9 @@ export default {
               this.form.json_info_companyname = response.json_info_companyname;
               this.form.scss_colors_primary = response.scss_colors_primary;
               this.form.scss_colors_secondary = response.scss_colors_secondary;
+              this.form.scss_colors_text = response.scss_colors_text;
+              this.form.scss_image_background = response.scss_image_background;
+
               this.form.videos.mp4.uri = '';
               this.form.videos.mp4.has = false;
               this.form.videos.webm.uri = '';
@@ -911,6 +937,8 @@ export default {
           json_info_companyname: '',
           scss_colors_primary: '',
           scss_colors_secondary: '',
+          scss_colors_text: '',
+          scss_image_background: '',
 
           name: '',
           domain: '',

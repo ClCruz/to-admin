@@ -138,7 +138,7 @@ function resetgit(loggedId) {
     return ret;
 }
 
-function scaffolder(loggedId, id_partner,json_meta_description, json_meta_keywords, json_template, json_info_title, json_info_cnpj, json_info_companyname, json_info_companyaddress, json_ga, scss_colors_primary, scss_colors_secondary, changedImage, imagebase64, generate) {
+function scaffolder(loggedId, id_partner,json_meta_description, json_meta_keywords, json_template, json_info_title, json_info_cnpj, json_info_companyname, json_info_companyaddress, json_ga, scss_colors_primary, scss_colors_secondary, changedImage, imagebase64, generate, scss_colors_text, scss_image_background) {
     let url = config.api + `/v1/admin/partner/scaffolder`;
 
     let obj = {
@@ -155,6 +155,8 @@ function scaffolder(loggedId, id_partner,json_meta_description, json_meta_keywor
         ,json_ga
         ,scss_colors_primary
         ,scss_colors_secondary
+        ,scss_colors_text
+        ,scss_image_background
         ,changedImage
         ,imagebase64
         ,generate
