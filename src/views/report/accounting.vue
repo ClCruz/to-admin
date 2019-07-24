@@ -150,6 +150,8 @@ export default {
     iframeloaded2() {
     },
     populateBases() {
+      if (this.getLoggedId() == null || this.getLoggedId() == "") return;
+      
       this.showWaitAboveAll();
       userService.baseSelect(this.getLoggedId()).then(
         response => {

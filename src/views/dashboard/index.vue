@@ -331,6 +331,8 @@ export default {
       );
     },
     populateBases() {
+      if (this.getLoggedId() == null || this.getLoggedId() == "") return;
+
       userService.baseSelect(this.getLoggedId()).then(
         response => {
           this.hideWaitAboveAll();
