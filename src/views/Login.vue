@@ -40,7 +40,6 @@
       </div>
     </div>
   </div>
-  <dashboard :key="dashboardid" v-if="!!checkIsAuth() && mayIseedashboard"></dashboard>
 </div>
 </template>
 
@@ -48,7 +47,6 @@
 import Vue from "vue";
 import VueResource from "vue-resource";
 import config from "@/config";
-import dashboard from "@/views/dashboard/index.vue";
 
 import {
   func
@@ -62,7 +60,6 @@ export default {
   data() {
     return {
       iddiv: 1,
-      dashboardid: 1,
       logged: false,
       processing: false,
       login: null,
@@ -71,7 +68,6 @@ export default {
     };
   },
   components: {
-    dashboard,
   },
   computed: {
     passwordType: function () {
@@ -81,9 +77,6 @@ export default {
         return "password";
       }
     },
-    mayIseedashboard() {
-      return this.mayI('dashboard-home-viewer');
-    }
   },
   created() {
     if (this.isAuth) {

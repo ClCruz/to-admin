@@ -70,6 +70,12 @@ const TicketOfficeWithdrawCR = resolve => {
 
 
 //admin
+const adminHome = resolve => {
+  require.ensure(['./views/Home.vue'], () => {
+    resolve(require('./views/Home.vue'));
+  }, 'admin');
+};
+
 const adminLogin = resolve => {
   require.ensure(['./views/Login.vue'], () => {
     resolve(require('./views/Login.vue'));
@@ -262,7 +268,7 @@ const obj = new Router({
     {
       path: '/',
       name: 'home',
-      component: adminLogin
+      component: adminHome
     },
     //LOGIN
     {
