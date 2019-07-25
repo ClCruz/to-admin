@@ -72,7 +72,7 @@
   </v-wait>
   <sidebar-menu :menu="menu" v-if="checkIsAuth()" :collapsed="true" :widthCollapsed="'48px'" :width="'240px'" />
   <div class="p-5">
-    <router-view />
+    <router-view :key="$route.fullPath" />
   </div>
 </div>
 </template>
@@ -162,41 +162,12 @@ export default {
       this.registration.waiting.postMessage('skipWaiting');
     },
     setMenu() {
-      let menuHelper = [{
+      let menuHelper = [
+        {
           title: 'Bilheteria',
           icon: 'fas fa-ticket-alt',
           code: 'ticketoffice-login',
           href: '/ticketoffice',
-        },
-        {
-          title: 'Eventos',
-          icon: 'fas fa-puzzle-piece',
-          code: 'ev-viewer',
-          child: [{
-              href: '/event/add',
-              title: 'Adicionar',
-              icon: 'fas fa-plus',
-              code: 'ev-viewer'
-            },
-            {
-              href: '/event/list',
-              title: 'Listar',
-              icon: 'fas fa-th-list',
-              code: 'ev-viewer'
-            },
-            {
-              href: '/room/add',
-              title: 'Adicionar sala',
-              icon: 'fas fa-person-booth',
-              code: 'room-viewer'
-            },
-            {
-              href: '/room/list',
-              title: 'Listar sala',
-              icon: 'fas fa-th-list',
-              code: 'room-viewer'
-            },
-          ]
         },
         {
           title: 'Usuários',
@@ -206,13 +177,13 @@ export default {
           child: [{
               href: '/user/add',
               title: 'Adicionar',
-              icon: 'fas fa-plus',
+              icon: 'fas fa-pen',
               code: 'user-add'
             },
             {
               href: '/user/list',
               title: 'Listar',
-              icon: 'fas fa-th-list',
+              icon: 'fas fa-list-ul',
               code: 'user-viewer' //'all',//'user-viewer'
             },
           ]
@@ -243,6 +214,61 @@ export default {
           ]
         },
         {
+          title: 'Eventos',
+          icon: 'fas fa-theater-masks',
+          code: 'ev-viewer',
+          child: [{
+              href: '/event/add',
+              title: 'Adicionar',
+              icon: 'fas fa-pen',
+              code: 'ev-viewer'
+            },
+            {
+              href: '/event/list',
+              title: 'Listar',
+              icon: 'fas fa-list-ul',
+              code: 'ev-viewer'
+            },
+            {
+              title: 'Sala',
+              icon: 'fas fa-person-booth',
+              code: 'room-viewer',
+              child: [
+                {
+                  href: '/room/add',
+                  title: 'Adicionar sala',
+                  icon: 'fas fa-pen',
+                  code: 'room-viewer'
+                },
+                {
+                  href: '/room/list',
+                  title: 'Listar sala',
+                  icon: 'fas fa-list-ul',
+                  code: 'room-viewer'
+                },
+              ]
+            },
+          ]
+        },
+        {
+          title: 'Bilhete',
+          icon: 'fas fa-clipboard-list',
+          code: 'tickettype-viewer',
+          child: [{
+              href: '/tickettype/add',
+              title: 'Adicionar',
+              icon: 'fas fa-pen',
+              code: 'tickettype-add'
+            },
+            {
+              href: '/tickettype/list',
+              title: 'Listar',
+              icon: 'fas fa-list-ul',
+              code: 'tickettype-viewer',
+            },
+          ]
+        },
+        {
           title: 'Propaganda',
           icon: 'fas fa-ad',
           code: 'all',
@@ -250,13 +276,13 @@ export default {
           child: [{
               href: '/ad/add',
               title: 'Adicionar',
-              icon: 'fas fa-plus',
+              icon: 'fas fa-pen',
               code: 'ad-add'
             },
             {
               href: '/ad/list',
               title: 'Listar',
-              icon: 'fas fa-th-list',
+              icon: 'fas fa-list-ul',
               code: 'ad-viewer' //'all',//'user-viewer'
             },
             {
@@ -275,13 +301,13 @@ export default {
           child: [{
               href: '/genre/add',
               title: 'Adicionar',
-              icon: 'fas fa-plus',
+              icon: 'fas fa-pen',
               code: 'genre-add'
             },
             {
               href: '/genre/list',
               title: 'Listar',
-              icon: 'fas fa-th-list',
+              icon: 'fas fa-list-ul',
               code: 'genre-viewer', //'user-viewer'
             },
           ]
@@ -294,13 +320,13 @@ export default {
           child: [{
               href: '/quota/add',
               title: 'Adicionar',
-              icon: 'fas fa-plus',
+              icon: 'fas fa-pen',
               code: 'quotapartner-add'
             },
             {
               href: '/quota/list',
               title: 'Listar',
-              icon: 'fas fa-th-list',
+              icon: 'fas fa-list-ul',
               code: 'quotapartner-viewer', //'user-viewer'
             },
           ]
@@ -313,13 +339,13 @@ export default {
           child: [{
               href: '/place/add',
               title: 'Adicionar',
-              icon: 'fas fa-plus',
+              icon: 'fas fa-pen',
               code: 'place-add'
             },
             {
               href: '/place/list',
               title: 'Listar',
-              icon: 'fas fa-th-list',
+              icon: 'fas fa-list-ul',
               code: 'place-viewer', //'user-viewer'
             },
           ]
@@ -332,13 +358,13 @@ export default {
           child: [{
               href: '/producer/add',
               title: 'Adicionar',
-              icon: 'fas fa-plus',
+              icon: 'fas fa-pen',
               code: 'producer-add'
             },
             {
               href: '/producer/list',
               title: 'Listar',
-              icon: 'fas fa-th-list',
+              icon: 'fas fa-list-ul',
               code: 'producer-viewer', //'user-viewer'
             },
           ]
@@ -350,13 +376,13 @@ export default {
           child: [{
               href: '/partner/add',
               title: 'Adicionar',
-              icon: 'fas fa-plus',
+              icon: 'fas fa-pen',
               code: 'partner-add'
             },
             {
               href: '/partner/list',
               title: 'Listar',
-              icon: 'fas fa-th-list',
+              icon: 'fas fa-list-ul',
               code: 'partner-viewer', //'user-viewer'
             },
             {
@@ -367,24 +393,6 @@ export default {
             },
           ]
         },
-        {
-          title: 'Bilhete',
-          icon: 'fas fa-clipboard-list',
-          code: 'tickettype-viewer',
-          child: [{
-              href: '/tickettype/add',
-              title: 'Adicionar',
-              icon: 'fas fa-plus',
-              code: 'tickettype-add'
-            },
-            {
-              href: '/tickettype/list',
-              title: 'Listar',
-              icon: 'fas fa-th-list',
-              code: 'tickettype-viewer',
-            },
-          ]
-        }
       ];
 
       for (let x = (menuHelper.length - 1); x > 0; x--) {

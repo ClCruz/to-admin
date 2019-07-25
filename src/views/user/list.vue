@@ -104,7 +104,7 @@
                                 Consultando...
                             </template>
                         </v-wait>
-                        <span v-if="!grids.users.processing">Consultar</span>
+                        <span v-if="!processing">Consultar</span>
                       </b-button>
 
                   </b-input-group>
@@ -130,7 +130,7 @@
                   <span v-if="!mayI('user-add')">-</span>
                   <b-button-group size="sm" v-if="mayI('user-add')">
                       <b-button title="Editar" v-if="mayI('user-add')" @click.stop="edit(data.item,$event.target)">
-                        <span v-if="!this.processing">
+                        <span v-if="!processing">
                           Editar
                         </span>
                         <v-wait for="inprocess">
@@ -140,7 +140,7 @@
                         </v-wait>
                       </b-button>
                       <b-button title="Bases" v-if="mayI('user-add')" @click.stop="base(data.item,$event.target)">
-                        <span v-if="!this.processing">
+                        <span v-if="!processing">
                           Bases
                         </span>
                         <v-wait for="inprocess">
@@ -150,7 +150,7 @@
                         </v-wait>
                       </b-button>
                       <b-button title="Bases" v-if="mayI('user-add-partner')" @click.stop="partner(data.item,$event.target)">
-                        <span v-if="!this.processing">
+                        <span v-if="!processing">
                           Parceiro
                         </span>
                         <v-wait for="inprocess">
@@ -160,7 +160,7 @@
                         </v-wait>
                       </b-button>
                       <b-button title="Permissão" v-if="mayI('user-add-auth')" @click.stop="authorization(data.item,$event.target)">
-                        <span v-if="!this.processing">
+                        <span v-if="!processing">
                           Permissão
                         </span>
                         <v-wait for="inprocess">
