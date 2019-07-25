@@ -1436,10 +1436,14 @@ code {
 }
 
 .errorFormValidateHack {
-  margin-top: -100px !important;
+  margin-top: -80px !important;
 }
 
 .errorFormValidateHack2 {
   padding-left: 12px;
+}
+
+#my-upload {
+  padding-bottom: 20px;
 }
 </style>

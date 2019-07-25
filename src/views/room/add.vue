@@ -285,7 +285,7 @@ export default {
 }
 
 .errorFormValidateHack {
-  margin-top: -100px !important;
+  margin-top: -80px !important;
 }
 
 .errorFormValidateHack2 {

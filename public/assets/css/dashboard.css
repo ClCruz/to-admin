@@ -20413,3 +20413,27 @@ svg {
   }
 
 
+.was-validated .form-control:invalid, .was-validated .dataTables_wrapper .dataTables_length select:invalid, .dataTables_wrapper .dataTables_length .was-validated select:invalid, .was-validated .dataTables_wrapper .dataTables_filter input:invalid, .dataTables_wrapper .dataTables_filter .was-validated input:invalid, .form-control.is-invalid, .dataTables_wrapper .dataTables_length select.is-invalid, .dataTables_wrapper .dataTables_filter input.is-invalid,
+.errorFormValidateInput,
+.error {
+  border-color: #cd201f;
+  padding-right: calc(1.6em + 0.75rem);
+  background-image: url(data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='%23cd201…%3e%3ccircle cy='3' r='.5'/%3e%3ccircle cx='3' cy='3' r='.5'/%3e%3c/svg%3E);
+  background-repeat: no-repeat;
+  background-position: center right calc(0.4em + 0.1875rem);
+  background-size: calc(0.8em + 0.375rem) calc(0.8em + 0.375rem);
+}
+
+.errorFormValidateLabel > .input-group-text {
+  border-color: #cd201f;
+  border: 0.8px solid #cd201f;
+}
+
+.invalid-feedback,
+.errorFormValidate{
+font-size: 87.5%;
+    color: #cd201f;
+  }
+
+  .errorFormValidateHack {
+    margin-top: -80px !important;  }

@@ -131,6 +131,13 @@ const adminAdAdd = resolve => {
   }, 'admin-ad');
 };
 
+// email
+const adminEmailAdd = resolve => {
+  require.ensure(['./views/email/generate.vue'], () => {
+    resolve(require('./views/email/generate.vue'));
+  }, 'admin-ad');
+};
+
 // tickettype
 const adminTicketTypeList = resolve => {
   require.ensure(['./views/tickettype/list.vue'], () => {
@@ -324,6 +331,14 @@ const obj = new Router({
       name: 'ad-edit',
       props: true,
       component: adminAdAdd
+    },
+    //------
+    //Email
+    {
+      path: '/email/generate/',
+      name: 'email-generate',
+      props: true,
+      component: adminEmailAdd
     },
     //------
     //TicketType
