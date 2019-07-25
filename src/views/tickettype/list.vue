@@ -96,6 +96,11 @@
                   <span v-else><i class="far fa-circle"></i></span>
               </template>
 
+              <template slot="allowapi" slot-scope="data">
+                  <span v-if="data.item.allowapi == 1"><i class="fas fa-circle"></i></span>
+                  <span v-else><i class="far fa-circle"></i></span>
+              </template>
+
 
               <template slot="actions" slot-scope="data">
                   <span v-if="!mayI('tickettype-add')">-</span>
@@ -235,6 +240,7 @@ export default {
                     isAllotment: { label: 'Lote', sortable: false },
                     allowweb: { label: 'Web', sortable: false },
                     allowticketoffice: { label: 'Bilheteria', sortable: false },
+                    allowapi: { label: 'API', sortable: false },
                     StaTipBilhete: { label: 'Ativo?', sortable: false },
                     actions: { label: 'Ações' }
                 },

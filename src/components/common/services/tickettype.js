@@ -99,6 +99,7 @@ function get(loggedId, id, id_base) {
                 ,id_base
                 ,nameWeb
                 ,nameTicketOffice
+                ,nameAPI
                 ,description
                 ,in_dom
                 ,in_seg
@@ -109,6 +110,7 @@ function get(loggedId, id, id_base) {
                 ,in_sab
                 ,allowweb
                 ,allowticketoffice
+                ,allowapi
                 ,isPrincipal
                 ,isDiscount
                 ,isHalf
@@ -133,6 +135,7 @@ function get(loggedId, id, id_base) {
         ,id_base
         ,nameWeb
         ,nameTicketOffice
+        ,nameAPI
         ,description
         ,in_dom: (in_dom == true ? 1 : 0)
         ,in_seg: (in_seg == true ? 1 : 0)
@@ -143,6 +146,7 @@ function get(loggedId, id, id_base) {
         ,in_sab: (in_sab == true ? 1 : 0)
         ,allowweb: (allowweb == true ? 1 : 0)
         ,allowticketoffice: (allowticketoffice == true ? 1 : 0)
+        ,allowapi: (allowapi == true ? 1 : 0)
         ,isPrincipal: (isPrincipal == true ? 1 : 0)
         ,isDiscount: (isDiscount == true ? 1 : 0)
         ,isHalf: (isHalf == true ? 1 : 0)

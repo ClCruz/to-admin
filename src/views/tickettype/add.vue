@@ -46,6 +46,22 @@
               </b-row>
               <b-row class="mb-3">
                   <b-input-group size="sm">
+                      <b-input-group-prepend is-text class="firstLabel" v-bind:class="{ errorFormValidateLabel: ($v.form.nameAPI.$invalid) }">
+                          Nome - API:
+                      </b-input-group-prepend>
+                      <b-form-input id="name"
+                                  v-bind:class="{ errorFormValidateInput: ($v.form.nameAPI.$invalid) }"
+                                  type="text"
+                                  name="name"
+                                  maxlength="100"
+                                  v-model="form.nameAPI"
+                                  placeholder="Digite o nome para API">
+                      </b-form-input>
+                  </b-input-group>
+                  <div class="errorFormValidate" v-if="!$v.form.nameAPI.required">Campo é obrigatório</div>
+              </b-row>
+              <b-row class="mb-3">
+                  <b-input-group size="sm">
                       <b-input-group-prepend is-text class="firstLabel">
                           Descrição:
                       </b-input-group-prepend>
@@ -84,6 +100,7 @@
               <b-row class="mb-3">
                   <toggle-button :sync="true" v-model="form.allowweb" :width="150" :color="{checked: '#b3ffb3', unchecked: '#ffb3b3', disabled: '#a6a6a6'}" :labels="{ checked: 'Mostrar na Web', unchecked: 'Não monstrar na Web' }"/>
                   <toggle-button :sync="true" v-model="form.allowticketoffice" :width="180" :color="{checked: '#b3ffb3', unchecked: '#ffb3b3', disabled: '#a6a6a6'}" :labels="{ checked: 'Mostrar na Bilheteria', unchecked: 'Não monstrar na Bilheteria' }"/>
+                  <toggle-button :sync="true" v-model="form.allowapi" :width="180" :color="{checked: '#b3ffb3', unchecked: '#ffb3b3', disabled: '#a6a6a6'}" :labels="{ checked: 'Mostrar na API', unchecked: 'Não monstrar na API' }"/>
               </b-row>
               <b-row class="mb-3">
                   <toggle-button :sync="true" @change="changed" name="isPrincipal" v-model="form.isPrincipal" :width="110" :color="{checked: '#b3ffb3', unchecked: '#ffb3b3', disabled: '#a6a6a6'}" :labels="{ checked: 'Inteira', unchecked: 'É inteira?' }"/>
@@ -425,6 +442,7 @@ export default {
       let id_base = this.form.id_base;
       let nameWeb = this.form.nameWeb;
       let nameTicketOffice = this.form.nameTicketOffice;
+      let nameAPI = this.form.nameAPI;
       let description = this.form.description;
       let in_dom = this.form.in_dom;
       let in_seg = this.form.in_seg;
@@ -435,6 +453,7 @@ export default {
       let in_sab = this.form.in_sab;
       let allowweb = this.form.allowweb == true ? 1 : 0;
       let allowticketoffice = this.form.allowticketoffice == true ? 1 : 0;
+      let allowapi = this.form.allowapi == true ? 1 : 0;
       let isPrincipal = this.form.isPrincipal == true ? 1 : 0;
       let isDiscount = this.form.isDiscount == true ? 1 : 0;
       let isHalf = this.form.isHalf == true ? 1 : 0;
@@ -483,6 +502,7 @@ export default {
                             ,id_base
                             ,nameWeb
                             ,nameTicketOffice
+                            ,nameAPI
                             ,description
                             ,in_dom
                             ,in_seg
@@ -493,6 +513,7 @@ export default {
                             ,in_sab
                             ,allowweb
                             ,allowticketoffice
+                            ,allowapi
                             ,isPrincipal
                             ,isDiscount
                             ,isHalf
@@ -557,6 +578,7 @@ export default {
                 this.form.uniquename = response.uniquename;
                 this.form.allowticketoffice = response.allowticketoffice == 1;
                 this.form.allowweb = response.allowweb == 1;
+                this.form.allowapi = response.allowapi == 1;
                 this.form.CobraComs = response.CobraComs;
                 this.form.CotaMeiaEstudante = response.CotaMeiaEstudante;
                 this.form.description = response.description;
@@ -588,6 +610,7 @@ export default {
                 this.form.isPOS = response.isPOS == 1;
                 this.form.nameTicketOffice = response.nameTicketOffice;
                 this.form.nameWeb = response.nameWeb;
+                this.form.nameAPI = response.nameAPI;
                 this.form.PerDesconto = response.PerDesconto;
                 this.form.QtdVendaPorLote = response.QtdVendaPorLote;
                 this.form.StaCalculoMeiaEstudante = response.StaCalculoMeiaEstudante;
@@ -625,6 +648,9 @@ export default {
         required,
       },
       nameTicketOffice: {
+        required,
+      },
+      nameAPI: {
         required,
       },
     }
@@ -685,6 +711,7 @@ export default {
           uniquename: '',
           allowticketoffice: true,
           allowweb: true,
+          allowapi: true,
           CobraComs: '',
           CotaMeiaEstudante: 40,
           description: '',
@@ -717,6 +744,7 @@ export default {
           halftype: true,
           nameTicketOffice: '',
           nameWeb: '',
+          nameAPI: '',
           PerDesconto: '',
           discountHalf: 5000,
           discount: 0,
