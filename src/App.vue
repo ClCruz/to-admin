@@ -168,12 +168,6 @@ export default {
           code: 'ticketoffice-login',
           href: '/ticketoffice',
         },
-        // {
-        //   title: 'Dashboard',
-        //   icon: 'fas fa-chart-bar',
-        //   code: 'all',
-        //   href: '/',
-        // },
         {
           title: 'Eventos',
           icon: 'fas fa-puzzle-piece',
@@ -265,6 +259,12 @@ export default {
               icon: 'fas fa-th-list',
               code: 'ad-viewer' //'all',//'user-viewer'
             },
+            {
+              href: '/email/generate',
+              title: 'Gerar e-mail',
+              icon: 'fas fa-envelope',
+              code: 'ad-emailtemplate-add' //'all',//'user-viewer'
+            }
           ]
         },
         {
@@ -536,6 +536,36 @@ export default {
   padding: 8px !important;
 }
 
+
+
+
+@media (max-width: 1600px) {
+.vsm-link {
+  font-size: 14px !important;
+  padding-top: 6px !important;
+  padding-bottom: 6px !important;
+}
+}
+
+@media (max-width: 1400px) {
+.vsm-link {
+  font-size: 13px !important;
+  padding-top: 4px !important;
+  padding-bottom: 4px !important;
+}
+}
+
+@media (max-width: 1200px) {
+.vsm-link {
+  font-size: 13px !important;
+  padding-top: 0px !important;
+  padding-bottom: 0px !important;
+}
+.v-sidebar-menu .vsm-item.first-item > .vsm-link > .vsm-icon {
+  color: #b0b0d3 !important
+}
+}
+
 .vsm-icon {
   height: 30px !important;
   width: 30px !important;
@@ -593,7 +623,7 @@ $dropDownBg: #fff;
 .v-sidebar-menu {
   background-color: $baseBg !important;
 
-  margin-top: 65px;
+  padding-top: 65px;
 
   & .vsm-list {}
 
@@ -713,4 +743,17 @@ $dropDownBg: #fff;
 .py-4 {
     padding-bottom: 0.8rem !important;
 }
+
+
+@media (max-width: 1200px) {
+.vsm-link {
+  font-size: 13px !important;
+  padding-top: 0px !important;
+  padding-bottom: 0px !important;
+}
+.v-sidebar-menu .vsm-item.first-item > .vsm-link > .vsm-icon {
+  color: #b0b0d3 !important
+}
+}
 </style>
+
