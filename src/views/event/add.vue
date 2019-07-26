@@ -40,6 +40,18 @@
             <div class="errorFormValidate" v-if="executedAtLeastOne && !$v.form.NomPeca.required">Campo é obrigatório</div>
             <div class="errorFormValidate" v-if="executedAtLeastOne && !$v.form.NomPeca.minLength">Deve ter pelo menos {{$v.form.NomPeca.$params.minLength.min}} caracteres.</div>
           </b-row>
+          <b-row class="mb-3" v-if="mayI('ev-externaluri')">
+            <b-input-group size="sm">
+              <b-input-group-prepend is-text>
+                URL externa: 
+                <span v-b-tooltip.hover title="Clique para abrir" 
+                style="cursor:pointer;padding-left: 4px;" @click="gotoFarFromHome(form.external_uri)"><i class="fab fa-chrome"></i></span>
+              </b-input-group-prepend>
+              <b-form-input id="external_uri" type="text"  name="external_uri" maxlength="500" v-model="form.external_uri" placeholder="URL externa" tooltip="Atenção só preencher esse campo no caso de eventos não gerenciados via TicketOffice.">
+              </b-form-input>
+            </b-input-group>
+            <div v-if="form.external_uri != ''" style="color:red;font-size:14px;">Atenção, todas as ações do site para compra irão redirecionar para a URL digitada nesse campo, e não mais o sistema da ticketoffice.</div>
+          </b-row>
           <b-row class="mb-3" v-if="!isAdd">
             <b-input-group size="sm">
               <b-input-group-prepend is-text>
@@ -646,6 +658,7 @@ export default {
               this.form.uri = response.uri;
               this.form.urifull = response.urifull;
               this.form.NomPeca = response.NomPeca;
+              this.form.external_uri = response.external_uri;
               this.form.CodTipPeca = response.CodTipPeca;
               this.form.id_genre = response.id_genre;
               this.form.TemDurPeca = response.TemDurPeca;
@@ -731,6 +744,7 @@ export default {
         let id_produtor = "",
           CodPeca = "",
           NomPeca = "",
+          external_uri = "",
           CodTipPeca = "",
           TemDurPeca = "",
           CenPeca = "",
@@ -764,6 +778,7 @@ export default {
         id_produtor = this.form.id_produtor;
         CodPeca = this.form.CodPeca;
         NomPeca = this.form.NomPeca;
+        external_uri = this.form.external_uri;
         CodTipPeca = this.form.id_genre;
         TemDurPeca = this.form.TemDurPeca;
         CenPeca = this.form.CenPeca;
@@ -797,7 +812,7 @@ export default {
         this.$wait.start("inprocessSave");
 
         this.showWaitAboveAll();
-        eventService.save(this.getLoggedId(), id_base, id_produtor, CodPeca, NomPeca, CodTipPeca, TemDurPeca, CenPeca, id_local_evento, ValIngresso, description, meta_description, meta_keyword, opening_time, insurance_policy, showInBanner, bannerDescription, QtIngrPorPedido, in_obriga_cpf, qt_ingressos_por_cpf, ticketoffice_askemail, imagechanged, imagebase64, free_installments, max_installments, interest_rate, ticketoffice_ticketmodel, showonline, minAmount, maxAmount, in_entrega_ingresso).then(
+        eventService.save(this.getLoggedId(), id_base, id_produtor, CodPeca, NomPeca, CodTipPeca, TemDurPeca, CenPeca, id_local_evento, ValIngresso, description, meta_description, meta_keyword, opening_time, insurance_policy, showInBanner, bannerDescription, QtIngrPorPedido, in_obriga_cpf, qt_ingressos_por_cpf, ticketoffice_askemail, imagechanged, imagebase64, free_installments, max_installments, interest_rate, ticketoffice_ticketmodel, showonline, minAmount, maxAmount, in_entrega_ingresso, external_uri).then(
 
           response => {
             this.processing = false;
@@ -1251,6 +1266,7 @@ export default {
         produceralert: false,
         loaded: false,
         id: '',
+        external_uri: '',
         id_estado: '',
         id_municipio: '',
         ds_googlemaps: '',
