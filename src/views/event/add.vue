@@ -373,7 +373,7 @@
         </v-wait>
         <span v-if="!processing">Salvar</span>
       </b-button>
-      <b-button :disabled="id == 0 || id == null || id == undefined" v-if="mayI('presentation-add')" type="button" variant="outline-info" size="sm" @click="addTicketType(true)">
+      <b-button :disabled="id == 0 || id == null || id == undefined" v-if="mayI('presentation-add') && !isAdd" type="button" variant="outline-info" size="sm" @click="addTicketType(true)">
         <v-wait for="inprocess">
           <template slot="waiting">
             Carregando...
@@ -386,7 +386,7 @@
         </v-wait>
         <span v-if="!processing">Tipos de Bilhetes</span>
       </b-button>
-      <b-button :disabled="id == 0 || id == null || id == undefined" v-if="mayI('presentation-add')" type="button" variant="outline-info" size="sm" @click="addPresentation(true)">
+      <b-button :disabled="id == 0 || id == null || id == undefined" v-if="mayI('presentation-add') && !isAdd" type="button" variant="outline-info" size="sm" @click="addPresentation(true)">
         <v-wait for="inprocess">
           <template slot="waiting">
             Carregando...
@@ -397,7 +397,7 @@
             Aguardando...
           </template>
         </v-wait>
-        <span v-if="!processing">Ver datas</span>
+        <span v-if="!processing && !isAdd">Ver datas</span>
       </b-button>
     </b-row>
 
