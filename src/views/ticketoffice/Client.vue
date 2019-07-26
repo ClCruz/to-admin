@@ -335,12 +335,14 @@ export default {
                             {
                                 this.$parent.codCliente = response.codigo;
                                 this.$parent.codReserva = response.codReserva;
+                                this.$parent.hasCPF = response.hasCPF;
                                 Vue.nextTick().then(d => {
                                     this.$parent.hideClientWhenForced();
                                 });
                             }
                             else {
                                 this.$parent.getCashRegister().form.clientCode = response.codigo;
+                                this.$parent.getCashRegister().form.hasCPF = response.hasCPF;
                                 this.$parent.getCashRegister().form.cardBin = this.form.bincard;
                                 Vue.nextTick().then(response => {
                                     this.$parent.getCashRegister().hideClient();
