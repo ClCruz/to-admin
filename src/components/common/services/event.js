@@ -17,6 +17,7 @@ export const eventService = {
   borderokey,
   borderourl,
   borderohtml,
+  searchPage
 }
 
 function borderourl(key, id_base) {
@@ -103,6 +104,22 @@ function get(loggedId, id_evento, id_base) {
   return ret;
 }
 
+function searchPage(type, input, startAt, howMany, city, state) {
+    let url = config.api + `/v1/search/result?input=${input}&type=${type}`;
+    var ret = new Promise(
+      function (resolve, reject) {
+        Vue.http.get(url).then(res => {
+          resolve(res.body);
+        }, err => {
+          reject({
+            error: true,
+            msg: err
+          });
+        });
+      }
+    );
+    return ret;
+  }
 function list(loggedId, search, currentPage, perPage) {
     let url = config.api + `/v1/admin/event/list?loggedId=${loggedId}&search=${search}`;
     url = config.system.applyPagination(url, currentPage, perPage);
