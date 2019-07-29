@@ -50,7 +50,7 @@
               <b-form-input id="external_uri" type="text"  name="external_uri" maxlength="500" v-model="form.external_uri" placeholder="URL externa" tooltip="Atenção só preencher esse campo no caso de eventos não gerenciados via TicketOffice.">
               </b-form-input>
             </b-input-group>
-            <div v-if="form.external_uri != ''" style="color:red;font-size:14px;">Atenção, todas as ações do site para compra irão redirecionar para a URL digitada nesse campo, e não mais o sistema da ticketoffice.</div>
+            <div v-if="form.external_uri != '' && form.external_uri != null" style="color:red;font-size:14px;">Atenção, todas as ações do site para compra irão redirecionar para a URL digitada nesse campo, e não mais o sistema da ticketoffice.</div>
           </b-row>
           <b-row class="mb-3" v-if="!isAdd">
             <b-input-group size="sm">
