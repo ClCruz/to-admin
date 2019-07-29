@@ -109,6 +109,11 @@
                   <span v-else><i class="far fa-circle"></i></span>
               </template>
 
+              <template slot="allowapi" slot-scope="data">
+                  <span v-if="data.item.allowapi == 1"><i class="fas fa-circle"></i></span>
+                  <span v-else><i class="far fa-circle"></i></span>
+              </template>
+
               <template slot="vl_preco_fixo" slot-scope="data">
                   <span v-if="data.item.isPrincipal == 1">-</span>
                   <span v-if="data.item.isFixed == 1">{{data.item.vl_preco_fixo | money }}</span>
@@ -369,6 +374,7 @@ export default {
                 isPlus: { label: 'Outros', sortable: false },
                 allowweb: { label: 'Web', sortable: false },
                 allowticketoffice: { label: 'Bilh.', sortable: false },
+                allowapi: { label: 'API', sortable: false },
                 vl_preco_fixo: { label: 'Valor', sortable: false },
             },
           },

@@ -163,7 +163,7 @@ export default {
                 loaded: false,
                 total: 0,
                 currentPage: 1,
-                perPage: 10,
+                perPage: 500,
                 items: [],
                 fields: {
                     id_evento: { label: '', sortable: false },

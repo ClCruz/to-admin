@@ -11,10 +11,11 @@ export const tickettypeService = {
   save,
   list,
   base64,
-  eventlist
+  eventlist,
+  select,
 }
 
-function eventlist2(loggedId, id_evento, id_base) {
+function select(loggedId, id_evento, id_base) {
     let url = config.api + `/v1/admin/tickettype/select`;
 
     //url = config.system.applyPagination(url, currentPage, perPage);

@@ -31,14 +31,26 @@
         <div class="directlink" v-if="form.imageURICard!=''"><a :href="form.imageURICard" title="Abrir imagem usada como card" target="_blank">Card</a>/<a title="Abrir imagem usada como banner" :href="form.imageURIBanner" target="_blank">Banner</a>/<a title="Abrir imagem original" :href="form.imageURIOriginal" target="_blank">Imagem original</a></div>
           <b-row class="mb-3">
             <b-input-group size="sm">
-              <b-input-group-prepend is-text v-bind:class="{ errorFormValidateLabel: ($v.form.NomPeca.$invalid) }">
+              <b-input-group-prepend is-text v-bind:class="{ errorFormValidateLabel: (executedAtLeastOne && $v.form.NomPeca.$invalid) }">
                 Nome:
               </b-input-group-prepend>
-              <b-form-input id="name" type="text" v-bind:class="{ errorFormValidateInput: ($v.form.NomPeca.$invalid) }" name="name" maxlength="150" v-model="form.NomPeca" placeholder="Digite o nome">
+              <b-form-input id="name" type="text" v-bind:class="{ errorFormValidateInput: (executedAtLeastOne && $v.form.NomPeca.$invalid) }" name="name" maxlength="150" v-model="form.NomPeca" placeholder="Digite o nome">
               </b-form-input>
             </b-input-group>
-            <div class="errorFormValidate" v-if="!$v.form.NomPeca.required">Campo é obrigatório</div>
-            <div class="errorFormValidate" v-if="!$v.form.NomPeca.minLength">Deve ter pelo menos {{$v.form.NomPeca.$params.minLength.min}} caracteres.</div>
+            <div class="errorFormValidate" v-if="executedAtLeastOne && !$v.form.NomPeca.required">Campo é obrigatório</div>
+            <div class="errorFormValidate" v-if="executedAtLeastOne && !$v.form.NomPeca.minLength">Deve ter pelo menos {{$v.form.NomPeca.$params.minLength.min}} caracteres.</div>
+          </b-row>
+          <b-row class="mb-3" v-if="mayI('ev-externaluri')">
+            <b-input-group size="sm">
+              <b-input-group-prepend is-text>
+                URL externa: 
+                <span v-b-tooltip.hover title="Clique para abrir" 
+                style="cursor:pointer;padding-left: 4px;" @click="gotoFarFromHome(form.external_uri)"><i class="fab fa-chrome"></i></span>
+              </b-input-group-prepend>
+              <b-form-input id="external_uri" type="text"  name="external_uri" maxlength="500" v-model="form.external_uri" placeholder="URL externa" tooltip="Atenção só preencher esse campo no caso de eventos não gerenciados via TicketOffice.">
+              </b-form-input>
+            </b-input-group>
+            <div v-if="form.external_uri != '' && form.external_uri != null" style="color:red;font-size:14px;">Atenção, todas as ações do site para compra irão redirecionar para a URL digitada nesse campo, e não mais o sistema da ticketoffice.</div>
           </b-row>
           <b-row class="mb-3" v-if="!isAdd">
             <b-input-group size="sm">
@@ -56,16 +68,16 @@
               <b-row>
                 <div class="col-12">
                   <b-input-group size="sm">
-                    <b-input-group-prepend is-text v-bind:class="{ errorFormValidateLabel: ($v.form.description.$invalid) }">
+                    <b-input-group-prepend is-text v-bind:class="{ errorFormValidateLabel: (executedAtLeastOne && $v.form.description.$invalid) }">
                       Descrição:
                     </b-input-group-prepend>
                     <div class="col-12 m-0 p-0" style="height:200px; margin-bottom:50px;margin-left: 0px;">
-                      <quill-editor v-model="form.description" ref="editor" v-bind:class="{ errorFormValidateInput: ($v.form.description.$invalid) }" :options="components.quillOptions">
+                      <quill-editor v-model="form.description" ref="editor" v-bind:class="{ errorFormValidateInput: (executedAtLeastOne && $v.form.description.$invalid) }" :options="components.quillOptions">
                       </quill-editor>
                     </div>
                   </b-input-group>
-                  <div class="errorFormValidate errorFormValidateHack" v-if="!$v.form.description.required">Campo é obrigatório</div>
-                  <div class="errorFormValidate errorFormValidateHack" v-if="!$v.form.description.minLength">Deve ter pelo menos {{$v.form.description.$params.minLength.min}} caracteres.</div>
+                  <div class="errorFormValidate errorFormValidateHack" v-if="executedAtLeastOne && !$v.form.description.required">Campo é obrigatório</div>
+                  <div class="errorFormValidate errorFormValidateHack" v-if="executedAtLeastOne && !$v.form.description.minLength">Deve ter pelo menos {{$v.form.description.$params.minLength.min}} caracteres.</div>
                 </div>
               </b-row>
             </b-col>
@@ -125,99 +137,99 @@
           </b-row>
           <b-row class="mb-3">
             <b-input-group size="sm">
-              <b-input-group-prepend is-text v-bind:class="{ errorFormValidateLabel: ($v.form.id_base.$invalid) }">
+              <b-input-group-prepend is-text v-bind:class="{ errorFormValidateLabel: (executedAtLeastOne && $v.form.id_base.$invalid) }">
                 Base:
               </b-input-group-prepend>
-              <b-form-select v-model="form.id_base" :options="selects.base" size="sm" v-bind:class="{ errorFormValidateInput: ($v.form.id_base.$invalid) }" />
+              <b-form-select v-model="form.id_base" :options="selects.base" size="sm" v-bind:class="{ errorFormValidateInput: (executedAtLeastOne && $v.form.id_base.$invalid) }" />
             </b-input-group>
-            <div class="errorFormValidate" v-if="!$v.form.id_base.required">Campo é obrigatório</div>
+            <div class="errorFormValidate" v-if="executedAtLeastOne && !$v.form.id_base.required">Campo é obrigatório</div>
           </b-row>
           <b-row class="mb-3">
             <b-input-group size="sm">
-              <b-input-group-prepend is-text v-bind:class="{ errorFormValidateLabel: ($v.form.id_genre.$invalid) }">
+              <b-input-group-prepend is-text v-bind:class="{ errorFormValidateLabel: (executedAtLeastOne && $v.form.id_genre.$invalid) }">
                 Gênero:
               </b-input-group-prepend>
-              <b-form-select v-model="form.id_genre" :options="selects.genre" size="sm" v-bind:class="{ errorFormValidateInput: ($v.form.id_genre.$invalid) }" />
+              <b-form-select v-model="form.id_genre" :options="selects.genre" size="sm" v-bind:class="{ errorFormValidateInput: (executedAtLeastOne && $v.form.id_genre.$invalid) }" />
             </b-input-group>
-            <div class="errorFormValidate" v-if="!$v.form.id_genre.required">Campo é obrigatório</div>
+            <div class="errorFormValidate" v-if="executedAtLeastOne && !$v.form.id_genre.required">Campo é obrigatório</div>
           </b-row>
           <b-row class="mb-3">
             <b-input-group size="sm">
-              <b-input-group-prepend is-text v-bind:class="{ errorFormValidateLabel: ($v.form.id_produtor.$invalid) }">
+              <b-input-group-prepend is-text v-bind:class="{ errorFormValidateLabel: (executedAtLeastOne && $v.form.id_produtor.$invalid) }">
                 Produtor:
               </b-input-group-prepend>
-              <b-form-select v-model="form.id_produtor" :options="selects.producer" size="sm" v-bind:class="{ errorFormValidateInput: ($v.form.id_produtor.$invalid) }" />
+              <b-form-select v-model="form.id_produtor" :options="selects.producer" size="sm" v-bind:class="{ errorFormValidateInput: (executedAtLeastOne && $v.form.id_produtor.$invalid) }" />
             </b-input-group>
-            <div class="errorFormValidate" v-if="!$v.form.id_produtor.required">Campo é obrigatório</div>
+            <div class="errorFormValidate" v-if="executedAtLeastOne && !$v.form.id_produtor.required">Campo é obrigatório</div>
           </b-row>
           <b-row class="mb-3">
             <b-input-group size="sm">
-              <b-input-group-prepend is-text v-bind:class="{ errorFormValidateLabel: ($v.form.id_estado.$invalid) }">
+              <b-input-group-prepend is-text v-bind:class="{ errorFormValidateLabel: (executedAtLeastOne && $v.form.id_estado.$invalid) }">
                 Estado:
               </b-input-group-prepend>
-              <b-form-select v-on:change="selState" v-model="form.id_estado" :options="selects.state" size="sm" v-bind:class="{ errorFormValidateInput: ($v.form.id_estado.$invalid) }" />
+              <b-form-select v-on:change="selState" v-model="form.id_estado" :options="selects.state" size="sm" v-bind:class="{ errorFormValidateInput: (executedAtLeastOne && $v.form.id_estado.$invalid) }" />
             </b-input-group>
-            <div class="errorFormValidate" v-if="!$v.form.id_estado.required">Campo é obrigatório</div>
+            <div class="errorFormValidate" v-if="executedAtLeastOne && !$v.form.id_estado.required">Campo é obrigatório</div>
           </b-row>
           <b-row class="mb-3">
             <b-input-group size="sm">
-              <b-input-group-prepend is-text v-bind:class="{ errorFormValidateLabel: ($v.form.id_municipio.$invalid) }">
+              <b-input-group-prepend is-text v-bind:class="{ errorFormValidateLabel: (executedAtLeastOne && $v.form.id_municipio.$invalid) }">
                 Cidade:
               </b-input-group-prepend>
-              <b-form-select v-on:change="selCity" v-model="form.id_municipio" :options="selects.city" size="sm" v-bind:class="{ errorFormValidateInput: ($v.form.id_municipio.$invalid) }" />
+              <b-form-select v-on:change="selCity" v-model="form.id_municipio" :options="selects.city" size="sm" v-bind:class="{ errorFormValidateInput: (executedAtLeastOne && $v.form.id_municipio.$invalid) }" />
             </b-input-group>
-            <div class="errorFormValidate" v-if="!$v.form.id_municipio.required">Campo é obrigatório</div>
+            <div class="errorFormValidate" v-if="executedAtLeastOne && !$v.form.id_municipio.required">Campo é obrigatório</div>
           </b-row>
           <b-row class="mb-3">
             <b-input-group size="sm">
-              <b-input-group-prepend is-text v-bind:class="{ errorFormValidateLabel: ($v.form.id_local_evento.$invalid) }">
+              <b-input-group-prepend is-text v-bind:class="{ errorFormValidateLabel: (executedAtLeastOne && $v.form.id_local_evento.$invalid) }">
                 Local:
               </b-input-group-prepend>
-              <b-form-select v-on:change="selPlace" v-model="form.id_local_evento" :options="selects.place" size="sm" v-bind:class="{ errorFormValidateInput: ($v.form.id_local_evento.$invalid) }" />
+              <b-form-select v-on:change="selPlace" v-model="form.id_local_evento" :options="selects.place" size="sm" v-bind:class="{ errorFormValidateInput: (executedAtLeastOne && $v.form.id_local_evento.$invalid) }" />
               <b-button :disabled="form.id_local_evento=='' || form.id_local_evento == 0" type="button" variant="outline-info" size="sm" @click="openMaps">
                 <span>Ver no Google Maps</span>
               </b-button>
             </b-input-group>
-            <div class="errorFormValidate" v-if="!$v.form.id_local_evento.required">Campo é obrigatório</div>
+            <div class="errorFormValidate" v-if="executedAtLeastOne && !$v.form.id_local_evento.required">Campo é obrigatório</div>
           </b-row>
           <b-row class="mb-3">
             <b-input-group size="sm">
-              <b-input-group-prepend is-text v-bind:class="{ errorFormValidateLabel: ($v.form.ticketoffice_ticketmodel.$invalid) }">
+              <b-input-group-prepend is-text v-bind:class="{ errorFormValidateLabel: (executedAtLeastOne && $v.form.ticketoffice_ticketmodel.$invalid) }">
                 Modelo de Ingresso na Bilheteria:
               </b-input-group-prepend>
-              <b-form-select v-model="form.ticketoffice_ticketmodel" :options="selects.ticketmodels" size="sm" v-bind:class="{ errorFormValidateInput: ($v.form.ticketoffice_ticketmodel.$invalid) }" />
+              <b-form-select v-model="form.ticketoffice_ticketmodel" :options="selects.ticketmodels" size="sm" v-bind:class="{ errorFormValidateInput: (executedAtLeastOne && $v.form.ticketoffice_ticketmodel.$invalid) }" />
             </b-input-group>
-            <div class="errorFormValidate" v-if="!$v.form.ticketoffice_ticketmodel.required">Campo é obrigatório</div>
+            <div class="errorFormValidate" v-if="executedAtLeastOne && !$v.form.ticketoffice_ticketmodel.required">Campo é obrigatório</div>
           </b-row>
           <b-row class="mb-3">
             <b-col>
               <b-row>
                 <b-input-group size="sm">
-                  <b-input-group-prepend is-text v-bind:class="{ errorFormValidateLabel: ($v.form.TemDurPeca.$invalid) }">
+                  <b-input-group-prepend is-text v-bind:class="{ errorFormValidateLabel: (executedAtLeastOne && $v.form.TemDurPeca.$invalid) }">
                     Duração:
                   </b-input-group-prepend>
-                  <b-form-input id="TemDurPeca" type="text" name="TemDurPeca" v-mask="'###'" maxlength="3" v-model="form.TemDurPeca" v-bind:class="{ errorFormValidateInput: ($v.form.TemDurPeca.$invalid) }" placeholder="Digite a duração do evento">
+                  <b-form-input id="TemDurPeca" type="text" name="TemDurPeca" v-mask="'###'" maxlength="3" v-model="form.TemDurPeca" v-bind:class="{ errorFormValidateInput: (executedAtLeastOne && $v.form.TemDurPeca.$invalid) }" placeholder="Digite a duração do evento">
                   </b-form-input>
-                  <b-input-group-prepend is-text>
+                  <b-input-group-prepend is-text v-bind:class="{ errorFormValidateLabel: (executedAtLeastOne && $v.form.TemDurPeca.$invalid) }">
                     min
                   </b-input-group-prepend>
                 </b-input-group>
-                <div class="errorFormValidate" v-if="!$v.form.TemDurPeca.required">Campo é obrigatório</div>
+                <div class="errorFormValidate" v-if="executedAtLeastOne && !$v.form.TemDurPeca.required">Campo é obrigatório</div>
               </b-row>
             </b-col>
             <b-col>
               <b-row>
                 <b-input-group size="sm" style="padding-left:10px;">
-                  <b-input-group-prepend is-text v-bind:class="{ errorFormValidateLabel: ($v.form.CenPeca.$invalid) }">
+                  <b-input-group-prepend is-text v-bind:class="{ errorFormValidateLabel: (executedAtLeastOne && $v.form.CenPeca.$invalid) }">
                     Censura:
                   </b-input-group-prepend>
-                  <b-form-input id="CenPeca" type="text" name="CenPeca" v-mask="'##'" maxlength="3" v-model="form.CenPeca" v-bind:class="{ errorFormValidateInput: ($v.form.CenPeca.$invalid) }" placeholder="Digite a censura">
+                  <b-form-input id="CenPeca" type="text" name="CenPeca" v-mask="'##'" maxlength="3" v-model="form.CenPeca" v-bind:class="{ errorFormValidateInput: (executedAtLeastOne && $v.form.CenPeca.$invalid) }" placeholder="Digite a censura">
                   </b-form-input>
-                  <b-input-group-prepend is-text>
+                  <b-input-group-prepend is-text v-bind:class="{ errorFormValidateLabel: (executedAtLeastOne && $v.form.CenPeca.$invalid) }">
                     anos
                   </b-input-group-prepend>
                 </b-input-group>
-                <div class="errorFormValidate errorFormValidateHack2" v-if="!$v.form.CenPeca.required">Campo é obrigatório</div>
+                <div class="errorFormValidate errorFormValidateHack2" v-if="executedAtLeastOne && !$v.form.CenPeca.required">Campo é obrigatório</div>
               </b-row>
             </b-col>
           </b-row>
@@ -249,25 +261,25 @@
             <b-col>
               <b-row>
                 <b-input-group size="sm">
-                  <b-input-group-prepend is-text v-bind:class="{ errorFormValidateLabel: ($v.form.QtIngrPorPedido.$invalid) }">
+                  <b-input-group-prepend is-text v-bind:class="{ errorFormValidateLabel: (executedAtLeastOne && $v.form.QtIngrPorPedido.$invalid) }">
                     Qta. máxima de ingressos por pedido na venda:
                   </b-input-group-prepend>
-                  <b-form-input id="QtIngrPorPedido" type="text" name="QtIngrPorPedido" v-mask="'###'" maxlength="3" v-model="form.QtIngrPorPedido" v-bind:class="{ errorFormValidateInput: ($v.form.QtIngrPorPedido.$invalid) }" placeholder="Digite a quantidade máxima de ingressos por pedido na venda">
+                  <b-form-input id="QtIngrPorPedido" type="text" name="QtIngrPorPedido" v-mask="'###'" maxlength="3" v-model="form.QtIngrPorPedido" v-bind:class="{ errorFormValidateInput: (executedAtLeastOne && $v.form.QtIngrPorPedido.$invalid) }" placeholder="Digite a quantidade máxima de ingressos por pedido na venda">
                   </b-form-input>
                 </b-input-group>
-                <div class="errorFormValidate" v-if="!$v.form.QtIngrPorPedido.required">Campo é obrigatório</div>
+                <div class="errorFormValidate" v-if="executedAtLeastOne && !$v.form.QtIngrPorPedido.required">Campo é obrigatório</div>
               </b-row>
             </b-col>
             <b-col>
               <b-row>
                 <b-input-group size="sm" style="padding-left:10px;">
-                  <b-input-group-prepend is-text v-bind:class="{ errorFormValidateLabel: ($v.form.qt_ingressos_por_cpf.$invalid) }">
+                  <b-input-group-prepend is-text v-bind:class="{ errorFormValidateLabel: (executedAtLeastOne && $v.form.qt_ingressos_por_cpf.$invalid) }">
                     Qta. máxima de ingressos por cpf na venda:
                   </b-input-group-prepend>
-                  <b-form-input id="qt_ingressos_por_cpf" type="text" name="qt_ingressos_por_cpf" v-mask="'###'" maxlength="3" v-model="form.qt_ingressos_por_cpf" v-bind:class="{ errorFormValidateInput: ($v.form.qt_ingressos_por_cpf.$invalid) }" placeholder="Digite a quantidade máxima de ingressos por cpf na venda">
+                  <b-form-input id="qt_ingressos_por_cpf" type="text" name="qt_ingressos_por_cpf" v-mask="'###'" maxlength="3" v-model="form.qt_ingressos_por_cpf" v-bind:class="{ errorFormValidateInput: (executedAtLeastOne && $v.form.qt_ingressos_por_cpf.$invalid) }" placeholder="Digite a quantidade máxima de ingressos por cpf na venda">
                   </b-form-input>
                 </b-input-group>
-                <div class="errorFormValidate errorFormValidateHack2" v-if="!$v.form.qt_ingressos_por_cpf.required">Campo é obrigatório</div>
+                <div class="errorFormValidate errorFormValidateHack2" v-if="executedAtLeastOne && !$v.form.qt_ingressos_por_cpf.required">Campo é obrigatório</div>
               </b-row>
             </b-col>
           </b-row>
@@ -373,7 +385,7 @@
         </v-wait>
         <span v-if="!processing">Salvar</span>
       </b-button>
-      <b-button :disabled="id == 0 || id == null || id == undefined" v-if="mayI('presentation-add')" type="button" variant="outline-info" size="sm" @click="addTicketType(true)">
+      <b-button :disabled="id == 0 || id == null || id == undefined" v-if="mayI('presentation-add') && !isAdd" type="button" variant="outline-info" size="sm" @click="addTicketType(true)">
         <v-wait for="inprocess">
           <template slot="waiting">
             Carregando...
@@ -386,7 +398,7 @@
         </v-wait>
         <span v-if="!processing">Tipos de Bilhetes</span>
       </b-button>
-      <b-button :disabled="id == 0 || id == null || id == undefined" v-if="mayI('presentation-add')" type="button" variant="outline-info" size="sm" @click="addPresentation(true)">
+      <b-button :disabled="id == 0 || id == null || id == undefined" v-if="mayI('presentation-add') && !isAdd" type="button" variant="outline-info" size="sm" @click="addPresentation(true)">
         <v-wait for="inprocess">
           <template slot="waiting">
             Carregando...
@@ -397,7 +409,7 @@
             Aguardando...
           </template>
         </v-wait>
-        <span v-if="!processing">Ver datas</span>
+        <span v-if="!processing && !isAdd">Ver datas</span>
       </b-button>
     </b-row>
 
@@ -646,6 +658,7 @@ export default {
               this.form.uri = response.uri;
               this.form.urifull = response.urifull;
               this.form.NomPeca = response.NomPeca;
+              this.form.external_uri = response.external_uri;
               this.form.CodTipPeca = response.CodTipPeca;
               this.form.id_genre = response.id_genre;
               this.form.TemDurPeca = response.TemDurPeca;
@@ -721,17 +734,17 @@ export default {
       this.$refs.gmapsModal.hide();
     },
     validate() {
+      this.executedAtLeastOne = true;
       return !this.$v.form.$invalid;
     },
     save() {
-      console.log(this.processing);
       if (this.processing) return;
-      console.log("passou");
 
       if (this.validate()) {
         let id_produtor = "",
           CodPeca = "",
           NomPeca = "",
+          external_uri = "",
           CodTipPeca = "",
           TemDurPeca = "",
           CenPeca = "",
@@ -765,6 +778,7 @@ export default {
         id_produtor = this.form.id_produtor;
         CodPeca = this.form.CodPeca;
         NomPeca = this.form.NomPeca;
+        external_uri = this.form.external_uri;
         CodTipPeca = this.form.id_genre;
         TemDurPeca = this.form.TemDurPeca;
         CenPeca = this.form.CenPeca;
@@ -798,7 +812,7 @@ export default {
         this.$wait.start("inprocessSave");
 
         this.showWaitAboveAll();
-        eventService.save(this.getLoggedId(), id_base, id_produtor, CodPeca, NomPeca, CodTipPeca, TemDurPeca, CenPeca, id_local_evento, ValIngresso, description, meta_description, meta_keyword, opening_time, insurance_policy, showInBanner, bannerDescription, QtIngrPorPedido, in_obriga_cpf, qt_ingressos_por_cpf, ticketoffice_askemail, imagechanged, imagebase64, free_installments, max_installments, interest_rate, ticketoffice_ticketmodel, showonline, minAmount, maxAmount, in_entrega_ingresso).then(
+        eventService.save(this.getLoggedId(), id_base, id_produtor, CodPeca, NomPeca, CodTipPeca, TemDurPeca, CenPeca, id_local_evento, ValIngresso, description, meta_description, meta_keyword, opening_time, insurance_policy, showInBanner, bannerDescription, QtIngrPorPedido, in_obriga_cpf, qt_ingressos_por_cpf, ticketoffice_askemail, imagechanged, imagebase64, free_installments, max_installments, interest_rate, ticketoffice_ticketmodel, showonline, minAmount, maxAmount, in_entrega_ingresso, external_uri).then(
 
           response => {
             this.processing = false;
@@ -807,6 +821,8 @@ export default {
 
             if (response.success) {
               this.toastSuccess("Salvo com sucesso");
+              this.$router.push(`/event/edit/${response.id_evento}/${this.form.id_base}`);
+              // this.$router.go();
             } else {
               this.toastError(response.msg);
             }
@@ -1044,6 +1060,7 @@ export default {
   },
   data() {
     return {
+      executedAtLeastOne: false,
       processing: false,
       loading: false,
       idupload: 1,
@@ -1249,6 +1266,7 @@ export default {
         produceralert: false,
         loaded: false,
         id: '',
+        external_uri: '',
         id_estado: '',
         id_municipio: '',
         ds_googlemaps: '',
