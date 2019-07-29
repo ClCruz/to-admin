@@ -5,20 +5,20 @@
           <b-col>
               <b-row class="mb-3">
                 <b-input-group size="sm">
-                  <b-input-group-prepend is-text v-bind:class="{ errorFormValidateLabel: ($v.form.id_base.$invalid) }">
+                  <b-input-group-prepend is-text v-bind:class="{ errorFormValidateLabel: (executedAtLeastOne && $v.form.id_base.$invalid) }">
                     Base:
                   </b-input-group-prepend>
-                  <b-form-select v-model="form.id_base" :options="selects.base" size="sm" v-bind:class="{ errorFormValidateInput: ($v.form.id_base.$invalid) }" />
+                  <b-form-select v-model="form.id_base" :options="selects.base" size="sm" v-bind:class="{ errorFormValidateInput: (executedAtLeastOne && $v.form.id_base.$invalid) }" />
                 </b-input-group>
-                <div class="errorFormValidate" v-if="!$v.form.id_base.required">Campo é obrigatório</div>
+                <div class="errorFormValidate" v-if="executedAtLeastOne && !$v.form.id_base.required">Campo é obrigatório</div>
               </b-row>
               <b-row class="mb-3">
                   <b-input-group size="sm">
-                      <b-input-group-prepend is-text class="firstLabel" v-bind:class="{ errorFormValidateLabel: ($v.form.nameWeb.$invalid) }">
+                      <b-input-group-prepend is-text class="firstLabel" v-bind:class="{ errorFormValidateLabel: (executedAtLeastOne && $v.form.nameWeb.$invalid) }">
                           Nome - WEB:
                       </b-input-group-prepend>
                       <b-form-input id="name"
-                                  v-bind:class="{ errorFormValidateInput: ($v.form.nameWeb.$invalid) }"
+                                  v-bind:class="{ errorFormValidateInput: (executedAtLeastOne && $v.form.nameWeb.$invalid) }"
                                   type="text"
                                   name="name"
                                   maxlength="100"
@@ -26,15 +26,15 @@
                                   placeholder="Digite o nome para web">
                       </b-form-input>
                   </b-input-group>
-                  <div class="errorFormValidate" v-if="!$v.form.nameWeb.required">Campo é obrigatório</div>
+                  <div class="errorFormValidate" v-if="executedAtLeastOne && !$v.form.nameWeb.required">Campo é obrigatório</div>
               </b-row>
               <b-row class="mb-3">
                   <b-input-group size="sm">
-                      <b-input-group-prepend is-text class="firstLabel" v-bind:class="{ errorFormValidateLabel: ($v.form.nameTicketOffice.$invalid) }">
+                      <b-input-group-prepend is-text class="firstLabel" v-bind:class="{ errorFormValidateLabel: (executedAtLeastOne && $v.form.nameTicketOffice.$invalid) }">
                           Nome - Bilheteria:
                       </b-input-group-prepend>
                       <b-form-input id="name"
-                                  v-bind:class="{ errorFormValidateInput: ($v.form.nameTicketOffice.$invalid) }"
+                                  v-bind:class="{ errorFormValidateInput: (executedAtLeastOne && $v.form.nameTicketOffice.$invalid) }"
                                   type="text"
                                   name="name"
                                   maxlength="100"
@@ -42,15 +42,15 @@
                                   placeholder="Digite o nome para bilheteria">
                       </b-form-input>
                   </b-input-group>
-                  <div class="errorFormValidate" v-if="!$v.form.nameTicketOffice.required">Campo é obrigatório</div>
+                  <div class="errorFormValidate" v-if="executedAtLeastOne && !$v.form.nameTicketOffice.required">Campo é obrigatório</div>
               </b-row>
               <b-row class="mb-3">
                   <b-input-group size="sm">
-                      <b-input-group-prepend is-text class="firstLabel" v-bind:class="{ errorFormValidateLabel: ($v.form.nameAPI.$invalid) }">
+                      <b-input-group-prepend is-text class="firstLabel" v-bind:class="{ errorFormValidateLabel: (executedAtLeastOne && $v.form.nameAPI.$invalid) }">
                           Nome - API:
                       </b-input-group-prepend>
                       <b-form-input id="name"
-                                  v-bind:class="{ errorFormValidateInput: ($v.form.nameAPI.$invalid) }"
+                                  v-bind:class="{ errorFormValidateInput: (executedAtLeastOne && $v.form.nameAPI.$invalid) }"
                                   type="text"
                                   name="name"
                                   maxlength="100"
@@ -58,7 +58,7 @@
                                   placeholder="Digite o nome para API">
                       </b-form-input>
                   </b-input-group>
-                  <div class="errorFormValidate" v-if="!$v.form.nameAPI.required">Campo é obrigatório</div>
+                  <div class="errorFormValidate" v-if="executedAtLeastOne && !$v.form.nameAPI.required">Campo é obrigatório</div>
               </b-row>
               <b-row class="mb-3">
                   <b-input-group size="sm">
@@ -428,6 +428,7 @@ export default {
     },
     save() {
       if (this.processing) return;
+      this.executedAtLeastOne = true;
 
       if (!this.validate()) {
         this.toastError("Verifique os campos");
@@ -658,6 +659,7 @@ export default {
   data () {
     return {
         processing: false,
+        executedAtLeastOne: false,
         idupload: 1,
         loading: false,
         selects: {

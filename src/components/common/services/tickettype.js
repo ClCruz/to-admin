@@ -12,16 +12,29 @@ export const tickettypeService = {
   list,
   base64,
   eventlist,
+  eventsave,
+  eventremove,
   select,
 }
 
-function select(loggedId, id_evento, id_base) {
-    let url = config.api + `/v1/admin/tickettype/select`;
+function eventsave(loggedId
+    ,id_base
+    ,id_evento
+    ,CodTipBilhete
+    ,start
+    ,end) {
 
-    //url = config.system.applyPagination(url, currentPage, perPage);
-  
-    let obj = { loggedId, id_evento, id_base };
-  
+    let url = config.api + `/v1/admin/event/tickettype/save`;
+
+    let obj = {
+        loggedId
+        ,id_base
+        ,CodTipBilhete
+        ,start
+        ,end
+        ,id_evento
+    };
+
     var ret = new Promise(
         function (resolve, reject) {
             Vue.http.post(url, obj, { emulateJSON: true }).then(res => {
@@ -34,6 +47,53 @@ function select(loggedId, id_evento, id_base) {
             });    
         }
     );
+    return ret;
+}
+
+function eventremove(loggedId
+    ,id_base
+    ,id_evento
+    ,CodTipBilhete) {
+
+    let url = config.api + `/v1/admin/event/tickettype/delete`;
+
+    let obj = {
+        loggedId
+        ,id_base
+        ,CodTipBilhete
+        ,id_evento
+    };
+
+    var ret = new Promise(
+        function (resolve, reject) {
+            Vue.http.post(url, obj, { emulateJSON: true }).then(res => {
+                resolve(res.body);
+            }, err => {
+                reject({
+                    error: true,
+                    msg: err
+                });
+            });    
+        }
+    );
+    return ret;
+}
+
+function select(loggedId, id_base, showto, principal, fixed, half, plus, allotment) {
+    let url = config.api + `/v1/admin/tickettype/select?id_base=${id_base}&showto=${showto}&principal=${principal}&fixed=${fixed}&half=${half}&plus=${plus}&allotment=${allotment}`;
+  
+    var ret = new Promise(
+        function (resolve, reject) {
+          Vue.http.get(url).then(res => {
+            resolve(res.body);
+          }, err => {
+            reject({
+              error: true,
+              msg: err
+            });
+          });
+        }
+      );
     return ret;
   }
 function eventlist(loggedId, id_evento, id_base) {
@@ -165,8 +225,6 @@ function get(loggedId, id, id_base) {
         ,saveimage: (saveimage == true ? 1 : 0)
         ,imagebase64
     };
-    
-    console.log(obj);
 
     var ret = new Promise(
         function (resolve, reject) {
