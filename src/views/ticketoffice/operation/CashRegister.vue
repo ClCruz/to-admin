@@ -134,6 +134,8 @@
                             </template>
 
                         </b-table>
+                        <div v-if="showDocumentRequiredMsg" style="color:red">Obrigatório preencher o CPF do comprador.</div>
+                        <div v-if="showCardRequiredMsg" style="color:red">Obrigatório utilizar cartão de crédito.</div>
                     </b-col>
                 </b-row>
             </b-form>
@@ -231,6 +233,7 @@ export default {
             messagePinpad: null,
             form: {
                 clientCode: null,
+                hasCPF: false,
                 sentbyemail: false,
                 cardBin: "",
                 payment: null,
@@ -666,6 +669,13 @@ export default {
             if (!this.event.validations.needClient)
                 clientCheck = true;
 
+            if (this.isDocumentRequired && !this.form.hasCPF) {
+                allvalidCheck = false;
+            }
+            if (this.showCardRequiredMsg) {
+                allvalidCheck = false;
+            }
+
             if (allvalidCheck && paymentCheck && valueCheck && clientCheck)
                 this.toffice_buttonNext(true, this.nextURI);
             else
@@ -680,6 +690,11 @@ export default {
                     {
                         this.grids.purchases.loaded = true;
                         this.grids.purchases.items = response;
+
+                        if (this.isDocumentRequired) {
+                            this.event.validations.needCPF = true;
+                        }
+
                         this.setTotalToPay();
                         this.checkIfCanSell();
                     }
@@ -737,7 +752,14 @@ export default {
                         this.event.ticketoffice_askemail = response.ticketoffice_askemail;
                         
                         this.event.validations.needClient = response.needClient == "1";
-                        this.event.validations.needCPF = response.needCPF == "1";
+                        
+                        if (this.isDocumentRequired) {
+                            this.event.validations.needCPF = true;
+                        }
+                        else {
+                            this.event.validations.needCPF = response.needCPF == "1";
+                        }
+
                         this.event.validations.needRG = response.needRG == "1";
                         this.event.validations.needPhone = response.needPhone == "1";
                         this.event.validations.needName = response.needName == "1";
@@ -760,6 +782,38 @@ export default {
         this.loadShoppingCart();
     },
     computed: {
+        showDocumentRequiredMsg() {
+            if (!this.form.hasCPF && this.isDocumentRequired) {
+                return true;
+            }
+            return false;
+        },
+        isDocumentRequired() {
+            let show = false;
+            for (let x in this.grids.purchases.items) {
+                show = this.grids.purchases.items[x].in_obriga_cpf;
+                if (show) {
+                    break;
+                }
+            }
+            return show;
+        },
+        showCardRequiredMsg() {
+            if (this.form.payment != 53 && this.form.payment != 54 && this.isCardRequired) {
+                return true;
+            }
+            return false;
+        },
+        isCardRequired() {
+            let ret = false;
+            for (let x in this.grids.purchases.items) {
+                ret = this.grids.purchases.items[x].in_obriga_cartao;
+                if (ret) {
+                    break;
+                }
+            }
+            return ret;
+        },
         amountTotal() {
             let total = 0;
             for (let x in this.grids.purchases.items) {
