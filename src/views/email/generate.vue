@@ -52,6 +52,15 @@
           </div>
         </b-col>
         <b-col>
+         
+        </b-col>
+      </b-row>
+
+      <b-row>
+        <b-col>
+   <b-button v-if="emailBody !== ''" type="button" variant="outline-success" class="mt-5" size="sm" @click="copy"> Copiar email para o clipboard</b-button>
+            <b-form-input v-if="emailBody !== ''" placeholder="Digite um sub título para o conteúdo"  v-model="emailBody"  value="Código HTML" id="myInput">></b-form-input>
+   
         </b-col>
       </b-row>
     </b-container>
@@ -282,7 +291,7 @@
                     <td class="es-m-p20b" width="250" align="left" style="padding:0;Margin:0;background-size:initial;background-attachment:initial;background-origin:initial;background-clip:initial;background-color:#FFFFFF;overflow:hidden;color:#444444;border-radius:0.25rem;box-shadow:rgba(0, 0, 0, 0.3) 0px 0px 3px 0px;"> 
                      <table width="100%" cellspacing="0" cellpadding="0" bgcolor="#fff" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;background-color:#FFFFFF;"> 
                        <tr style="border-collapse:collapse;"> 
-                        <td align="center" style="padding:0;Margin:0;"> <a target="_blank" href="`+ item.uri  +`" style="-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:lato, 'helvetica neue', helvetica, arial, sans-serif;font-size:15px;text-decoration:none;color:#ED8E20;"> <img class="adapt-img" src="` + item.img  + `" alt="Item #1" style="display:block;border:0;outline:none;text-decoration:none;-ms-interpolation-mode:bicubic;" title="Item #1" width="246"> </a> </td> 
+                        <td align="center" style="padding:0;Margin:0;"> <a target="_blank" href="`+ this.uriSite + item.uri  +`" style="-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:lato, 'helvetica neue', helvetica, arial, sans-serif;font-size:15px;text-decoration:none;color:#ED8E20;"> <img class="adapt-img" src="` + item.img  + `" alt="Item #1" style="display:block;border:0;outline:none;text-decoration:none;-ms-interpolation-mode:bicubic;" title="Item #1" width="246"> </a> </td> 
                        </tr> 
                        <tr style="border-collapse:collapse;"> 
                         <td align="center" style="padding:0;Margin:0;padding-left:10px;padding-top:15px;"> <h4 style="Margin:0;line-height:120%;mso-line-height-rule:exactly;font-family:'open sans', 'helvetica neue', helvetica, arial, sans-serif;text-align:left;">` + item.ds_evento + `</h4> </td> 
@@ -294,7 +303,7 @@
                         <td align="center" style="padding:0;Margin:0;padding-bottom:10px;padding-left:10px;"> <p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-size:12px;font-family:lato, 'helvetica neue', helvetica, arial, sans-serif;line-height:18px;color:#777777;text-align:left;"><span class="product-description">` + item.ds_nome_teatro + ' - ' + item.ds_municipio + ' - ' + item.sg_estado + '' + `</span></p> </td> 
                        </tr> 
                        <tr style="border-collapse:collapse;"> 
-                          <td align="center" bgcolor="transparent" style="Margin:0;padding-left:10px;padding-right:10px;padding-top:15px;padding-bottom:25px;"> <span class="es-button-border" style="border-style:solid;border-color:#333333;background:#2F2F2F;border-width:0px;display:inline-block;border-radius:5px;width:auto;box-shadow:rgba(0, 0, 0, 0.6) 0px 0px 3px 0px;"> <a href="`+ item.uri  +`" class="es-button" target="_blank" style="mso-style-priority:100 !important;text-decoration:none;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:'open sans', 'helvetica neue', helvetica, arial, sans-serif;font-size:12px;color:#FFFFFF;border-style:solid;border-color:#2F2F2F;border-width:10px 30px;display:inline-block;background:#2F2F2F;border-radius:5px;font-weight:bold;font-style:normal;line-height:14px;width:auto;text-align:center;">COMPRAR INGRESSOS</a> </span> </td> 
+                          <td align="center" bgcolor="transparent" style="Margin:0;padding-left:10px;padding-right:10px;padding-top:15px;padding-bottom:25px;"> <span class="es-button-border" style="border-style:solid;border-color:#333333;background:#2F2F2F;border-width:0px;display:inline-block;border-radius:5px;width:auto;box-shadow:rgba(0, 0, 0, 0.6) 0px 0px 3px 0px;"> <a href="`+ this.uriSite + item.uri  +`" class="es-button" target="_blank" style="mso-style-priority:100 !important;text-decoration:none;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:'open sans', 'helvetica neue', helvetica, arial, sans-serif;font-size:12px;color:#FFFFFF;border-style:solid;border-color:#2F2F2F;border-width:10px 30px;display:inline-block;background:#2F2F2F;border-radius:5px;font-weight:bold;font-style:normal;line-height:14px;width:auto;text-align:center;">COMPRAR INGRESSOS</a> </span> </td> 
                        </tr> 
                      </table></td> 
                    </tr> 
@@ -393,7 +402,6 @@
             this.isLoaded = true;
             this.text = response;
 
-            console.log(this.text);
   
             this.generateBodyEmail();
           },
@@ -405,10 +413,24 @@
       save() {
         this.getSearchResults('search', this.input);
         // console.log(this.slideData);
+      },
+      copy() {
+         /* Get the text field */
+  var copyText = document.getElementById("myInput");
+
+  /* Select the text field */
+  copyText.select();
+
+  /* Copy the text inside the text field */
+  document.execCommand("copy");
+
+  /* Alert the copied text */
+  alert("Copied the text: " + copyText.value);
       }
     },
     data() {
       return {
+        uriSite: config.uri,
         cityList: [],
         slideData: [],
         text: '',

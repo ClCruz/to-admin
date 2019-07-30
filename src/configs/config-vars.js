@@ -9,6 +9,7 @@ const myconf = {
   apikey: multi.apikey,
   geo: 'https://maps.googleapis.com/maps/api/geocode/json?latlng={lat},{lng}&sensor=true&key={key}',
   geokey: multi.geokey,
+  uri: multi.uri,
   scss: multi.scss,
   host
 }
