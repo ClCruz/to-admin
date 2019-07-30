@@ -47,20 +47,17 @@
         </b-col>
       </b-row>
       <b-row>
-        <b-col>
-          <div v-html="emailBody">
+        <b-col class="pt-5">
+          <div class="align-center mx-0 m-0" v-html="emailBody">
           </div>
         </b-col>
         <b-col>
-         
         </b-col>
       </b-row>
-
       <b-row>
         <b-col>
-   <b-button v-if="emailBody !== ''" type="button" variant="outline-success" class="mt-5" size="sm" @click="copy"> Copiar email para o clipboard</b-button>
-            <b-form-input v-if="emailBody !== ''" placeholder="Digite um sub título para o conteúdo"  v-model="emailBody"  value="Código HTML" id="myInput">></b-form-input>
-   
+          <b-button v-if="emailBody !== ''" type="button" variant="outline-success" class="mt-5" size="sm" @click="copy"> Copiar email para o clipboard</b-button>
+          <b-form-input v-if="emailBody !== ''" placeholder="Digite um sub título para o conteúdo"  v-model="emailBody"  value="Código HTML" id="myInput">></b-form-input>
         </b-col>
       </b-row>
     </b-container>
@@ -193,16 +190,7 @@
             <td align="center" style="padding:0;Margin:0;"> 
              
                  <!--[if mso]></td><td width="20"></td><td width="278" valign="top"><![endif]--> 
-                 <table class="es-right" cellspacing="0" cellpadding="0" align="right" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;float:right;"> 
-                   <tr style="border-collapse:collapse;"> 
-                    <td width="278" align="left" style="padding:0;Margin:0;"> 
-                     <table width="100%" cellspacing="0" cellpadding="0" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px;"> 
-                       <tr style="border-collapse:collapse;"> 
-                        <td class="es-infoblock es-m-txt-c" align="right" style="padding:0;Margin:0;line-height:14px;font-size:12px;color:#CCCCCC;"> <p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-size:12px;font-family:lato, 'helvetica neue', helvetica, arial, sans-serif;line-height:14px;color:#CCCCCC;"><a href="http://#" target="_blank" style="-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:arial, 'helvetica neue', helvetica, sans-serif;font-size:12px;text-decoration:none;color:#CCCCCC;">View in browser</a><br></p> </td> 
-                       </tr> 
-                     </table> </td> 
-                   </tr> 
-                 </table> 
+                
                  <!--[if mso]></td></tr></table><![endif]--> </td> 
                </tr> 
              </table> </td> 
@@ -351,7 +339,7 @@
                   <!--[if mso]></td></tr></table><![endif]--> </td> 
                </tr> `
         let count = 0;
-
+  
         if (this.text.length < this.numberOfItens) {
           count = this.text.length;
         } else {
@@ -401,7 +389,7 @@
             this.searchResults.map(x => x.img = x.cardimage);
             this.isLoaded = true;
             this.text = response;
-
+  
   
             this.generateBodyEmail();
           },
@@ -417,15 +405,15 @@
       copy() {
          /* Get the text field */
   var copyText = document.getElementById("myInput");
-
+  
   /* Select the text field */
   copyText.select();
-
+  
   /* Copy the text inside the text field */
   document.execCommand("copy");
-
+  
   /* Alert the copied text */
-  alert("Copied the text: " + copyText.value);
+  this.toastSuccess("Texto copiado");
       }
     },
     data() {
