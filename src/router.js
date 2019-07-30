@@ -162,6 +162,18 @@ const adminTypePaymentTypeAdd = resolve => {
   }, 'admin-typeofpaymenttype');
 };
 
+// city
+const adminCityList = resolve => {
+  require.ensure(['./views/city/list.vue'], () => {
+    resolve(require('./views/city/list.vue'));
+  }, 'admin-city');
+};
+const adminCityAdd = resolve => {
+  require.ensure(['./views/city/add.vue'], () => {
+    resolve(require('./views/city/add.vue'));
+  }, 'admin-city');
+};
+
 // partner
 const adminPartnerList = resolve => {
   require.ensure(['./views/partner/list.vue'], () => {
@@ -369,6 +381,24 @@ const obj = new Router({
       name: 'typeofpt-edit',
       props: true,
       component: adminTypePaymentTypeAdd
+    },
+    //------
+    //City
+    {
+      path: '/city/list',
+      name: 'city-list',
+      component: adminCityList
+    },
+    {
+      path: '/city/add',
+      name: 'city-add',
+      component: adminCityAdd
+    },
+    {
+      path: '/city/edit/:id/',
+      name: 'city-edit',
+      props: true,
+      component: adminCityAdd
     },
     //------
     //TicketType

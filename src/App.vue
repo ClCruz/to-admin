@@ -377,6 +377,25 @@ export default {
           ]
         },
         {
+          title: 'Cidade',
+          icon: 'fas fa-city',
+          code: 'city-viewer',
+          //code: 'user-viewer',
+          child: [{
+              href: '/city/add',
+              title: 'Adicionar',
+              icon: 'fas fa-pen',
+              code: 'city-add'
+            },
+            {
+              href: '/city/list',
+              title: 'Listar',
+              icon: 'fas fa-list-ul',
+              code: 'city-viewer', //'user-viewer'
+            },
+          ]
+        },
+        {
           title: 'Produtores',
           icon: 'fas fa-people-carry',
           code: 'producer-viewer',
