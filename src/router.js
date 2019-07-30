@@ -150,6 +150,30 @@ const adminTicketTypeAdd = resolve => {
   }, 'admin-tickettype');
 };
 
+// typepaymenttype
+const adminTypePaymentTypeList = resolve => {
+  require.ensure(['./views/typeofpaymenttype/list.vue'], () => {
+    resolve(require('./views/typeofpaymenttype/list.vue'));
+  }, 'admin-typeofpaymenttype');
+};
+const adminTypePaymentTypeAdd = resolve => {
+  require.ensure(['./views/typeofpaymenttype/add.vue'], () => {
+    resolve(require('./views/typeofpaymenttype/add.vue'));
+  }, 'admin-typeofpaymenttype');
+};
+
+// city
+const adminCityList = resolve => {
+  require.ensure(['./views/city/list.vue'], () => {
+    resolve(require('./views/city/list.vue'));
+  }, 'admin-city');
+};
+const adminCityAdd = resolve => {
+  require.ensure(['./views/city/add.vue'], () => {
+    resolve(require('./views/city/add.vue'));
+  }, 'admin-city');
+};
+
 // partner
 const adminPartnerList = resolve => {
   require.ensure(['./views/partner/list.vue'], () => {
@@ -339,6 +363,42 @@ const obj = new Router({
       name: 'email-generate',
       props: true,
       component: adminEmailAdd
+    },
+    //------
+    //Type of payment type
+    {
+      path: '/typeofpt/list',
+      name: 'typeofpt-list',
+      component: adminTypePaymentTypeList
+    },
+    {
+      path: '/typeofpt/add',
+      name: 'typeofpt-add',
+      component: adminTypePaymentTypeAdd
+    },
+    {
+      path: '/typeofpt/edit/:id/:id_base',
+      name: 'typeofpt-edit',
+      props: true,
+      component: adminTypePaymentTypeAdd
+    },
+    //------
+    //City
+    {
+      path: '/city/list',
+      name: 'city-list',
+      component: adminCityList
+    },
+    {
+      path: '/city/add',
+      name: 'city-add',
+      component: adminCityAdd
+    },
+    {
+      path: '/city/edit/:id/',
+      name: 'city-edit',
+      props: true,
+      component: adminCityAdd
     },
     //------
     //TicketType
