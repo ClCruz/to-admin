@@ -184,6 +184,7 @@ export default {
   },
   created() {
     this.get();
+    this.codes();
   },
   data () {
     return {

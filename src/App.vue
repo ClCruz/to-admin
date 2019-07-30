@@ -251,6 +251,32 @@ export default {
           ]
         },
         {
+          title: 'Tipo de pagamento',
+          icon: 'fas fa-money-bill-wave',
+          code: 'typeofpt-viewer',
+          child: [
+            {
+              title: 'Tipo',
+              icon: 'fas fa-money-check-alt',
+              code: 'typeofpt-add',
+              child: [
+                {
+                  href: '/typeofpt/add',
+                  title: 'Adicionar',
+                  icon: 'fas fa-pen',
+                  code: 'typeofpt-add'
+                },
+                {
+                  href: '/typeofpt/list',
+                  title: 'Listar',
+                  icon: 'fas fa-list-ul',
+                  code: 'typeofpt-viewer',
+                },
+              ]
+            },
+          ]
+        },
+        {
           title: 'Bilhete',
           icon: 'fas fa-clipboard-list',
           code: 'tickettype-viewer',
