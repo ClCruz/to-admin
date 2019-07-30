@@ -1,5 +1,6 @@
 <template>
     <div v-if="mayIsee" style="-moz-user-select: none; -webkit-user-select: none; -ms-user-select:none; user-select:none;-o-user-select:none;" unselectable="on" onselectstart="return false;">
+      <
       <b-container v-if="isAdd">
         <b-row class="mb-3">
           <b-col>
@@ -9,7 +10,7 @@
                   <b-input-group-prepend is-text>
                       Bilhete:
                   </b-input-group-prepend>
-                  <b-form-select v-model="form.CodTipBilhete" v-on:change="selTicketType" :options="selects.ticketype" size="sm" />
+                  <b-form-select v-model="form.CodTipBilhete" v-on:change="selTicketType" :options="selects.tickettype" size="sm" />
                 </b-input-group>
             </b-collapse>
           </b-col>
@@ -30,11 +31,10 @@
           </b-col>
         </b-row>
         <b-row class="mx-auto mb-3">
-          <b-collapse v-model="form.collapseButton" id="collapse1" class="mt-2 mx-auto mb-3">
               <b-row class="mx-auto mb-3">
-                  <b-button title="Incluir" variant="outline-success" v-if="mayI('ev-add')" @click.stop="save">Incluir</b-button>
+                  <b-button v-if="mayI('ev-add') && form.collapseButtonSave" title="Incluir" variant="outline-success" @click.stop="save">Incluir</b-button>
+                  <b-button title="Voltar" variant="outline-info" @click.stop="back">Voltar</b-button>
               </b-row>
-          </b-collapse>
         </b-row>
       </b-container>
       <b-container v-if="!isAdd && !dummy">
@@ -65,8 +65,12 @@
                 <strong>Carregando...</strong>
               </div>
 
+              <template slot="TipBilhete" slot-scope="data">
+                  <span style="font-size:12px;">{{data.item.TipBilhete}}</span>
+              </template>
+
               <template slot="DatIniDesconto" slot-scope="data">
-                  <span>{{data.item.DatIniDesconto}} - {{data.item.DatFinDesconto}}</span>
+                  <span style="font-size:12px;">{{data.item.DatIniDesconto}} - {{data.item.DatFinDesconto}}</span>
               </template>
 
               <template slot="isFixed" slot-scope="data">
@@ -115,17 +119,18 @@
               </template>
 
               <template slot="vl_preco_fixo" slot-scope="data">
-                  <span v-if="data.item.isPrincipal == 1">-</span>
-                  <span v-if="data.item.isFixed == 1">{{data.item.vl_preco_fixo | money }}</span>
-                  <span v-if="data.item.isDiscount == 1">{{ data.item.PerDesconto | per }}</span>
-                  <span v-if="data.item.isHalf == 1">{{ data.item.PerDesconto | per }}</span>
-                  <span v-if="data.item.isPlus == 1">{{ data.item.vl_preco_fixo | money }}</span>
+                  <span style="font-size: 12px;" v-if="data.item.isPrincipal == 1">-</span>
+                  <span style="font-size: 12px;" v-if="data.item.isFixed == 1">{{data.item.vl_preco_fixo | money }}</span>
+                  <span style="font-size: 12px;" v-if="data.item.isDiscount == 1">{{ data.item.PerDesconto | per }}</span>
+                  <span style="font-size: 12px;" v-if="data.item.isHalf == 1">{{ data.item.PerDesconto | per }}</span>
+                  <span style="font-size: 12px;" v-if="data.item.isPlus == 1">{{ data.item.vl_preco_fixo | money }}</span>
               </template>
 
-              <template slot="active" slot-scope="data">
-                <b-button size="sm" @click="removeAdded(data.item)" title="Remover" variant="danger">
-                    Remover
-                </b-button>
+              <template slot="actions" slot-scope="data">
+                  <span v-if="!mayI('presentation-add')">-</span>
+                  <b-button-group size="sm" v-if="mayI('presentation-add')">
+                      <b-button title="Excluir" v-if="mayI('presentation-add')" @click.stop="remove(data.item,$event.target)">Excluir</b-button>
+                  </b-button-group>
               </template>
             </b-table>
 
@@ -191,16 +196,108 @@ export default {
     }
   },
   methods: {
+    back() {
+      this.isAdd = false;
+      this.dummy = false;
+      this.form.CodTipBilhete = '';
+      this.form.selectedDate.start = '';
+      this.form.selectedDate.end = '';
+    },
     save() {
+      if (this.processing) return;
+
       this.showWaitAboveAll();
+
+      if (this.form.CodTipBilhete != '' && this.form.selectedDate.start != '' && this.form.selectedDate.end != '') {
+        tickettypeService.eventsave(this.getLoggedId(), this.id_base, this.id, this.form.CodTipBilhete, this.form.selectedDate.start, this.form.selectedDate.end).then(
+          response => {
+            this.hideWaitAboveAll();
+            this.processing = false;
+
+            if (this.validateJSON(response)) {
+              if (response.success == true) {
+                this.toastSuccess(response.msg);
+                this.populateGrid();
+                this.isAdd = false;
+                this.dummy = false;
+                this.clear();
+
+                EventBus.$emit('reloadinfo', true);
+              }
+              else {
+                this.toastError(response.msg);
+              }
+            }
+          },
+          error => {
+            this.hideWaitAboveAll();
+            this.processing = false;
+            this.toastError("Falha na execução.");
+          }
+        );        
+
+      }
+    },
+    remove(data) {
+      // data.CodPeca;
+      // data.CodTipBilhete;
+      if (this.processing) return;
+      this.$swal({
+          type: 'question',
+          text: `Deseja excluir o bilhete ${data.TipBilhete}?`,
+          showCancelButton: true,
+          showConfirmButton: true,
+          confirmButtonText: 'Sim',
+          cancelButtonText: 'Não',
+          allowEscapeKey: false,
+          allowOutsideClick: false,
+          allowEnterKey: false,
+          preConfirm: () => {
+            this.removeinternal(data.CodTipBilhete);
+          },
+      });
+    },
+    removeinternal(code) {
+      if (this.processing) return;
+
+      this.showWaitAboveAll();
+
+      if (code != '') {
+        tickettypeService.eventremove(this.getLoggedId(), this.id_base, this.id, code).then(
+          response => {
+            this.hideWaitAboveAll();
+            this.processing = false;
+
+            if (this.validateJSON(response)) {
+              if (response.success == true) {
+                this.toastSuccess(response.msg);
+                this.populateGrid();
+                this.isAdd = false;
+                this.dummy = false;
+                this.clear();
+
+                EventBus.$emit('reloadinfo', true);
+              }
+              else {
+                this.toastError(response.msg);
+              }
+            }
+          },
+          error => {
+            this.hideWaitAboveAll();
+            this.processing = false;
+            this.toastError("Falha na execução.");
+          }
+        );        
+      }
     },
     startchanged(date) {
       this.form.selectedDate.start = moment(date).isValid() ? moment(date).format("YYYY-MM-DD") : '';
-      this.form.collapseButton = true;
+      this.form.collapseButtonSave = true;
     },
     endchanged(date) {
       this.form.selectedDate.end = moment(date).isValid() ? moment(date).format("YYYY-MM-DD") : '';
-      this.form.collapseButton = true;
+      this.form.collapseButtonSave = true;
     },
     selTicketType() {
       this.form.collapseDays = true;
@@ -210,38 +307,6 @@ export default {
       this.dummy = true;
       this.populateTicketType();
     },
-    deletetickettype() {
-      if (this.processing) return;
-
-      this.processing = true;
-      this.showWaitAboveAll();
-      presentationService.remove(this.getLoggedId(), this.form.modify.CodApresentacao,this.id_base).then(
-        response => {
-          this.hideWaitAboveAll();
-          this.processing = false;
-
-          if (this.validateJSON(response)) {
-            if (response.success == true) {
-              this.toastSuccess(response.msg);
-              this.populateGrid();
-              this.isAdd = false;
-              this.dummy = false;
-              this.clear();
-
-              EventBus.$emit('reloadinfo', true);
-            }
-            else {
-              this.toastError(response.msg);
-            }
-          }
-        },
-        error => {
-          this.hideWaitAboveAll();
-          this.processing = false;
-          this.toastError("Falha na execução.");
-        }
-      );
-    },
     edit() {
       this.isAdd = false;
       this.dummy = true;
@@ -249,13 +314,13 @@ export default {
     },
     populateTicketType() {
       this.showWaitAboveAll();
-      tickettypeService.select(this.id_base).then(
+      tickettypeService.select(this.getLoggedId(),this.id_base, "all", 0, 0, 0, 0, 0).then(
         response => {
           this.hideWaitAboveAll();
 
           if (this.validateJSON(response))
           {
-              this.selects.room = response;
+              this.selects.tickettype = response;
           }
         },
         error => {
@@ -293,7 +358,7 @@ export default {
       this.form.CodTipBilhete = "";
       this.form.collapseTicketType = true;
       this.form.collapseDays = false;
-      this.form.collapseButton = false;
+      this.form.collapseButtonSave = false;
       this.form.selectedDate.end = '';
       this.form.selectedDate.start = '';
     },
@@ -346,7 +411,7 @@ export default {
           row: null,
           collapseTicketType: true,
           collapseDays: false,
-          collapseButton: false,
+          collapseButtonSave: false,
           selectedDate: {
             start: '',
             end: ''
@@ -376,6 +441,7 @@ export default {
                 allowticketoffice: { label: 'Bilh.', sortable: false },
                 allowapi: { label: 'API', sortable: false },
                 vl_preco_fixo: { label: 'Valor', sortable: false },
+                actions: { label: 'Ações' }
             },
           },
         }

@@ -70,6 +70,7 @@
                   <b-button-group size="sm" v-if="mayI('ev-add', 'presentation-add')">
                       <b-button title="Editar" v-if="mayI('ev-add')" @click.stop="edit(data.item,$event.target)">Editar</b-button>
                       <b-button title="Datas" v-if="mayI('presentation-add')" @click.stop="datas(data.item,$event.target)">Datas</b-button>
+                      <b-button title="Datas" v-if="mayI('presentation-add')" @click.stop="tickets(data.item,$event.target)">Bilhetes</b-button>
                   </b-button-group>
               </template>
           </b-table>
@@ -112,6 +113,9 @@ export default {
     },
     datas(item) {
       this.$router.push(`/event/edit/${item.id_evento}/${item.id_base}?opendate=true`);
+    },
+    tickets(item) {
+      this.$router.push(`/event/edit/${item.id_evento}/${item.id_base}?openticket=true`);
     },
     pagto(to) {
       this.grids.event.currentPage = to;

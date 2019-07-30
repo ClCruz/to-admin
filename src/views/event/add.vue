@@ -573,9 +573,6 @@ export default {
       console.log("dataChange");
       console.log(data)
     },
-    teste() {
-      alert("oi");
-    },
     reloadonly() {
       this.get(false);
     },

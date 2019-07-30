@@ -10,10 +10,10 @@
               <span class="selectgroup-button selectgroup-button-icon">Todos</span>
             </label>
           <label class="selectgroup-item">
-            <input type="radio" name="icon-input" value="2" class="selectgroup-input" @click="filterWeb()"  v-if="data.web.length !== 0">
+            <input type="radio" name="icon-input" value="2" class="selectgroup-input" @click="filterWeb()"  v-if="data!=null && data.web!=null && data.web.length !== 0">
               <span class="selectgroup-button selectgroup-button-icon"><i class="fab fa-chrome"></i> Web </span>
             </label>
-          <label class="selectgroup-item" v-if="data.ticketoffice.length !== 0">
+          <label class="selectgroup-item" v-if="data!=null && data.ticketoffice!=null && data.ticketoffice.length !== 0">
             <input type="radio" name="icon-input" value="3" class="selectgroup-input" @click="filterTicketoffice()">
               <span class="selectgroup-button selectgroup-button-icon"><i class="fas fa-ticket-alt"></i> Bilheteria</span>
             </label>
