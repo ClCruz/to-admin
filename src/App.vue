@@ -125,6 +125,8 @@ export default {
     }
     this.tryLogin(null);
     this.setMenu();
+
+    console.log(this.menu)
   },
   computed: {},
   head: {
