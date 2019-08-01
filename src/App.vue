@@ -274,6 +274,25 @@ export default {
                 },
               ]
             },
+            {
+              title: 'Forma',
+              icon: 'fas fa-money-bill-alt',
+              code: 'paymenttype-add',
+              child: [
+                {
+                  href: '/paymenttype/add',
+                  title: 'Adicionar',
+                  icon: 'fas fa-pen',
+                  code: 'paymenttype-add'
+                },
+                {
+                  href: '/paymenttype/list',
+                  title: 'Listar',
+                  icon: 'fas fa-list-ul',
+                  code: 'paymenttype-viewer',
+                },
+              ]
+            },
           ]
         },
         {
