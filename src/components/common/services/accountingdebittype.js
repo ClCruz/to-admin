@@ -10,7 +10,91 @@ export const accountingdebittypeService = {
   list,
   get,
   save,
-  select
+  select,
+  eventlist,
+  eventremove,
+  eventsave
+}
+
+function eventlist(loggedId, id_evento, id_base) {
+  let url = config.api + `/v1/admin/event/accountingdebittype/list`;
+
+  let obj = { loggedId, id_evento, id_base };
+
+  var ret = new Promise(
+      function (resolve, reject) {
+          Vue.http.post(url, obj, { emulateJSON: true }).then(res => {
+              resolve(res.body);
+          }, err => {
+              reject({
+                  error: true,
+                  msg: err
+              });
+          });    
+      }
+  );
+  return ret;
+}
+function eventsave(loggedId
+  ,id_base
+  ,id_evento
+  ,CodTipDebBordero
+  ,start
+  ,end) {
+
+  let url = config.api + `/v1/admin/event/accountingdebittype/save`;
+
+  let obj = {
+      loggedId
+      ,id_base
+      ,CodTipDebBordero
+      ,start
+      ,end
+      ,id_evento
+  };
+
+  var ret = new Promise(
+      function (resolve, reject) {
+          Vue.http.post(url, obj, { emulateJSON: true }).then(res => {
+              resolve(res.body);
+          }, err => {
+              reject({
+                  error: true,
+                  msg: err
+              });
+          });    
+      }
+  );
+  return ret;
+}
+
+function eventremove(loggedId
+  ,id_base
+  ,id_evento
+  ,CodTipDebBordero) {
+
+  let url = config.api + `/v1/admin/event/accountingdebittype/delete`;
+
+  let obj = {
+      loggedId
+      ,id_base
+      ,CodTipDebBordero
+      ,id_evento
+  };
+
+  var ret = new Promise(
+      function (resolve, reject) {
+          Vue.http.post(url, obj, { emulateJSON: true }).then(res => {
+              resolve(res.body);
+          }, err => {
+              reject({
+                  error: true,
+                  msg: err
+              });
+          });    
+      }
+  );
+  return ret;
 }
 
   function list(loggedId, id_base, text, currentPage, perPage) {

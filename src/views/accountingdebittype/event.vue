@@ -3,13 +3,13 @@
       <b-container v-if="isAdd">
         <b-row class="mb-3">
           <b-col>
-            <b-collapse v-model="form.collapseTicketType" id="collapse1" class="mt-2">
-                <h3>Qual o bilhete?</h3>
+            <b-collapse v-model="form.collapseAccountingDebitType" id="collapse1" class="mt-2">
+                <h3>Qual o tipo de débito?</h3>
                 <b-input-group size="sm">
                   <b-input-group-prepend is-text>
-                      Bilhete:
+                      Tipo de débito:
                   </b-input-group-prepend>
-                  <b-form-select v-model="form.CodTipBilhete" v-on:change="selTicketType" :options="selects.tickettype" size="sm" />
+                  <b-form-select v-model="form.CodTipDebBordero" v-on:change="selaccountingdebittype" :options="selects.accountingdebittypes" size="sm" />
                 </b-input-group>
             </b-collapse>
           </b-col>
@@ -19,6 +19,8 @@
             <b-collapse v-model="form.collapseDays" id="collapse1" class="mt-2">
                 <h3>Qual os dias?</h3>
                 <HotelDatePicker :id="components.datepicker.id" ref="dtpicker" :format="components.datepicker.format" :minNights="components.datepicker.minNights"
+                :startDate="startDate"
+                :endDate="endDate"
                 :maxNights="components.datepicker.maxNights"
                 :hoveringTooltip="components.datepicker.hoveringTooltip"
                 :i18n="components.datepicker.ptBr"
@@ -31,7 +33,7 @@
         </b-row>
         <b-row class="mx-auto mb-3">
               <b-row class="mx-auto mb-3">
-                  <b-button v-if="mayI('ev-add') && form.collapseButtonSave" title="Incluir" variant="outline-success" @click.stop="save">Incluir</b-button>
+                  <b-button v-if="mayI('ev-accountingdebittype-add') && form.collapseButtonSave" title="Incluir" variant="outline-success" @click.stop="save">Incluir</b-button>
                   <b-button title="Voltar" variant="outline-info" @click.stop="back">Voltar</b-button>
               </b-row>
         </b-row>
@@ -64,71 +66,24 @@
                 <strong>Carregando...</strong>
               </div>
 
-              <template slot="TipBilhete" slot-scope="data">
-                  <span style="font-size:12px;">{{data.item.TipBilhete}}</span>
+              <template slot="DebBordero" slot-scope="data">
+                  <span style="font-size:12px;">{{data.item.DebBordero}}</span>
               </template>
 
-              <template slot="DatIniDesconto" slot-scope="data">
-                  <span style="font-size:12px;">{{data.item.DatIniDesconto}} - {{data.item.DatFinDesconto}}</span>
+              <template slot="DatIniDebito" slot-scope="data">
+                  <span style="font-size:12px;">{{data.item.DatIniDebito}} - {{data.item.DatFinDebito}}</span>
               </template>
 
-              <template slot="isFixed" slot-scope="data">
-                  <span v-if="data.item.isFixed == 1"><i class="fas fa-circle"></i></span>
-                  <span v-else><i class="far fa-circle"></i></span>
-              </template>
-
-              <template slot="isPrincipal" slot-scope="data">
-                  <span v-if="data.item.isPrincipal == 1"><i class="fas fa-circle"></i></span>
-                  <span v-else><i class="far fa-circle"></i></span>
-              </template>
-
-              <template slot="isHalf" slot-scope="data">
-                  <span v-if="data.item.isHalf == 1"><i class="fas fa-circle"></i></span>
-                  <span v-else><i class="far fa-circle"></i></span>
-              </template>
-
-              <template slot="isDiscount" slot-scope="data">
-                  <span v-if="data.item.isDiscount == 1"><i class="fas fa-circle"></i></span>
-                  <span v-else><i class="far fa-circle"></i></span>
-              </template>
-
-              <template slot="isPlus" slot-scope="data">
-                  <span v-if="data.item.isPlus == 1"><i class="fas fa-circle"></i></span>
-                  <span v-else><i class="far fa-circle"></i></span>
-              </template>
-
-              <template slot="isAllotment" slot-scope="data">
-                  <span v-if="data.item.isAllotment == 1"><i class="fas fa-circle"></i></span>
-                  <span v-else><i class="far fa-circle"></i></span>
-              </template>
-
-              <template slot="allowweb" slot-scope="data">
-                  <span v-if="data.item.allowweb == 1"><i class="fas fa-circle"></i></span>
-                  <span v-else><i class="far fa-circle"></i></span>
-              </template>
-
-              <template slot="allowticketoffice" slot-scope="data">
-                  <span v-if="data.item.allowticketoffice == 1"><i class="fas fa-circle"></i></span>
-                  <span v-else><i class="far fa-circle"></i></span>
-              </template>
-
-              <template slot="allowapi" slot-scope="data">
-                  <span v-if="data.item.allowapi == 1"><i class="fas fa-circle"></i></span>
-                  <span v-else><i class="far fa-circle"></i></span>
-              </template>
-
-              <template slot="vl_preco_fixo" slot-scope="data">
-                  <span style="font-size: 12px;" v-if="data.item.isPrincipal == 1">-</span>
-                  <span style="font-size: 12px;" v-if="data.item.isFixed == 1">{{data.item.vl_preco_fixo | money }}</span>
-                  <span style="font-size: 12px;" v-if="data.item.isDiscount == 1">{{ data.item.PerDesconto | per }}</span>
-                  <span style="font-size: 12px;" v-if="data.item.isHalf == 1">{{ data.item.PerDesconto | per }}</span>
-                  <span style="font-size: 12px;" v-if="data.item.isPlus == 1">{{ data.item.vl_preco_fixo | money }}</span>
+              <template slot="PerDesconto_formatted" slot-scope="data">
+                  <span v-if="data.item.TipValor == 'F' || data.item.TipValor == 'V'">R$ </span>
+                  {{data.item.PerDesconto_formatted}}
+                  <span v-if="data.item.TipValor == 'P'">%</span>
               </template>
 
               <template slot="actions" slot-scope="data">
-                  <span v-if="!mayI('presentation-add')">-</span>
-                  <b-button-group size="sm" v-if="mayI('presentation-add')">
-                      <b-button title="Excluir" v-if="mayI('presentation-add')" @click.stop="remove(data.item,$event.target)">Excluir</b-button>
+                  <span v-if="!mayI('ev-accountingdebittype-add')">-</span>
+                  <b-button-group size="sm" v-if="mayI('ev-accountingdebittype-add')">
+                      <b-button title="Excluir" v-if="mayI('ev-accountingdebittype-add')" @click.stop="remove(data.item,$event.target)">Excluir</b-button>
                   </b-button-group>
               </template>
             </b-table>
@@ -151,7 +106,7 @@ import ToggleButton from 'vue-js-toggle-button';
 import { extendMoment } from 'moment-range';
 import { func } from "@/functions";
 import { EventBus } from '@/event-bus';
-import { tickettypeService } from '../../components/common/services/tickettype';
+import { accountingdebittypeService } from '../../components/common/services/accountingdebittype';
 import { defer } from 'q';
 import { Datetime } from 'vue-datetime';
 import { Settings } from 'luxon';
@@ -168,7 +123,7 @@ import 'vue-datetime/dist/vue-datetime.css';
 
 export default {
   mixins: [func],
-  props: ['id', 'id_base'],
+  props: ['id', 'id_base', 'startDate', 'endDate'],
   components: { VueTimepicker, HotelDatePicker, Datetime },
   name: 'tickettypeevent-add',
   head: {
@@ -176,7 +131,7 @@ export default {
       return { 
         inner: `TicketOffice | Admin`,
         separator: " | ",
-        complement: `Bilhete x Evento - ${this.typeOf}`,
+        complement: `Tipo de Débito de Bordero x Evento - ${this.typeOf}`,
       }
     },
   },
@@ -185,7 +140,7 @@ export default {
   },
   computed: {
     mayIsee() {
-      return this.mayI('presentation-add', 'presentation-viewer');
+      return this.mayI('ev-accountingdebittype-add');
     },
     typeOf() {
       return this.isAdd ? "Adicionar" : "Alterar";
@@ -198,17 +153,15 @@ export default {
     back() {
       this.isAdd = false;
       this.dummy = false;
-      this.form.CodTipBilhete = '';
+      this.form.CodTipDebBordero = '';
       this.form.selectedDate.start = '';
       this.form.selectedDate.end = '';
     },
     save() {
       if (this.processing) return;
-
-      this.showWaitAboveAll();
-
-      if (this.form.CodTipBilhete != '' && this.form.selectedDate.start != '' && this.form.selectedDate.end != '') {
-        tickettypeService.eventsave(this.getLoggedId(), this.id_base, this.id, this.form.CodTipBilhete, this.form.selectedDate.start, this.form.selectedDate.end).then(
+      if (this.form.CodTipDebBordero != '' && this.form.selectedDate.start != '' && this.form.selectedDate.end != '') {
+        this.showWaitAboveAll();
+        accountingdebittypeService.eventsave(this.getLoggedId(), this.id_base, this.id, this.form.CodTipDebBordero, this.form.selectedDate.start, this.form.selectedDate.end).then(
           response => {
             this.hideWaitAboveAll();
             this.processing = false;
@@ -238,12 +191,10 @@ export default {
       }
     },
     remove(data) {
-      // data.CodPeca;
-      // data.CodTipBilhete;
       if (this.processing) return;
       this.$swal({
           type: 'question',
-          text: `Deseja excluir o bilhete ${data.TipBilhete}?`,
+          text: `Deseja excluir o tipo de débito de bordero ${data.DebBordero}?`,
           showCancelButton: true,
           showConfirmButton: true,
           confirmButtonText: 'Sim',
@@ -252,7 +203,7 @@ export default {
           allowOutsideClick: false,
           allowEnterKey: false,
           preConfirm: () => {
-            this.removeinternal(data.CodTipBilhete);
+            this.removeinternal(data.CodTipDebBordero);  
           },
       });
     },
@@ -262,7 +213,7 @@ export default {
       this.showWaitAboveAll();
 
       if (code != '') {
-        tickettypeService.eventremove(this.getLoggedId(), this.id_base, this.id, code).then(
+        accountingdebittypeService.eventremove(this.getLoggedId(), this.id_base, this.id, code).then(
           response => {
             this.hideWaitAboveAll();
             this.processing = false;
@@ -298,28 +249,28 @@ export default {
       this.form.selectedDate.end = moment(date).isValid() ? moment(date).format("YYYY-MM-DD") : '';
       this.form.collapseButtonSave = true;
     },
-    selTicketType() {
+    selaccountingdebittype() {
       this.form.collapseDays = true;
     },
     add() {
       this.isAdd = true;
       this.dummy = true;
-      this.populateTicketType();
+      this.populateAccountingDebitType();
     },
     edit() {
       this.isAdd = false;
       this.dummy = true;
-      this.populateTicketType();
+      this.populateAccountingDebitType();
     },
-    populateTicketType() {
+    populateAccountingDebitType() {
       this.showWaitAboveAll();
-      tickettypeService.select(this.getLoggedId(),this.id_base, "all", 0, 0, 0, 0, 0).then(
+      accountingdebittypeService.select(this.getLoggedId(),this.id_base).then(
         response => {
           this.hideWaitAboveAll();
 
           if (this.validateJSON(response))
           {
-              this.selects.tickettype = response;
+              this.selects.accountingdebittypes = response;
           }
         },
         error => {
@@ -334,7 +285,7 @@ export default {
       this.processing = true;
 
       this.showWaitAboveAll();
-      tickettypeService.eventlist(this.getLoggedId(), this.id, this.id_base).then(
+      accountingdebittypeService.eventlist(this.getLoggedId(), this.id, this.id_base).then(
         response => {
           this.processing = false;
           this.hideWaitAboveAll();
@@ -354,8 +305,8 @@ export default {
       );      
     },
     clear() {
-      this.form.CodTipBilhete = "";
-      this.form.collapseTicketType = true;
+      this.form.CodTipDebBordero = "";
+      this.form.collapseAccountingDebitType = true;
       this.form.collapseDays = false;
       this.form.collapseButtonSave = false;
       this.form.selectedDate.end = '';
@@ -408,7 +359,7 @@ export default {
           loaded: false,
           CodTipBilhete: '',
           row: null,
-          collapseTicketType: true,
+          collapseAccountingDebitType: true,
           collapseDays: false,
           collapseButtonSave: false,
           selectedDate: {
@@ -417,7 +368,7 @@ export default {
           },
         },
         selects: {
-          tickettype: [],
+          accountingdebittypes: [],
         },
         grids: {
           result: {
@@ -428,18 +379,9 @@ export default {
             perPage: 1000,
             items: [],
             fields: {
-                TipBilhete: { label: 'Nome', sortable: false, tdClass: 'table_column_TipBilhete' },
-                DatIniDesconto: { label: 'Início', sortable: false },
-                isPrincipal: { label: 'Int.', sortable: false },
-                isHalf: { label: 'Meia', sortable: false },
-                isFixed: { label: 'Fixa', sortable: false },
-                isDiscount: { label: 'Des.', sortable: false },
-                isAllotment: { label: 'Lote', sortable: false },
-                isPlus: { label: 'Outros', sortable: false },
-                allowweb: { label: 'Web', sortable: false },
-                allowticketoffice: { label: 'Bilh.', sortable: false },
-                allowapi: { label: 'API', sortable: false },
-                vl_preco_fixo: { label: 'Valor', sortable: false },
+                DebBordero: { label: 'Nome', sortable: false, tdClass: 'table_column_DebBordero' },
+                DatIniDebito: { label: 'Início', sortable: false },
+                PerDesconto_formatted: { label: 'Valor', sortable: false },
                 actions: { label: 'Ações' }
             },
           },
@@ -455,7 +397,7 @@ export default {
 .v-switch-label {
   color: #4d4d4d !important;
 }
-.table_column_TipBilhete {
+.table_column_DebBordero {
   width: 150px;
 }
 .table_column_ValPeca {

@@ -372,45 +372,38 @@
       </div>
     </div>
     <b-row class="mb-3">
-      <b-button type="button" variant="outline-success" size="sm" @click="save">
-        <v-wait for="inprocess">
-          <template slot="waiting">
-            Carregando...
-          </template>
-        </v-wait>
-        <v-wait for="inprocessSave">
-          <template slot="waiting">
-            Salvando...
-          </template>
-        </v-wait>
-        <span v-if="!processing">Salvar</span>
-      </b-button>
-      <b-button :disabled="id == 0 || id == null || id == undefined" v-if="mayI('presentation-add') && !isAdd" type="button" variant="outline-info" size="sm" @click="addTicketType(true)">
-        <v-wait for="inprocess">
-          <template slot="waiting">
-            Carregando...
-          </template>
-        </v-wait>
-        <v-wait for="inprocessSave">
-          <template slot="waiting">
-            Aguardando...
-          </template>
-        </v-wait>
-        <span v-if="!processing">Tipos de Bilhetes</span>
-      </b-button>
-      <b-button :disabled="id == 0 || id == null || id == undefined" v-if="mayI('presentation-add') && !isAdd" type="button" variant="outline-info" size="sm" @click="addPresentation(true)">
-        <v-wait for="inprocess">
-          <template slot="waiting">
-            Carregando...
-          </template>
-        </v-wait>
-        <v-wait for="inprocessSave">
-          <template slot="waiting">
-            Aguardando...
-          </template>
-        </v-wait>
-        <span v-if="!processing && !isAdd">Ver datas</span>
-      </b-button>
+
+      <div class="input-group">
+        <div class="input-group-append">
+          <b-button type="button" variant="btn btn-primary" size="sm" @click="save">
+            <v-wait for="inprocess">
+              <template slot="waiting">
+                Carregando...
+              </template>
+            </v-wait>
+            <v-wait for="inprocessSave">
+              <template slot="waiting">
+                Salvando...
+              </template>
+            </v-wait>
+            <span v-if="!processing">Salvar</span>
+          </b-button>
+          <button v-if="id != 0 && id != null && id != undefined" data-toggle="dropdown" type="button" class="btn btn-primary dropdown-toggle" aria-expanded="false"></button>
+          <div v-if="id != 0 && id != null && id != undefined" class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; transform: translate3d(311px, 38px, 0px); top: 0px; left: 0px; will-change: transform;">
+            <a class="dropdown-item" href="javascript:void(0)" v-if="mayI('presentation-add') && !isAdd && !processing" @click="addPresentation(true)">
+              Apresentações
+            </a>
+            <a class="dropdown-item" href="javascript:void(0)" v-if="mayI('presentation-add') && !isAdd && !processing" @click="addTicketType(true)">
+              Bilhetes
+            </a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="javascript:void(0)" v-if="mayI('ev-accountingdebittype-add') && !isAdd && !processing" @click="addAccountingDebitType(true)">
+              Débitos do borderô
+            </a>
+          </div>
+        </div>
+      </div>
+      
     </b-row>
 
   </b-container>
@@ -425,9 +418,13 @@ import VueUploadMultipleImage from 'vue-upload-multiple-image';
 import VueMask from 'v-mask';
 import Vuelidate from 'vuelidate';
 import VModal from 'vue-js-modal';
+import moment from 'moment';
+
+
 
 import dateadd from '../presentation/add';
 import tickettypeadd from '../tickettype/event';
+import accountingdebittypeadd from '../accountingdebittype/event';
 
 import config from "@/config";
 import { EventBus } from '@/event-bus';
@@ -455,6 +452,7 @@ Vue.use(VModal, {
   injectModalsContainer: true
 });
 Vue.use(VueHead);
+Vue.use(moment);
 Vue.use(VueQuillEditor);
 Vue.use(VueMask);
 Vue.use(Vuelidate);
@@ -548,6 +546,17 @@ export default {
     }
   },
   methods: {
+    getStartDate() {
+      let ret = moment(`${this.form.DatIniPeca.split("/")[2]}-${this.form.DatIniPeca.split("/")[1]}-${this.form.DatIniPeca.split("/")[0]}`).add(1,"days").format("YYYY-MM-DD");
+      return ret;
+      // return `${this.form.DatIniPeca.split("/")[2]}-${this.form.DatIniPeca.split("/")[1]}-${this.form.DatIniPeca.split("/")[0]}`;
+    },
+    getEndDate() {
+      let ret = moment(`${this.form.DatFinPeca.split("/")[2]}-${this.form.DatFinPeca.split("/")[1]}-${this.form.DatFinPeca.split("/")[0]}`).add(1,"days").format("YYYY-MM-DD");
+      console.log("end");
+      console.log(ret);
+      return ret;
+    },
     uploadImageSuccess(formData, index, fileList) {
       //console.log(fileList);
       this.form.saveimage = true;
@@ -600,6 +609,24 @@ export default {
       this.$modal.show(tickettypeadd, { //dateadd, {
         id: this.id,
         id_base: this.base,
+      }, {
+        draggable: false,
+        resizable: true,
+        adaptive: true,
+        height: "auto",
+        width: '850px',
+        // resizable: true,
+        scrollable: true,
+      });
+    },
+    addAccountingDebitType(force) {
+
+      if (!force && this.processing) return;
+      this.$modal.show(accountingdebittypeadd, { //dateadd, {
+        id: this.id,
+        id_base: this.base,
+        startDate: this.getStartDate(),
+        endDate: this.getEndDate(),
       }, {
         draggable: false,
         resizable: true,

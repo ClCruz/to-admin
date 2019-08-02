@@ -20,8 +20,8 @@ export const eventService = {
   searchPage
 }
 
-function borderourl(key, id_base) {
-    let url = config.api + `/v1/print/report/accounting?id_base=${id_base}&id=${key}&${config.getapikeyQS()}`;
+function borderourl(key, id_base, print) {
+    let url = config.api + `/v1/print/report/accounting?id_base=${id_base}&print=${print}&id=${key}&${config.getapikeyQS()}`;
     return url;
 }
 

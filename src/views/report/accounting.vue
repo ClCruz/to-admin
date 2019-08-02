@@ -3,87 +3,92 @@
       <b-container>
         <b-row class="mb-3">
           <b-input-group size="sm">
-            <b-input-group-prepend is-text>
+            <b-input-group-prepend is-text v-bind:class="{ errorFormValidateLabel: (executedAtLeastOne && $v.form.id_base.$invalid) }">
               Base:
             </b-input-group-prepend>
-            <b-form-select v-on:change="selBase" v-model="form.id_base" :options="selects.base" size="sm">
+            <b-form-select v-on:change="selBase" v-model="form.id_base" :options="selects.base" size="sm" v-bind:class="{ errorFormValidateInput: (executedAtLeastOne && $v.form.id_base.$invalid) }" />
                 <template slot="first">
                     <option :value="''" disabled>-- Selecione --</option>
                 </template>
             </b-form-select>
           </b-input-group>
+          <div class="errorFormValidate" v-if="executedAtLeastOne && !$v.form.id_base.required">Campo é obrigatório</div>
         </b-row>
         <b-row class="mb-3">
           <b-input-group size="sm">
-            <b-input-group-prepend is-text class="firstLabel">
+            <b-input-group-prepend is-text class="firstLabel" v-bind:class="{ errorFormValidateLabel: (executedAtLeastOne && $v.form.id_evento.$invalid) }">
                 Evento:
             </b-input-group-prepend>
-            <b-form-select id="event" v-on:change="selEvent" v-model="form.id_evento" :options="selects.events">
+            <b-form-select id="event" v-on:change="selEvent" v-model="form.id_evento" :options="selects.events" v-bind:class="{ errorFormValidateInput: (executedAtLeastOne && $v.form.id_evento.$invalid) }" />
                 <template slot="first">
                     <option :value="null" disabled>-- Selecione --</option>
                 </template>
             </b-form-select>
           </b-input-group>
+          <div class="errorFormValidate" v-if="executedAtLeastOne && !$v.form.id_evento.required">Campo é obrigatório</div>
         </b-row>
         <b-row class="mb-3">
           <b-col>
             <b-row>
             <b-input-group size="sm">
-              <b-input-group-prepend is-text class="firstLabel">
+              <b-input-group-prepend is-text class="firstLabel" v-bind:class="{ errorFormValidateLabel: (executedAtLeastOne && $v.form.date.$invalid) }">
                   Dias:
               </b-input-group-prepend>
               <b-form-select id="days"
                               :options="selects.days"
                               v-on:change="selDays"
-                              v-model="form.date">
+                              v-model="form.date" v-bind:class="{ errorFormValidateInput: (executedAtLeastOne && $v.form.date.$invalid) }" />
                   <template slot="first">
                       <option :value="null" disabled>-- Selecione --</option>
                   </template>
               </b-form-select>
             </b-input-group>
+            <div class="errorFormValidate" v-if="executedAtLeastOne && !$v.form.date.required">Campo é obrigatório</div>
             </b-row>
           </b-col>
           <b-col>
             <b-row>
             <b-input-group size="sm">
-              <b-input-group-prepend is-text class="firstLabel">
+              <b-input-group-prepend is-text class="firstLabel" v-bind:class="{ errorFormValidateLabel: (executedAtLeastOne && $v.form.hour.$invalid) }">
                   Horário:
               </b-input-group-prepend>
               <b-form-select id="hours"
                               :options="selects.hours"
                               v-on:change="selHours"
-                              v-model="form.hour">
+                              v-model="form.hour" v-bind:class="{ errorFormValidateInput: (executedAtLeastOne && $v.form.hour.$invalid) }" />
                   <template slot="first">
                       <option :value="null" disabled>-- Selecione --</option>
                   </template>
               </b-form-select>
             </b-input-group>
+            <div class="errorFormValidate" v-if="executedAtLeastOne && !$v.form.hour.required">Campo é obrigatório</div>
             </b-row>
           </b-col>
         </b-row>
         <b-row class="mb-3">
           <b-col>
             <b-row>
-              <b-button type="button" variant="primary" size="sm" @click="search">
-                <v-wait for="inprocess">
-                    <template slot="waiting">
-                        Aguarde...
-                    </template>
-                </v-wait>
-                <span v-if="!processing">Consultar</span>
-              </b-button>
-            </b-row>
-          </b-col>
-          <b-col>
-            <b-row>
-              <b-button type="button" variant="primary" size="sm" @click="exportExcel" v-if="this.bordero!=''">
-                <v-wait for="inprocess">
-                    <template slot="waiting">
-                        Aguarde...
-                    </template>
-                </v-wait>
-                <span v-if="!processing">Excel</span>
-              </b-button>
+              <div class="input-group">
+                <div class="input-group-append">
+                  <b-button type="button" class="btn btn-primary" variant="primary" size="sm" @click="search(false)">
+                    <v-wait for="inprocess">
+                        <template slot="waiting">
+                            Aguarde...
+                        </template>
+                    </v-wait>
+                    <span v-if="!processing">Consultar</span>
+                  </b-button>
+                  <button data-toggle="dropdown" type="button" class="btn btn-primary dropdown-toggle" aria-expanded="false"></button>
+                  <div class="dropdown-menu dropdown-menu-right" x-placement="bottom-end" style="position: absolute; transform: translate3d(311px, 38px, 0px); top: 0px; left: 0px; will-change: transform;">
+                    <a class="dropdown-item" href="javascript:void(0)" @click="search(true)">
+                      Consultar e imprimir
+                    </a>
+                    <a class="dropdown-item" href="javascript:void(0)" @click="exportExcel" v-if="this.bordero!=''">
+                      Exportar - Excel
+                    </a>
+                  </div>
+                </div>
+              </div>
             </b-row>
           </b-col>
         </b-row>
@@ -95,6 +100,7 @@
 <script>
 import Vue from "vue";
 import VueHead from 'vue-head';
+import Vuelidate from 'vuelidate';
 import VueFriendlyIframe from 'vue-friendly-iframe';
 import html2canvas from 'html2canvas';
 import config from "@/config";
@@ -105,7 +111,13 @@ import jsPDF from 'jspdf';
 
 
 Vue.use(VueHead);
+Vue.use(Vuelidate);
 Vue.component('vue-friendly-iframe', VueFriendlyIframe);
+
+import {
+  required
+  ,helpers
+} from 'vuelidate/lib/validators';
 
 export default {
   mixins: [func],
@@ -131,9 +143,17 @@ export default {
     this.populateBases();
   },
   methods: {
+    validate() {
+      let ret = !this.$v.form.$invalid;
+      return ret;
+    },
     exportExcel() {
       if (this.bordero == "") {
         this.toastError("Consulte antes de exportar");
+        return;
+      }
+      if (!this.validate()) {
+        this.toastError("Verifique os campos");
         return;
       }
       window.open(this.bordero+"&exportto=sheet");
@@ -261,7 +281,15 @@ export default {
     selHours() {
 
     },
-    search() {
+    search(print) {
+        if (print == null || print == undefined) {
+          print = true;
+        }
+        this.executedAtLeastOne = true;
+        if (!this.validate()) {
+          this.toastError("Verifique os campos");
+          return;
+        }
         this.executed = false;
         this.processing = true;
         this.$wait.start("inprocess");
@@ -271,7 +299,7 @@ export default {
           response => {
             //this.processing = false;
             //this.hideWaitAboveAll();
-            this.bordero = eventService.borderourl(response.id, this.form.id_base);
+            this.bordero = eventService.borderourl(response.id, this.form.id_base, print);
             this.executed = true;
             //this.$wait.end("inprocess");
 
@@ -296,9 +324,26 @@ export default {
       this.form.hour = "";
     }
   },
+  validations: {
+    form: {
+      id_base: {
+        required,
+      },
+      id_evento: {
+        required,
+      },
+      date: {
+        required,
+      },
+      hour: {
+        required,
+      }
+    }
+  },
   data () {
     return {
       processing: false,
+      executedAtLeastOne: false,
       loading: false,
       bordero: '',
       executed: false,
