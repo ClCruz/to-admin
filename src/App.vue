@@ -459,6 +459,24 @@ export default {
             },
           ]
         },
+        {
+          title: 'Tipo de debito no bordero',
+          icon: 'fas fa-file-invoice-dollar',
+          code: 'accountingdebittype-viewer',
+          child: [{
+              href: '/accountingdebittype/add',
+              title: 'Adicionar',
+              icon: 'fas fa-pen',
+              code: 'accountingdebittype-add'
+            },
+            {
+              href: '/accountingdebittype/list',
+              title: 'Listar',
+              icon: 'fas fa-list-ul',
+              code: 'accountingdebittype-viewer',
+            },
+          ]
+        },        
       ];
 
       for (let x = (menuHelper.length - 1); x > 0; x--) {

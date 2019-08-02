@@ -174,6 +174,18 @@ const adminPaymentTypeAdd = resolve => {
   }, 'admin-paymenttype');
 };
 
+// accounting debit type
+const adminAccountingDebitTypeList = resolve => {
+  require.ensure(['./views/accountingdebittype/list.vue'], () => {
+    resolve(require('./views/accountingdebittype/list.vue'));
+  }, 'admin-accountingdebittype');
+};
+const adminAccountingDebitTypeAdd = resolve => {
+  require.ensure(['./views/accountingdebittype/add.vue'], () => {
+    resolve(require('./views/accountingdebittype/add.vue'));
+  }, 'admin-accountingdebittype');
+};
+
 // city
 const adminCityList = resolve => {
   require.ensure(['./views/city/list.vue'], () => {
@@ -393,6 +405,24 @@ const obj = new Router({
       name: 'typeofpt-edit',
       props: true,
       component: adminTypePaymentTypeAdd
+    },
+    //------
+    //Accounting debit type
+    {
+      path: '/accountingdebittype/list',
+      name: 'accountingdebittype-list',
+      component: adminAccountingDebitTypeList
+    },
+    {
+      path: '/accountingdebittype/add',
+      name: 'accountingdebittype-add',
+      component: adminAccountingDebitTypeAdd
+    },
+    {
+      path: '/accountingdebittype/edit/:id/:id_base',
+      name: 'accountingdebittype-edit',
+      props: true,
+      component: adminAccountingDebitTypeAdd
     },
     //------
     //Type of payment type
