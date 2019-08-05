@@ -4,7 +4,8 @@ var map = L.map('map', {
 	zoom: 0,
 	renderer: L.svg(),
 	crs: L.CRS.Simple,
-	center: [ 305, 480 ]
+	center: [ 305, 480 ],
+	attributionControl: false
 });
 
 var yx = L.latLng;
@@ -132,8 +133,8 @@ map.on(L.Draw.Event.CREATED, function(e) {
 			seatNumber = initialValue + (i == 0 ? i : i * steps);
 			var y = {
 				xy: xy([ lng + i * spaceBetween, lat ]),
-				class: 'status',
-				NomObjeto: rowName + ' - ' + seatNumber,
+				class: 'available',
+				title: rowName + ' - ' + seatNumber,
 				count: i,
 				rowname: 'teste'
 			};
@@ -153,103 +154,99 @@ map.on(L.Draw.Event.CREATED, function(e) {
 });
 
 var height = map._lastCenter.lat * 2;
+
 var pointsForJson = [
-	{ xy: xy([ 214, height - 112 ]), status: true, customClass: '', clicked: false, NomObjeto: 'A - 01' },
-	{ xy: xy([ 234, height - 112 ]), status: true, customClass: '', clicked: false, NomObjeto: 'A - 01' },
-	{ xy: xy([ 254, height - 112 ]), status: true, customClass: '', clicked: false, NomObjeto: 'A - 01' },
-	{ xy: xy([ 274, height - 112 ]), status: true, customClass: '', clicked: false, NomObjeto: 'A - 01' },
-	{ xy: xy([ 294, height - 112 ]), status: true, customClass: '', clicked: false, NomObjeto: 'A - 01' },
-	{ xy: xy([ 194, height - 134 ]), status: true, customClass: '', clicked: false, NomObjeto: 'A - 01' },
-	{ xy: xy([ 214, height - 134 ]), status: true, customClass: '', clicked: false, NomObjeto: 'A - 01' },
-	{ xy: xy([ 234, height - 134 ]), status: true, customClass: '', clicked: false, NomObjeto: 'A - 01' },
-	{ xy: xy([ 254, height - 134 ]), status: true, customClass: '', clicked: false, NomObjeto: 'A - 01' },
-	{ xy: xy([ 274, height - 134 ]), status: true, customClass: '', clicked: false, NomObjeto: 'A - 01' },
-	{ xy: xy([ 294, height - 134 ]), status: true, customClass: '', clicked: false, NomObjeto: 'A - 01' },
-	{ xy: xy([ 194, height - 154 ]), status: true, customClass: '', clicked: false, NomObjeto: 'A - 01' },
-	{ xy: xy([ 214, height - 154 ]), status: true, customClass: '', clicked: false, NomObjeto: 'A - 01' },
-	{ xy: xy([ 234, height - 154 ]), status: true, customClass: '', clicked: false, NomObjeto: 'A - 01' },
-	{ xy: xy([ 254, height - 154 ]), status: true, customClass: '', clicked: false, NomObjeto: 'A - 01' },
-	{ xy: xy([ 274, height - 154 ]), status: true, customClass: '', clicked: false, NomObjeto: 'A - 01' },
-	{ xy: xy([ 294, height - 154 ]), status: true, customClass: '', clicked: false, NomObjeto: 'A - 01' },
-	{ xy: xy([ 194, height - 174 ]), status: true, customClass: '', clicked: false, NomObjeto: 'A - 01' },
-	{ xy: xy([ 214, height - 174 ]), status: true, customClass: '', clicked: false, NomObjeto: 'A - 01' },
-	{ xy: xy([ 234, height - 174 ]), status: true, customClass: '', clicked: false, NomObjeto: 'A - 01' },
-	{ xy: xy([ 254, height - 174 ]), status: true, customClass: '', clicked: false, NomObjeto: 'A - 01' },
-	{ xy: xy([ 274, height - 174 ]), status: true, customClass: '', clicked: false, NomObjeto: 'A - 01' },
-	{ xy: xy([ 294, height - 174 ]), status: true, customClass: '', clicked: false, NomObjeto: 'A - 01' },
-	{ xy: xy([ 194, height - 194 ]), status: true, customClass: '', clicked: false, NomObjeto: 'A - 01' },
-	{ xy: xy([ 214, height - 194 ]), status: true, customClass: '', clicked: false, NomObjeto: 'A - 01' },
-	{ xy: xy([ 234, height - 194 ]), status: true, customClass: '', clicked: false, NomObjeto: 'A - 01' },
-	{ xy: xy([ 254, height - 194 ]), status: true, customClass: '', clicked: false, NomObjeto: 'A - 01' },
-	{ xy: xy([ 274, height - 194 ]), status: true, customClass: '', clicked: false, NomObjeto: 'A - 01' },
-	{ xy: xy([ 294, height - 194 ]), status: true, customClass: '', clicked: false, NomObjeto: 'A - 01' },
-	{ xy: xy([ 194, height - 214 ]), status: true, customClass: '', clicked: false, NomObjeto: 'A - 01' },
-	{ xy: xy([ 214, height - 214 ]), status: true, customClass: '', clicked: false, NomObjeto: 'A - 01' },
-	{ xy: xy([ 234, height - 214 ]), status: true, customClass: '', clicked: false, NomObjeto: 'A - 01' },
-	{ xy: xy([ 254, height - 214 ]), status: true, customClass: '', clicked: false, NomObjeto: 'A - 01' },
-	{ xy: xy([ 274, height - 214 ]), status: true, customClass: '', clicked: false, NomObjeto: 'A - 01' },
-	{ xy: xy([ 294, height - 214 ]), status: true, customClass: '', clicked: false, NomObjeto: 'A - 01' },
-	{ xy: xy([ 194, height - 234 ]), status: true, customClass: '', clicked: false, NomObjeto: 'A - 01' },
-	{ xy: xy([ 214, height - 234 ]), status: true, customClass: '', clicked: false, NomObjeto: 'A - 01' },
-	{ xy: xy([ 234, height - 234 ]), status: true, customClass: '', clicked: false, NomObjeto: 'A - 01' },
-	{ xy: xy([ 254, height - 234 ]), status: true, customClass: '', clicked: false, NomObjeto: 'A - 01' },
-	{ xy: xy([ 274, height - 234 ]), status: true, customClass: '', clicked: false, NomObjeto: 'A - 01' },
-	{ xy: xy([ 294, height - 234 ]), status: true, customClass: '', clicked: false, NomObjeto: 'A - 01' },
-	{ xy: xy([ 194, height - 254 ]), status: true, customClass: '', clicked: false, NomObjeto: 'A - 01' },
-	{ xy: xy([ 214, height - 254 ]), status: true, customClass: '', clicked: false, NomObjeto: 'A - 01' },
-	{ xy: xy([ 234, height - 254 ]), status: true, customClass: '', clicked: false, NomObjeto: 'A - 01' },
-	{ xy: xy([ 254, height - 254 ]), status: true, customClass: '', clicked: false, NomObjeto: 'A - 01' },
-	{ xy: xy([ 274, height - 254 ]), status: true, customClass: '', clicked: false, NomObjeto: 'A - 01' },
-	{ xy: xy([ 294, height - 254 ]), status: true, customClass: '', clicked: false, NomObjeto: 'A - 01' },
-	{ xy: xy([ 194, height - 274 ]), status: true, customClass: '', clicked: false, NomObjeto: 'A - 01' },
-	{ xy: xy([ 214, height - 274 ]), status: true, customClass: '', clicked: false, NomObjeto: 'A - 01' },
-	{ xy: xy([ 234, height - 274 ]), status: true, customClass: '', clicked: false, NomObjeto: 'A - 01' },
-	{ xy: xy([ 254, height - 274 ]), status: true, customClass: '', clicked: false, NomObjeto: 'A - 01' },
-	{ xy: xy([ 274, height - 274 ]), status: true, customClass: '', clicked: false, NomObjeto: 'A - 01' },
-	{ xy: xy([ 294, height - 274 ]), status: true, customClass: '', clicked: false, NomObjeto: 'A - 01' },
-	{ xy: xy([ 194, height - 294 ]), status: true, customClass: '', clicked: false, NomObjeto: 'A - 01' },
-	{ xy: xy([ 214, height - 294 ]), status: true, customClass: '', clicked: false, NomObjeto: 'A - 01' },
-	{ xy: xy([ 234, height - 294 ]), status: true, customClass: '', clicked: false, NomObjeto: 'A - 01' },
-	{ xy: xy([ 254, height - 294 ]), status: true, customClass: '', clicked: false, NomObjeto: 'A - 01' },
-	{ xy: xy([ 274, height - 294 ]), status: true, customClass: '', clicked: false, NomObjeto: 'A - 01' },
-	{ xy: xy([ 294, height - 294 ]), status: true, customClass: '', clicked: false, NomObjeto: 'A - 01' },
-	{ xy: xy([ 194, height - 314 ]), status: true, customClass: '', clicked: false, NomObjeto: 'A - 01' },
-	{ xy: xy([ 214, height - 314 ]), status: true, customClass: '', clicked: false, NomObjeto: 'A - 01' },
-	{ xy: xy([ 234, height - 314 ]), status: true, customClass: '', clicked: false, NomObjeto: 'A - 01' },
-	{ xy: xy([ 254, height - 314 ]), status: true, customClass: '', clicked: false, NomObjeto: 'A - 01' },
-	{ xy: xy([ 274, height - 314 ]), status: true, customClass: '', clicked: false, NomObjeto: 'A - 01' },
-	{ xy: xy([ 294, height - 314 ]), status: true, customClass: '', clicked: false, NomObjeto: 'A - 01' },
-	{ xy: xy([ 194, height - 334 ]), status: true, customClass: '', clicked: false, NomObjeto: 'A - 01' },
-	{ xy: xy([ 214, height - 334 ]), status: true, customClass: '', clicked: false, NomObjeto: 'A - 01' },
-	{ xy: xy([ 234, height - 334 ]), status: true, customClass: '', clicked: false, NomObjeto: 'A - 01' },
-	{ xy: xy([ 254, height - 334 ]), status: true, customClass: '', clicked: false, NomObjeto: 'A - 01' },
-	{ xy: xy([ 274, height - 334 ]), status: true, customClass: '', clicked: false, NomObjeto: 'A - 01' },
-	{ xy: xy([ 294, height - 334 ]), status: true, customClass: '', clicked: false, NomObjeto: 'A - 01' }
+	{ xy: xy([ 194, height - 112 ]), available: true, customClass: '', clicked: false, title: 'A - 01' },
+	{ xy: xy([ 214, height - 112 ]), available: true, customClass: '', clicked: false, title: 'A - 01' },
+	{ xy: xy([ 234, height - 112 ]), available: true, customClass: '', clicked: false, title: 'A - 01' },
+	{ xy: xy([ 254, height - 112 ]), available: true, customClass: '', clicked: false, title: 'A - 01' },
+	{ xy: xy([ 274, height - 112 ]), available: true, customClass: '', clicked: false, title: 'A - 01' },
+	{ xy: xy([ 294, height - 112 ]), available: true, customClass: '', clicked: false, title: 'A - 01' },
+	{ xy: xy([ 194, height - 134 ]), available: true, customClass: '', clicked: false, title: 'A - 01' },
+	{ xy: xy([ 214, height - 134 ]), available: true, customClass: '', clicked: false, title: 'A - 01' },
+	{ xy: xy([ 234, height - 134 ]), available: true, customClass: '', clicked: false, title: 'A - 01' },
+	{ xy: xy([ 254, height - 134 ]), available: true, customClass: '', clicked: false, title: 'A - 01' },
+	{ xy: xy([ 274, height - 134 ]), available: true, customClass: '', clicked: false, title: 'A - 01' },
+	{ xy: xy([ 294, height - 134 ]), available: true, customClass: '', clicked: false, title: 'A - 01' },
+	{ xy: xy([ 194, height - 154 ]), available: true, customClass: '', clicked: false, title: 'A - 01' },
+	{ xy: xy([ 214, height - 154 ]), available: true, customClass: '', clicked: false, title: 'A - 01' },
+	{ xy: xy([ 234, height - 154 ]), available: true, customClass: '', clicked: false, title: 'A - 01' },
+	{ xy: xy([ 254, height - 154 ]), available: true, customClass: '', clicked: false, title: 'A - 01' },
+	{ xy: xy([ 274, height - 154 ]), available: true, customClass: '', clicked: false, title: 'A - 01' },
+	{ xy: xy([ 294, height - 154 ]), available: true, customClass: '', clicked: false, title: 'A - 01' },
+	{ xy: xy([ 194, height - 174 ]), available: true, customClass: '', clicked: false, title: 'A - 01' },
+	{ xy: xy([ 214, height - 174 ]), available: true, customClass: '', clicked: false, title: 'A - 01' },
+	{ xy: xy([ 234, height - 174 ]), available: true, customClass: '', clicked: false, title: 'A - 01' },
+	{ xy: xy([ 254, height - 174 ]), available: true, customClass: '', clicked: false, title: 'A - 01' },
+	{ xy: xy([ 274, height - 174 ]), available: true, customClass: '', clicked: false, title: 'A - 01' },
+	{ xy: xy([ 294, height - 174 ]), available: true, customClass: '', clicked: false, title: 'A - 01' },
+	{ xy: xy([ 194, height - 194 ]), available: true, customClass: '', clicked: false, title: 'A - 01' },
+	{ xy: xy([ 214, height - 194 ]), available: true, customClass: '', clicked: false, title: 'A - 01' },
+	{ xy: xy([ 234, height - 194 ]), available: true, customClass: '', clicked: false, title: 'A - 01' },
+	{ xy: xy([ 254, height - 194 ]), available: true, customClass: '', clicked: false, title: 'A - 01' },
+	{ xy: xy([ 274, height - 194 ]), available: true, customClass: '', clicked: false, title: 'A - 01' },
+	{ xy: xy([ 294, height - 194 ]), available: true, customClass: '', clicked: false, title: 'A - 01' },
+	{ xy: xy([ 194, height - 214 ]), available: true, customClass: '', clicked: false, title: 'A - 01' },
+	{ xy: xy([ 214, height - 214 ]), available: true, customClass: '', clicked: false, title: 'A - 01' },
+	{ xy: xy([ 234, height - 214 ]), available: true, customClass: '', clicked: false, title: 'A - 01' },
+	{ xy: xy([ 254, height - 214 ]), available: true, customClass: '', clicked: false, title: 'A - 01' },
+	{ xy: xy([ 274, height - 214 ]), available: true, customClass: '', clicked: false, title: 'A - 01' },
+	{ xy: xy([ 294, height - 214 ]), available: true, customClass: '', clicked: false, title: 'A - 01' },
+	{ xy: xy([ 194, height - 234 ]), available: true, customClass: '', clicked: false, title: 'A - 01' },
+	{ xy: xy([ 214, height - 234 ]), available: true, customClass: '', clicked: false, title: 'A - 01' },
+	{ xy: xy([ 234, height - 234 ]), available: true, customClass: '', clicked: false, title: 'A - 01' },
+	{ xy: xy([ 254, height - 234 ]), available: true, customClass: '', clicked: false, title: 'A - 01' },
+	{ xy: xy([ 274, height - 234 ]), available: true, customClass: '', clicked: false, title: 'A - 01' },
+	{ xy: xy([ 294, height - 234 ]), available: true, customClass: '', clicked: false, title: 'A - 01' },
+	{ xy: xy([ 194, height - 254 ]), available: true, customClass: '', clicked: false, title: 'A - 01' },
+	{ xy: xy([ 214, height - 254 ]), available: true, customClass: '', clicked: false, title: 'A - 01' },
+	{ xy: xy([ 234, height - 254 ]), available: true, customClass: '', clicked: false, title: 'A - 01' },
+	{ xy: xy([ 254, height - 254 ]), available: true, customClass: '', clicked: false, title: 'A - 01' },
+	{ xy: xy([ 274, height - 254 ]), available: true, customClass: '', clicked: false, title: 'A - 01' },
+	{ xy: xy([ 294, height - 254 ]), available: true, customClass: '', clicked: false, title: 'A - 01' },
+	{ xy: xy([ 194, height - 274 ]), available: true, customClass: '', clicked: false, title: 'A - 01' },
+	{ xy: xy([ 214, height - 274 ]), available: true, customClass: '', clicked: false, title: 'A - 01' },
+	{ xy: xy([ 234, height - 274 ]), available: true, customClass: '', clicked: false, title: 'A - 01' },
+	{ xy: xy([ 254, height - 274 ]), available: true, customClass: '', clicked: false, title: 'A - 01' },
+	{ xy: xy([ 274, height - 274 ]), available: true, customClass: '', clicked: false, title: 'A - 01' },
+	{ xy: xy([ 294, height - 274 ]), available: true, customClass: '', clicked: false, title: 'A - 01' },
+	{ xy: xy([ 194, height - 294 ]), available: true, customClass: '', clicked: false, title: 'A - 01' },
+	{ xy: xy([ 214, height - 294 ]), available: true, customClass: '', clicked: false, title: 'A - 01' },
+	{ xy: xy([ 234, height - 294 ]), available: true, customClass: '', clicked: false, title: 'A - 01' },
+	{ xy: xy([ 254, height - 294 ]), available: true, customClass: '', clicked: false, title: 'A - 01' },
+	{ xy: xy([ 274, height - 294 ]), available: true, customClass: '', clicked: false, title: 'A - 01' },
+	{ xy: xy([ 294, height - 294 ]), available: true, customClass: '', clicked: false, title: 'A - 01' },
+	{ xy: xy([ 194, height - 314 ]), available: true, customClass: '', clicked: false, title: 'A - 01' },
+	{ xy: xy([ 214, height - 314 ]), available: true, customClass: '', clicked: false, title: 'A - 01' },
+	{ xy: xy([ 234, height - 314 ]), available: true, customClass: '', clicked: false, title: 'A - 01' },
+	{ xy: xy([ 254, height - 314 ]), available: true, customClass: '', clicked: false, title: 'A - 01' },
+	{ xy: xy([ 274, height - 314 ]), available: true, customClass: '', clicked: false, title: 'A - 01' },
+	{ xy: xy([ 294, height - 314 ]), available: true, customClass: '', clicked: false, title: 'A - 01' },
+	{ xy: xy([ 194, height - 334 ]), available: true, customClass: '', clicked: false, title: 'A - 01' },
+	{ xy: xy([ 214, height - 334 ]), available: true, customClass: '', clicked: false, title: 'A - 01' },
+	{ xy: xy([ 234, height - 334 ]), available: true, customClass: '', clicked: false, title: 'A - 01' },
+	{ xy: xy([ 254, height - 334 ]), available: true, customClass: '', clicked: false, title: 'A - 01' },
+	{ xy: xy([ 274, height - 334 ]), available: true, customClass: '', clicked: false, title: 'A - 01' },
+	{ xy: xy([ 294, height - 334 ]), available: true, customClass: '', clicked: false, title: 'A - 01' }
 ];
 
 /**
  * 
  * TODO: conectar ao serviço do banco
- * @param  {array} list - Lista de assentos no padrão [ { xy: xy([ 294, height - 334 ]), status: true, customClass: '', clicked: false, NomObjeto: 'A - 01' } ] 
+ * @param  {array} list - Lista de assentos no padrão [ { xy: xy([ 294, height - 334 ]), available: true, customClass: '', clicked: false, title: 'A - 01' } ] 
  * 
  */
 
  markers = []
-map.width = 960;
-map.height = 610;
+
 function insertSeats(list) {
 	list.forEach(function(value) {
-
-		value.xy = xy([ (value.PosXSite * (map.width / 2)), value.PosYSite * (map.height / 2 ) - 112 ]);
-
-
 		var marker = L.marker(value.xy, {
-			// xy: xy([ (value.PosXSite * (map.width / 2)), value.PosYSite * (map.height / 2 ) - 112 ]),
 			icon: markerIcon,
 			customClass: value.customClass,
-			status: value.status,
+			available: value.available,
 			clicked: value.clicked,
-			NomObjeto: value.NomObjeto,
+			title: value.title,
 			rowname: value.rowname,
 			clickable: true,
 			draggable: true
@@ -257,7 +254,7 @@ function insertSeats(list) {
 
 		marker.on('click', onClick)
 			.addTo(map)
-			.bindPopup(value.NomObjeto)
+			.bindPopup(value.title)
 			.on('mouseover', function(e) {
 				this.openPopup();
 			})
@@ -277,7 +274,6 @@ function insertSeats(list) {
 	});
 }
 
-var teste2 = [];
 
 /**
  * Modo edição: add assentos para edição
@@ -393,11 +389,11 @@ function apply() {
 
 	for (var i = 0; i < quantityOfColumns; i++) {
 		seatNumber = initialValue + (i == 0 ? i : i * steps);
-		var y = { NomObjeto: rowName + ' - ' + seatNumber };
+		var y = { title: rowName + ' - ' + seatNumber };
 		markersExample.push(y);
 	}
 
-	markersExample.forEach((x) => (span.innerHTML += x.NomObjeto + ', '));
+	markersExample.forEach((x) => (span.innerHTML += x.title + ', '));
 
 	span = markersExample;
 }
@@ -541,7 +537,7 @@ document.querySelector('#map > div.leaflet-control-container > div.leaflet-top.l
 // 	markersToEdit.map(x => {
 // 		document.getElementById('seats_to_edit').innerHTML += 
 // 			'<div class="form-inline mt-2">' +
-// 			'<label class="mb-2" for="">Nome do assento: ' + x.sourceTarget.options.NomObjeto +'</label>' +
+// 			'<label class="mb-2" for="">Nome do assento: ' + x.sourceTarget.options.title +'</label>' +
 // 			'<input class="input-small" id="row-name" type="text" placeholder="Novo nome (Ex: AA 03)">'+
 // 		'</div>'
 // 	});
@@ -551,12 +547,12 @@ document.querySelector('#map > div.leaflet-control-container > div.leaflet-top.l
  * Atualiza nome do primeiro selecionado na ferramenta de edição
  */
 function updateFirstName() {
-	document.getElementById('seat_name').innerText = '' + markersToEdit[0].sourceTarget.options.NomObjeto;
+	document.getElementById('seat_name').innerText = '' + markersToEdit[0].sourceTarget.options.title;
 }
 
 
 document.getElementById('update_first_seat').onclick = function() {
-	markersToEdit[0].sourceTarget.options.NomObjeto = document.getElementById('new_seat_name').value;
+	markersToEdit[0].sourceTarget.options.title = document.getElementById('new_seat_name').value;
 
 	updateFirstName();
 };
@@ -569,12 +565,6 @@ realtime = L.realtime({
 	crossOrigin: true,
 	type: 'json'
 }, {
-	interval: 3 * 1000
-}).addTo(map);	
+	// interval: 3 * 1000
+})
 
-	// realtime.on('update', function() {
-	// 	if(getMarkersSorted().length > 60 ) {
-	// 		getMarkersSorted().map(x => x.remove());
-	// 	}
-	// 		insertSeats(pointsForJson);
-	// });
