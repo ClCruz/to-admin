@@ -272,6 +272,16 @@ const adminRoomAdd = resolve => {
     resolve(require('./views/room/add.vue'));
   }, 'admin-room');
 };
+const adminMapList = resolve => {
+  require.ensure(['./views/map/list.vue'], () => {
+    resolve(require('./views/map/list.vue'));
+  }, 'admin-mapList');
+};
+const adminMapAdd = resolve => {
+  require.ensure(['./views/map/add.vue'], () => {
+    resolve(require('./views/map/add.vue'));
+  }, 'admin-mapAdd');
+};
 
 // my
 const adminMyInfo = resolve => {
@@ -564,6 +574,16 @@ const obj = new Router({
       path: '/room/list',
       name: 'room-list',
       component: adminRoomList
+    },
+    {
+      path: '/map/add',
+      name: 'map-add',
+      component: adminMapAdd
+    },
+    {
+      path: '/map/list',
+      name: 'map-list',
+      component: adminMapList
     },
     //------
     //MY

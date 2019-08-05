@@ -148,7 +148,7 @@ export default {
   mixins: [func],
   components: {},
   props: ['id', 'base'],
-  name: 'event-add',
+  name: 'map-add',
   head: {
     title: function () {
       return {
