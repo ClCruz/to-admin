@@ -2,7 +2,7 @@
 <div v-if="mayIsee">
   <div class="container">
     <div class="row">
-      <h2 @click="teste">Criação de salas</h2>
+      <h3  style="font-weight: 600 !important; font-size: 16px">Edição mapa - <span class="fx-3" style="font-weight: 400 !important; font-size: 16px">Nome Mapa</span></h3>
       <div class="col-12 pl-0 ml-0 border-0">
         <div id="sidebar_create" class="btn-group-sm">
           <p class="mt-4">Opções</p>
@@ -81,7 +81,7 @@
           <i class="fa fa-save"></i>
           </button>
         </div>
-        <div id="map" style="width: 960px; height: 610px; border: 1px solid #fff"></div>
+        <div id="map" style="width: 100%; height: 610px; border: 1px solid #fff"></div>
       </div>
     </div>
   </div>
@@ -148,7 +148,7 @@ export default {
   mixins: [func],
   components: {},
   props: ['id', 'base'],
-  name: 'event-add',
+  name: 'map-add',
   head: {
     title: function () {
       return {
@@ -185,22 +185,22 @@ export default {
     
     setSeats() {
       Vue.nextTick().then(response => {
-        if (this.showClientAdd)
-          return;
+        // if (this.showClientAdd)
+        //   return;
 
-        let seatsFiltered = this.seats.filter(o => o.status != 'O' && o.status != 'C');
-        for (let x in seatsFiltered) {
-          if (this.codCliente != null && this.codCliente != "" && seatsFiltered[x].status == 'R' && seatsFiltered[x].codCliente != this.codCliente) continue;
+        // let seatsFiltered = this.seats.filter(o => o.status != 'O' && o.status != 'C');
+        // for (let x in seatsFiltered) {
+        //   if (this.codCliente != null && this.codCliente != "" && seatsFiltered[x].status == 'R' && seatsFiltered[x].codCliente != this.codCliente) continue;
 
-          if (seatsFiltered[x].Indice)
-            this.movSeat(this.createSeatSelectedObject(seatsFiltered[x].Indice, seatsFiltered[x].NomObjeto, seatsFiltered[x].NomSetor), false);
-        }
+        //   if (seatsFiltered[x].Indice)
+        //     this.movSeat(this.createSeatSelectedObject(seatsFiltered[x].Indice, seatsFiltered[x].NomObjeto, seatsFiltered[x].NomSetor), false);
+        // }
 
-        console.log(this.seats);
-        teste2 = this.seats;
+        // console.log(this.seats);
+        this.teste();
 
-        addSeatJS($("#mapa_de_plateia"), annotation, this.seats, this.chooseSeat, this.indiceInProcess, this.codCliente, this.codReserva);
-        setup_without_touch();
+        // addSeatJS($("#mapa_de_plateia"), annotation, this.seats, this.chooseSeat, this.indiceInProcess, this.codCliente, this.codReserva);
+        // setup_without_touch();
 
         //mapa_de_plateia[0].removeAnnotations();
         //$mapa_de_plateia.addAnnotations(annotation, this.seats);
@@ -277,6 +277,12 @@ export default {
   height: 100%;
   min-height: 100%;
   overflow-y: auto;
+}
+
+.leaflet-container {
+    background-color:#fff;
+    border-radius: 5px;
+    box-shadow: 0 4px 6px #e3e3e3;
 }
 
 .errorFormValidate {
