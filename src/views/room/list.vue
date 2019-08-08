@@ -267,7 +267,7 @@ export default {
 
       this.$wait.start("inprocess");
       this.showWaitAboveAll();
-      roomService.list(this.getLoggedId(), this.form.id_base, this.form.id_municipio, this.form.search, this.grids.default.currentPage, this.grids.default.perPage).then(
+      roomService.list(this.getLoggedId(), this.form.id_base, this.form.id_local_evento, this.form.search, this.grids.default.currentPage, this.grids.default.perPage).then(
         response => {
           this.processing = false;
           this.grids.default.processing = false;
@@ -311,6 +311,7 @@ export default {
   filters: {
       sectors: function (value) {
         let ret = "";
+        if (value == null) value = "";
         let rows = value.split(",");
         rows.forEach(function (e) {
             let split = e.split("|");
