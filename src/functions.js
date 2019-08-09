@@ -109,7 +109,7 @@ export const func = {
             }
         },
         //admin
-        validateLoginForMe() {
+        validateLoginForMe(callback = null) {
             let ret = false;
             if (this.getLoggedId()!='' && this.getLoggedId() != null) {
                 let lastcheck = this.ls_get('lastcheck');
@@ -118,12 +118,22 @@ export const func = {
                     authService.revalid(this.getLoggedId()).then(response => {
                         //this.hideWaitAboveAll();
                         if (response.valid) {
-                            this.ls_add("lastcheck", moment().add(10,'minutes').format("YYYY-MM-DD HH:mm"));                           
+                            this.ls_add("lastcheck", moment().add(10,'minutes').format("YYYY-MM-DD HH:mm"));
+                            if (callback!=null && callback!=undefined) {
+                                callback();
+                            }
                         } else {
                             localStorage.clear();
                             window.location.reload(true);
                         }
                     }, error => { this.hideWaitAboveAll(); });
+                }
+                else {
+                    if (lastcheck != null && lastcheck != undefined && lastcheck != '' && (moment(lastcheck).isValid() && moment(lastcheck).toDate() >= moment().toDate()) ) {
+                        if (callback!=null && callback!=undefined) {
+                            callback();
+                        }
+                    }
                 }
                 ret = true;
             }

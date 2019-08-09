@@ -18,7 +18,7 @@
         <b-row class="mb-3">
           <b-col>
             <b-row>
-              <b-button type="button" variant="primary" size="sm" @click="search">
+              <b-button type="button" variant="primary" size="sm" @click="clicksearch">
                 <v-wait for="inprocess">
                     <template slot="waiting">
                         Aguarde...
@@ -140,7 +140,11 @@ export default {
   created() {
   },
   methods: {
+    clicksearch() {
+      this.validateLoginForMe(this.search);
+    },
     search() {
+      
       if (this.processing) return;
       this.processing = true;
 
