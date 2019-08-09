@@ -211,6 +211,12 @@ export default {
               icon: 'fas fa-chart-pie',
               code: 'report-quotasale'
             },
+            {
+              href: '/report/binpromotion',
+              title: 'Venda para promoção BIN',
+              icon: 'fas fa-file-contract',
+              code: 'report-binpromotion'
+            },
           ]
         },
         {

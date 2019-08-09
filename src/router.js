@@ -197,6 +197,11 @@ const adminPartnerStaticPage = resolve => {
 };
 
 // report
+const adminReportBinPromotion = resolve => {
+  require.ensure(['./views/report/binpromotion.vue'], () => {
+    resolve(require('./views/report/binpromotion.vue'));
+  }, 'admin-report-binpromotion');
+};
 const adminReportAccounting = resolve => {
   require.ensure(['./views/report/accounting.vue'], () => {
     resolve(require('./views/report/accounting.vue'));
@@ -499,6 +504,11 @@ const obj = new Router({
       path: '/report/quotasale',
       name: 'report-quotasale',
       component: adminReportQuotaSale
+    },
+    {
+      path: '/report/binpromotion',
+      name: 'report-binpromotion',
+      component: adminReportBinPromotion
     },
     //------
     //GENRE
