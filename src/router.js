@@ -631,7 +631,13 @@ const obj = new Router({
       component: adminRoomAdd
     },
     {
-      path: '/room/list',
+      path: '/room/edit/:id/:id_base',
+      name: 'room-edit',
+      props: true,
+      component: adminRoomAdd
+    },
+    {
+      path: '/room/list/:id?',
       name: 'room-list',
       component: adminRoomList
     },

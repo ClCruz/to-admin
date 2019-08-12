@@ -84,6 +84,10 @@
                   <span v-else>Inativo</span>
               </template>
 
+              <template slot="seattypes" slot-scope="data">
+                  {{data.item.seattypes | sectors}}
+              </template>
+
               <template slot="actions" slot-scope="data">
                   <span v-if="!mayI('room-add')">-</span>
                   <b-button-group size="sm" v-if="mayI('room-add')">
@@ -106,10 +110,10 @@ import Vuelidate from 'vuelidate';
 import config from "@/config";
 import { func } from "@/functions";
 import { userService } from '../../components/common/services/user';
-import { roomService } from '../../components/common/services/room';
 import { cityService } from '../../components/common/services/city';
 import { stateService } from '../../components/common/services/state';
 import { placeService } from '../../components/common/services/place';
+import { roomService } from '../../components/common/services/room';
 
 import {
   required,
@@ -122,6 +126,7 @@ Vue.use(Vuelidate);
 export default {
   mixins: [func],
   name: 'room-list',
+  props: ['id_local_evento'],
   head: {
     title: function () {
       return { 
@@ -138,8 +143,32 @@ export default {
   },
   created() {
     this.populateBases();
+    this.populateState();
+    if (this.$route.params.id!=undefined && this.$route.params.id!=null) {
+      this.get();
+    }
   },
   methods: {
+    get() {
+      this.showWaitAboveAll();
+      placeService.get(this.$route.params.id).then(
+        response => {
+          this.hideWaitAboveAll();
+
+          if (this.validateJSON(response)) {
+            this.form.id_estado = response.id_estado;
+            this.form.id_municipio = response.id_municipio;
+            this.populateCity();
+            this.form.id_local_evento = response.id_local_evento;
+            this.populatePlace();
+          }
+        },
+        error => {
+          this.hideWaitAboveAll();
+          this.toastError("Falha na execução.");
+        }
+      );
+    },
     selState() {
       Vue.nextTick().then(response => {
         this.populateCity();
@@ -220,7 +249,7 @@ export default {
       );
     },
     edit(item) {
-      this.$router.push(`/paymenttype/edit/${item.CodForPagto}/${item.id_base}`);
+      this.$router.push(`/room/edit/${item.CodSala}/${item.id_base}`);
     },
     pagto(to) {
       this.grids.default.currentPage = to;
@@ -238,7 +267,7 @@ export default {
 
       this.$wait.start("inprocess");
       this.showWaitAboveAll();
-      paymenttypeService.list(this.getLoggedId(), this.form.id_base, this.form.search, this.grids.default.currentPage, this.grids.default.perPage).then(
+      roomService.list(this.getLoggedId(), this.form.id_base, this.form.id_local_evento, this.form.search, this.grids.default.currentPage, this.grids.default.perPage).then(
         response => {
           this.processing = false;
           this.grids.default.processing = false;
@@ -279,10 +308,26 @@ export default {
       },
     }
   },
+  filters: {
+      sectors: function (value) {
+        let ret = "";
+        if (value == null) value = "";
+        let rows = value.split(",");
+        rows.forEach(function (e) {
+            let split = e.split("|");
+            if (ret != '') {
+              ret += ", ";
+            }
+            ret += split[0];
+        });
+        return ret;
+      },
+  },
   data () {
     return {
         processing: false,
         loading: false,
+        executedAtLeastOne: false,
         form: {
           search: '',
           id_base: '',
@@ -309,6 +354,7 @@ export default {
                 fields: {
                     NomSala: { label: 'Nome', sortable: false },
                     StaSala: { label: 'Ativo?', sortable: false },
+                    seattypes: { label: 'Setores', sortable: false },
                     actions: { label: 'Ações' }
                 },
             }
