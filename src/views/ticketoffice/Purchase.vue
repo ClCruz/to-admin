@@ -317,6 +317,8 @@ export default {
             purchaseService.refund(this.get_id_base(), this.getLoggedId(), this.form.codVendaToRefund, 0,this.form.selected.join(),this.form.inGatewayTo ? 1 : 0).then(response=> {
                     if (this.validateJSON(response))
                     {
+                        this.form.selected = [];
+                        
                         this.$swal.insertQueueStep({
                             title: 'Processo de estorno',
                             type: 'success',
