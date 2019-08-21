@@ -239,6 +239,7 @@ var pointsForJson = [
  markers = []
 
 function insertSeats(list) {
+	console.log(list);
 	list.forEach(function(value) {
 		var marker = L.marker(value.xy, {
 			icon: markerIcon,
@@ -396,7 +397,7 @@ function apply() {
 
 	span = markersExample;
 }
-
+console.log(this.map._lastCenter.lat * 2);
 // insertSeats(pointsForJson);
 
 L.easyButton( 'fa fa-edit', function(){
