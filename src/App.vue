@@ -70,7 +70,7 @@
       </div>
     </template>
   </v-wait>
-  <sidebar-menu :menu="menu" v-if="checkIsAuth()" :collapsed="true" :widthCollapsed="'48px'" :width="'240px'" />
+  <sidebar-menu :menu="menu" v-if="checkIsAuth()" :collapsed="true" :widthCollapsed="'48px'" :width="'280px'" />
   <div class="p-5">
     <router-view :key="$route.fullPath" />
   </div>
@@ -212,6 +212,12 @@ export default {
               title: 'Venda para cota',
               icon: 'fas fa-chart-pie',
               code: 'report-quotasale'
+            },
+            {
+              href: '/report/binpromotion',
+              title: 'Venda para promoção BIN',
+              icon: 'fas fa-file-contract',
+              code: 'report-binpromotion'
             },
           ]
         },
@@ -738,6 +744,8 @@ $dropDownBg: #fff;
     &>.vsm-icon {
       color: $mobileIconColor !important;
       background-color: $mobileIconBg !important;
+      padding-right: 0px;
+      margin-right: 0px;
     }
   }
 
@@ -787,7 +795,10 @@ $dropDownBg: #fff;
     }
   }
 
+  & .nav-item {}
+
   & .vsm-dropdown {
+
     &>.vsm-list {
       background-color: $dropDownBg !important;
 
@@ -800,6 +811,18 @@ $dropDownBg: #fff;
       & .vsm-link:hover {
         color: $itemHoverColor !important;
         background-color: #fff !important;
+      }
+
+      & .vsm-icon {
+
+        padding-right: 0px !important;
+        margin-right: 0px !important;
+      }
+
+      & .vsm-title {
+        font-size: 12px;
+        padding-left: 0px !important;
+        margin-left: 0px !important;
       }
 
       & :hover {

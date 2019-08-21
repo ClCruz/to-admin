@@ -18,9 +18,13 @@ export const partnerService = {
   resetgit,
   videoupload,
   listbase,
+  listbaseselect,
   savebase,
   withpermission,
-  withpermissionbases
+  withpermissionbases,
+  listpaymenttype,
+  savepaymenttype,
+  listpaymenttypeonbase,
 }
 
 function withpermissionbases(loggedId) {
@@ -63,6 +67,76 @@ function withpermission(loggedId) {
 }
 function listbase(id_partner) {
     let url = config.api + `/v1/admin/partner/base/list?id=${id_partner}`;
+
+    var ret = new Promise(
+    function (resolve, reject) {
+        Vue.http.get(url).then(res => {
+        resolve(res.body);
+        }, err => {
+        reject({
+            error: true,
+            msg: err
+        });
+        });
+    }
+  );
+  return ret;
+}
+function listbaseselect(id_partner) {
+    let url = config.api + `/v1/admin/partner/base/select?id=${id_partner}`;
+
+    var ret = new Promise(
+    function (resolve, reject) {
+        Vue.http.get(url).then(res => {
+        resolve(res.body);
+        }, err => {
+        reject({
+            error: true,
+            msg: err
+        });
+        });
+    }
+  );
+  return ret;
+}
+function savepaymenttype(id_partner, loggedId, id_base, id_meio_pagamento, codForPagto) {
+    let url = config.api + `/v1/admin/partner/paymenttype/save`;
+
+    let obj = { id_partner, loggedId, id_base, id_meio_pagamento, codForPagto };
+
+    var ret = new Promise(
+        function (resolve, reject) {
+            Vue.http.post(url, obj, { emulateJSON: true }).then(res => {
+                resolve(res.body);
+            }, err => {
+                reject({
+                    error: true,
+                    msg: err
+                });
+            });    
+        }
+    );
+    return ret;
+}
+function listpaymenttype(id_partner, id_base) {
+    let url = config.api + `/v1/admin/partner/paymenttype/list?id=${id_partner}&id_base=${id_base}`;
+
+    var ret = new Promise(
+    function (resolve, reject) {
+        Vue.http.get(url).then(res => {
+        resolve(res.body);
+        }, err => {
+        reject({
+            error: true,
+            msg: err
+        });
+        });
+    }
+  );
+  return ret;
+}
+function listpaymenttypeonbase(id_base) {
+    let url = config.api + `/v1/admin/partner/paymenttype/select_onbase?id_base=${id_base}`;
 
     var ret = new Promise(
     function (resolve, reject) {
