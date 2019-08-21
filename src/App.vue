@@ -219,9 +219,9 @@ export default {
             },
             {
               href: '/report/binpromotionresume',
-              title: 'Venda para promoção BIN',
+              title: 'Venda para promoção BIN Resumido',
               icon: 'fas fa-file-contract',
-              code: 'report-binpromotionresume'
+              code: 'report-binpromotion'
             },
           ]
         },
