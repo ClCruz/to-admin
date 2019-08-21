@@ -118,6 +118,7 @@ export default {
     },
   },
   computed: {
+    
     total() {
       if (this.grids.default.items.length == 0)
         return "";
