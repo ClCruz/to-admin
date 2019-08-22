@@ -162,7 +162,7 @@ export default {
       );      
     },
     startprint() {
-      let url = binpromotionService.printurl(this.getLoggedId(), this.form.selectedDate.start, this.form.selectedDate.end);
+      let url = binpromotionService.printurlresume(this.getLoggedId(), this.form.selectedDate.start, this.form.selectedDate.end);
       window.open(url);
     },
     iframeloaded() {

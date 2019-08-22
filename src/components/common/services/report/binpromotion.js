@@ -8,11 +8,17 @@ config.setapikey();
 
 export const binpromotionService = {
   list,
-  printurl
+  printurl,
+  printurlresume
 }
 
 function printurl(loggedId, start, end) {
   let url = config.api + `/v1/print/report/binpromotion?exportto=sheet&loggedId=${loggedId}&start=${start}&end=${end}&${config.getapikeyQS()}`;
+  return url;
+}
+
+function printurlresume(loggedId, start, end) {
+  let url = config.api + `/v1/print/report/binpromotionresume?exportto=sheet&loggedId=${loggedId}&start=${start}&end=${end}&${config.getapikeyQS()}`;
   return url;
 }
 
