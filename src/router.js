@@ -226,6 +226,11 @@ const adminReportBinPromotion = resolve => {
     resolve(require('./views/report/binpromotion.vue'));
   }, 'admin-report-binpromotion');
 };
+const adminReportBinPromotionResume = resolve => {
+  require.ensure(['./views/report/binpromotionresume.vue'], () => {
+    resolve(require('./views/report/binpromotionresume.vue'));
+  }, 'admin-report-binpromotionresume');
+};
 const adminReportAccounting = resolve => {
   require.ensure(['./views/report/accounting.vue'], () => {
     resolve(require('./views/report/accounting.vue'));
@@ -579,6 +584,11 @@ const obj = new Router({
       path: '/report/binpromotion',
       name: 'report-binpromotion',
       component: adminReportBinPromotion
+    },
+    {
+      path: '/report/binpromotionresume',
+      name: 'report-binpromotionresume',
+      component: adminReportBinPromotionResume
     },
     //------
     //GENRE
