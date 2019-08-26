@@ -348,7 +348,7 @@ export default {
         return;
       }
 
-      if(!this.markersToEdit[0]) {
+      if (!this.markersToEdit[0]) {
         return;
       }
 
