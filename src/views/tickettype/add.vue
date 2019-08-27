@@ -1,5 +1,34 @@
 <template>
     <div>
+
+<b-modal ref="partnerModal" hide-footer title="Usuário x Parceiro" size="lg">
+  <div class="d-block text-center">
+    <h4>Parceiros que podem ver o bilhete {{popups.partner.name}}</h4>
+  </div>
+  <b-table striped="striped"
+            outlined="outlined"
+            class="fontSize tableClicked bg-white"
+            small="small"
+            hover="hover"
+            responsive
+            show-empty
+            empty-text="Não foram encontrados registros."
+            v-if="this.popups.partner.grids.partner.loaded"
+            :items="this.popups.partner.grids.partner.items"
+            :fields="this.popups.partner.grids.partner.fields">
+
+        <template slot="active" slot-scope="data">
+          <b-button size="sm" @click="changePartner('add', data.item)" title="Adicionar parceiro" variant="outline-success" v-if="data.item.active != 1">
+              Adicionar
+          </b-button>
+          <b-button size="sm" @click="changePartner('del', data.item)" title="Remover parceiro" variant="danger" v-if="data.item.active == 1">
+              Remover
+          </b-button>
+        </template>
+  </b-table>
+  <b-btn class="mt-3" variant="outline-info" block @click="partnerClose">Fechar</b-btn>
+</b-modal>
+
       <b-container>
         <b-row>
           <b-col>
@@ -215,6 +244,12 @@
               <b-row v-if="form.isPlus">
                 <div class="directlink"><a :href="form.imageURI" target="_blank">Imagem</a>/<a :href="form.imageURIOriginal" target="_blank">Imagem original</a></div>
               </b-row>
+              <b-row class="mb-3">
+                  <toggle-button :sync="true" v-model="form.allpartner" :width="150" :color="{checked: '#b3ffb3', unchecked: '#ffb3b3', disabled: '#a6a6a6'}" :labels="{ checked: 'Todos parceiros', unchecked: 'Escolher parceiro' }"/>
+              </b-row>
+              <b-row class="mb-3" v-if="form.allpartner == 0">
+                <button class="btn btn-secondary" type="button" @click="partnerOpen">Ver parceiros</button>
+              </b-row>
               <b-row>
                   <b-input-group size="sm">
                       <b-form-checkbox id="StaTipBilhete"
@@ -305,6 +340,82 @@ export default {
     }
   },
   methods: {
+    partnerOpen() {
+      this.partner();
+    },
+    partnerClose() {
+      this.$refs.partnerModal.hide();
+    },
+    partner() {
+      if (this.processing) return;
+
+      this.popups.partner.name = this.form.nameWeb;
+      this.popups.partner.id = this.id;
+
+      this.popups.partner.grids.partner.processing = true;
+      this.processing = true;
+
+      this.$wait.start("inprocess");
+      this.showWaitAboveAll();
+      
+      tickettypeService.partnerlist(this.id_base,this.id).then(
+        response => {
+          this.processing = false;
+          this.popups.partner.grids.partner.processing = false;
+          this.hideWaitAboveAll();
+          this.$wait.end("inprocess");
+
+          if (this.validateJSON(response))
+          {
+              this.popups.partner.grids.partner.loaded = true;
+              this.popups.partner.grids.partner.items = response;
+              this.$refs.partnerModal.show();
+          }
+        },
+        error => {
+          this.popups.partner.grids.partner.processing = false;
+          this.processing = false;
+          this.hideWaitAboveAll();
+          this.$wait.end("inprocess");
+          this.toastError("Falha na execução.");
+        }
+      );      
+    },
+    refreshPartner() {
+      this.partner();
+    },
+    changePartner(type, item) {
+      if (this.processing) return;
+
+      this.processing = true;
+
+      this.showWaitAboveAll();
+      tickettypeService.partnersave(this.getLoggedId(), this.id_base,this.id, item.id).then(
+        response => {
+          this.processing = false;
+
+          this.hideWaitAboveAll();
+          //this.$wait.end("inprocess");
+
+          if (this.validateJSON(response))
+          {
+            if (response.success) {
+              this.toastSuccess("Salvo com sucesso.");
+              this.refreshPartner();
+            }
+            else {
+              this.toastError(response.msg);
+            }
+          }
+        },
+        error => {
+          this.processing = false;
+          this.hideWaitAboveAll();
+          //this.$wait.end("inprocess");
+          this.toastError("Falha na execução.");
+        }
+      );      
+    },
     populateImage() {
       Vue.nextTick().then(response => {
         this.$wait.start("inprocess");
@@ -471,6 +582,7 @@ export default {
       let isAllotment = this.form.isAllotment == true ? 1 : 0;
       let QtdVendaPorLote_allotment = this.form.QtdVendaPorLote;
       let StaTipBilhete = this.form.StaTipBilhete == 1 ? 'A' : 'I';
+      let allpartner = this.form.allpartner == true ? 1 : 0;
 
       let vl_preco_fixo = 0;
       let PerDesconto = 0;
@@ -529,6 +641,7 @@ export default {
                             ,isAllotment
                             ,QtdVendaPorLote
                             ,StaTipBilhete
+                            ,allpartner
                             ,saveimage
                             ,imagebase64).then(
         response => {
@@ -622,6 +735,7 @@ export default {
                 this.form.TipBilhete = response.TipBilhete;
                 this.form.TipCaixa = response.TipCaixa;
                 this.form.vl_preco_fixo = response.vl_preco_fixo;
+                this.form.allpartner = response.allpartner == 1;
 
                 this.form.halftype = response.StaCalculoMeiaEstudante == 'P';
                 this.form.discountHalf = response.PerDesconto;
@@ -664,6 +778,25 @@ export default {
         loading: false,
         selects: {
           base: [],
+        },
+        popups: {
+          partner: {
+            loaded: false,
+            name: '',
+            id: '',
+            grids: {
+              partner: {
+                processing: false,
+                loaded: false,
+                items: [],
+                fields: {
+                  name: { label: 'Nome', sortable: false },
+                  domain: { label: 'Dominio', sortable: false },
+                  active: { label: '', sortable: false },
+                },
+              }
+            }
+          }
         },
         components: { 
           picOptions: {
@@ -759,7 +892,7 @@ export default {
           TipBilhete: '',
           TipCaixa: '',
           vl_preco_fixo: '',
-
+          allpartner: true,
 
         }
     }

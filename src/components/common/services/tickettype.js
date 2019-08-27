@@ -15,6 +15,47 @@ export const tickettypeService = {
   eventsave,
   eventremove,
   select,
+  partnerlist,
+  partnersave,
+}
+function partnerlist(id_base,CodTipBilhete) {
+    let url = config.api + `/v1/admin/tickettype/partner/list?id_base=${id_base}&CodTipBilhete=${CodTipBilhete}`;
+
+    var ret = new Promise(
+    function (resolve, reject) {
+        Vue.http.get(url).then(res => {
+        resolve(res.body);
+        }, err => {
+        reject({
+            error: true,
+            msg: err
+        });
+        });
+    }
+  );
+  return ret;
+}
+function partnersave(loggedId, id_base, CodTipBilhete, id_partner) {
+    let url = config.api + `/v1/admin/tickettype/partner/save`;
+
+    let obj = {
+        loggedId,
+        id_base, CodTipBilhete, id_partner
+    };
+
+    var ret = new Promise(
+        function (resolve, reject) {
+            Vue.http.post(url, obj, { emulateJSON: true }).then(res => {
+                resolve(res.body);
+            }, err => {
+                reject({
+                    error: true,
+                    msg: err
+                });
+            });    
+        }
+    );
+    return ret;
 }
 
 function eventsave(loggedId
@@ -186,6 +227,7 @@ function get(loggedId, id, id_base) {
                 ,isAllotment
                 ,QtdVendaPorLote
                 ,StaTipBilhete
+                ,allpartner
                 ,saveimage
                 ,imagebase64) {
     let url = config.api + `/v1/admin/tickettype/save`;
@@ -222,6 +264,7 @@ function get(loggedId, id, id_base) {
         ,isAllotment: (isAllotment == true ? 1 : 0)
         ,QtdVendaPorLote
         ,StaTipBilhete
+        ,allpartner: (allpartner == true ? 1 : 0)
         ,saveimage: (saveimage == true ? 1 : 0)
         ,imagebase64
     };
