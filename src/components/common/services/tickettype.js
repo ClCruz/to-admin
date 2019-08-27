@@ -9,6 +9,7 @@ config.setapikey();
 export const tickettypeService = {
   get,
   save,
+  saveold,
   list,
   base64,
   eventlist,
@@ -267,6 +268,33 @@ function get(loggedId, id, id_base) {
         ,allpartner: (allpartner == true ? 1 : 0)
         ,saveimage: (saveimage == true ? 1 : 0)
         ,imagebase64
+    };
+
+    var ret = new Promise(
+        function (resolve, reject) {
+            Vue.http.post(url, obj, { emulateJSON: true }).then(res => {
+                resolve(res.body);
+            }, err => {
+                reject({
+                    error: true,
+                    msg: err
+                });
+            });    
+        }
+    );
+    return ret;
+  }
+  function saveold(loggedId
+                ,id
+                ,id_base
+                ,allpartner) {
+    let url = config.api + `/v1/admin/tickettype/saveold`;
+
+    let obj = {
+        loggedId
+        ,id
+        ,id_base
+        ,allpartner: (allpartner == true ? 1 : 0)
     };
 
     var ret = new Promise(

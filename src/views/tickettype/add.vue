@@ -41,7 +41,39 @@
                 </b-input-group>
                 <div class="errorFormValidate" v-if="executedAtLeastOne && !$v.form.id_base.required">Campo é obrigatório</div>
               </b-row>
-              <b-row class="mb-3">
+            <b-row class="mb-3" v-if="form.isOld">
+                  <b-input-group size="sm">
+                      <b-input-group-prepend is-text class="firstLabel">
+                          Nome:
+                      </b-input-group-prepend>
+                      <b-form-input id="name"
+                                  type="text"
+                                  name="name"
+                                  maxlength="100"
+                                  v-model="form.TipBilhete"
+                                  disabled
+                                  placeholder="">
+                      </b-form-input>
+                  </b-input-group>
+                  <div class="errorFormValidate" v-if="executedAtLeastOne && !$v.form.nameWeb.required">Campo é obrigatório</div>
+              </b-row>
+            <b-row class="mb-3" v-if="form.isOld">
+                  <b-input-group size="sm">
+                      <b-input-group-prepend is-text class="firstLabel">
+                          Nome Site:
+                      </b-input-group-prepend>
+                      <b-form-input id="name"
+                                  type="text"
+                                  name="name"
+                                  maxlength="100"
+                                  v-model="form.ds_nome_site"
+                                  disabled
+                                  placeholder="">
+                      </b-form-input>
+                  </b-input-group>
+                  <div class="errorFormValidate" v-if="executedAtLeastOne && !$v.form.nameWeb.required">Campo é obrigatório</div>
+              </b-row>
+              <b-row class="mb-3" v-if="!form.isOld">
                   <b-input-group size="sm">
                       <b-input-group-prepend is-text class="firstLabel" v-bind:class="{ errorFormValidateLabel: (executedAtLeastOne && $v.form.nameWeb.$invalid) }">
                           Nome - WEB:
@@ -57,7 +89,7 @@
                   </b-input-group>
                   <div class="errorFormValidate" v-if="executedAtLeastOne && !$v.form.nameWeb.required">Campo é obrigatório</div>
               </b-row>
-              <b-row class="mb-3">
+              <b-row class="mb-3" v-if="!form.isOld">
                   <b-input-group size="sm">
                       <b-input-group-prepend is-text class="firstLabel" v-bind:class="{ errorFormValidateLabel: (executedAtLeastOne && $v.form.nameTicketOffice.$invalid) }">
                           Nome - Bilheteria:
@@ -73,7 +105,7 @@
                   </b-input-group>
                   <div class="errorFormValidate" v-if="executedAtLeastOne && !$v.form.nameTicketOffice.required">Campo é obrigatório</div>
               </b-row>
-              <b-row class="mb-3">
+              <b-row class="mb-3" v-if="!form.isOld">
                   <b-input-group size="sm">
                       <b-input-group-prepend is-text class="firstLabel" v-bind:class="{ errorFormValidateLabel: (executedAtLeastOne && $v.form.nameAPI.$invalid) }">
                           Nome - API:
@@ -89,7 +121,7 @@
                   </b-input-group>
                   <div class="errorFormValidate" v-if="executedAtLeastOne && !$v.form.nameAPI.required">Campo é obrigatório</div>
               </b-row>
-              <b-row class="mb-3">
+              <b-row class="mb-3" v-if="!form.isOld">
                   <b-input-group size="sm">
                       <b-input-group-prepend is-text class="firstLabel">
                           Descrição:
@@ -103,7 +135,7 @@
                       </b-form-input>
                   </b-input-group>
               </b-row>
-              <b-row class="mb-3">
+              <b-row class="mb-3" v-if="!form.isOld">
                 <b-input-group size="sm">
                       <b-input-group-prepend is-text class="firstLabel">
                           Dia da semana:
@@ -126,12 +158,12 @@
                   </div>
                 </b-input-group>
               </b-row>
-              <b-row class="mb-3">
+              <b-row class="mb-3" v-if="!form.isOld">
                   <toggle-button :sync="true" v-model="form.allowweb" :width="150" :color="{checked: '#b3ffb3', unchecked: '#ffb3b3', disabled: '#a6a6a6'}" :labels="{ checked: 'Mostrar na Web', unchecked: 'Não monstrar na Web' }"/>
                   <toggle-button :sync="true" v-model="form.allowticketoffice" :width="180" :color="{checked: '#b3ffb3', unchecked: '#ffb3b3', disabled: '#a6a6a6'}" :labels="{ checked: 'Mostrar na Bilheteria', unchecked: 'Não monstrar na Bilheteria' }"/>
                   <toggle-button :sync="true" v-model="form.allowapi" :width="180" :color="{checked: '#b3ffb3', unchecked: '#ffb3b3', disabled: '#a6a6a6'}" :labels="{ checked: 'Mostrar na API', unchecked: 'Não monstrar na API' }"/>
               </b-row>
-              <b-row class="mb-3">
+              <b-row class="mb-3" v-if="!form.isOld">
                   <toggle-button :sync="true" @change="changed" name="isPrincipal" v-model="form.isPrincipal" :width="110" :color="{checked: '#b3ffb3', unchecked: '#ffb3b3', disabled: '#a6a6a6'}" :labels="{ checked: 'Inteira', unchecked: 'É inteira?' }"/>
                   <toggle-button :sync="true" @change="changed" name="isDiscount" v-model="form.isDiscount" :width="120" :color="{checked: '#b3ffb3', unchecked: '#ffb3b3', disabled: '#a6a6a6'}" :labels="{ checked: 'Desconto', unchecked: 'É com desconto?' }"/>
                   <toggle-button :sync="true" @change="changed" name="isHalf" v-model="form.isHalf" :width="110" :color="{checked: '#b3ffb3', unchecked: '#ffb3b3', disabled: '#a6a6a6'}" :labels="{ checked: 'Meia', unchecked: 'É meia entrada?' }"/>
@@ -203,7 +235,7 @@
                   </b-form-input>
                 </b-input-group>
               </b-row>
-              <b-row class="mb-3">
+              <b-row class="mb-3" v-if="!form.isOld">
                   <toggle-button :sync="true" @change="changed" name="isAllotment" v-model="form.isAllotment" :width="110" :color="{checked: '#b3ffb3', unchecked: '#ffb3b3', disabled: '#a6a6a6'}" :labels="{ checked: 'Lote', unchecked: 'É lote?' }"/>
               </b-row>
               <b-row class="mb-3" v-if="form.isAllotment">
@@ -250,7 +282,7 @@
               <b-row class="mb-3" v-if="form.allpartner == 0">
                 <button class="btn btn-secondary" type="button" @click="partnerOpen">Ver parceiros</button>
               </b-row>
-              <b-row>
+              <b-row v-if="!form.isOld">
                   <b-input-group size="sm">
                       <b-form-checkbox id="StaTipBilhete"
                                       v-model="form.StaTipBilhete"
@@ -260,8 +292,23 @@
                       </b-form-checkbox>
                   </b-input-group>
               </b-row>
-              <b-row>
+              <b-row v-if="!form.isOld">
                 <b-button type="button" variant="success" size="sm" @click="save">
+                  <v-wait for="inprocess">
+                      <template slot="waiting">
+                          Carregando...
+                      </template>
+                  </v-wait>
+                  <v-wait for="inprocessSave">
+                      <template slot="waiting">
+                          Salvando...
+                      </template>
+                  </v-wait>
+                  <span v-if="!processing">Salvar</span>
+                </b-button>
+              </b-row>
+              <b-row v-if="form.isOld">
+                <b-button type="button" variant="success" size="sm" @click="saveold">
                   <v-wait for="inprocess">
                       <template slot="waiting">
                           Carregando...
@@ -644,6 +691,45 @@ export default {
                             ,allpartner
                             ,saveimage
                             ,imagebase64).then(
+        response => {
+          this.processing = false;
+          this.hideWaitAboveAll();
+          this.$wait.end("inprocessSave");
+
+          if (this.validateJSON(response))
+          {
+             if (response.success) {
+               this.toastSuccess("Salvo com sucesso");
+               this.$router.push(`/tickettype/list`);
+             }
+             else {
+               this.toastError(response.msg);
+             }
+          }
+        },
+        error => {
+          this.processing = false;
+          this.hideWaitAboveAll();
+          this.$wait.end("inprocessSave");
+          this.toastError("Falha na execução.");
+        }
+      );      
+    },
+    saveold() {
+      if (this.processing) return;
+      this.executedAtLeastOne = true;
+
+      this.processing = true;
+
+      this.$wait.start("inprocessSave");
+      this.showWaitAboveAll();
+      let id = this.id;
+      let id_base = this.form.id_base;
+      let allpartner = this.form.allpartner == true ? 1 : 0;
+
+      tickettypeService.saveold(this.getLoggedId(), this.isAdd ? '' : this.id
+                            ,id_base
+                            ,allpartner).then(
         response => {
           this.processing = false;
           this.hideWaitAboveAll();
