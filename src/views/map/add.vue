@@ -31,7 +31,7 @@
                   <span id="result"></span>
                 </div>
               </div>
-              <a class="btn btn-small non-routed" id="btn-apply-options" href="#" title="Copy generated code to clipboard" data-clipboard-target="#code-anim-keyframes" onclick="apply()">Simular</a>
+              <a class="btn btn-small non-routed" id="btn-apply-options" href="#" title="Copy generated code to clipboard" data-clipboard-target="#code-anim-keyframes" @click="apply">Simular</a>
             </fieldset>
           </form>
         </div>
@@ -227,6 +227,8 @@ export default {
         iconUrl: "https://cdn2.iconfinder.com/data/icons/interface-elements-i/512/Circle-512.png"
       });
 
+      const ctxMapSidebar = this;
+
       this.drawControl = new L.Control.Draw({
         position: "topleft",
         draw: {
@@ -242,6 +244,11 @@ export default {
         },
         edit: {
           featureGroup: this.drawnItems,
+          remove: false,
+          edit: false
+        },
+        save: {
+           featureGroup: this.drawnItems,
           remove: false,
           edit: false
         }
@@ -262,12 +269,20 @@ export default {
       })
 
       L.easyButton('fa fa-edit', function () {
-        this.sidebarEdit.toggle();
+        ctxMapSidebar.sidebarEdit.toggle();
       }).addTo(this.map);
+
+      L.easyButton('fa fa-save', function () {
+        ctxMapSidebar.sidebarCreate.toggle();
+      }).addTo(this.map);
+
 
       this.map.addControl(this.sidebarEdit);
       this.map.addControl(this.sidebarCreate);
 
+    },
+    showSidebar() {
+      this.sidebarEdit.toggle();
     },
     getSeats() {
       roomEventService
@@ -392,23 +407,23 @@ export default {
 
         // (marker);
 
-        marker.on("click", this.clickMarker).addTo(this.map);
-        //   .bindPopup(value.title)
-        //   .on('mouseover', function (e) {
-        //     this.openPopup();
-        //   })
-        //   .on('mouseout', function (e) {
-        //     this.closePopup(); d 
-        //   })
-        //   .on('drag', function (e) {})
-        //   .on('dragstart', function (e) {
-        //     console.log('marker dragstart event');
-        //   })
-        //   .on('dragend', function (e) {
-        //     console.log('marker dragend event');
-        //   });
+        marker.on("click", this.clickMarker).addTo(this.map)
+        .bindPopup(value.title)
+        .on('mouseover', function (e) {
+        this.openPopup();
+        })
+        .on('mouseout', function (e) {
+          this.closePopup(); 
+        })
+        .on('drag', function (e) {})
+        .on('dragstart', function (e) {
+          console.log('marker dragstart event');
+        })
+        .on('dragend', function (e) {
+          console.log('marker dragend event');
+        });
 
-        // this.markers.push(marker);
+        this.markers.push(marker);
       }, this);
     },
     getMarkers() {
@@ -431,15 +446,16 @@ export default {
       return list;
     },
     apply() {
-      var span = document.getElementById('result');
+      let span = document.getElementById('result');
       span.innerHTML = '';
 
-      var quantityOfColumns = document.getElementById('seats-quantity').value;
-      var rowName = document.getElementById('row-name').value;
-      var steps = document.getElementById('steps-quantity').value;
-      var initialValue = document.getElementById('initial-value').value;
+      let quantityOfColumns = document.getElementById('seats-quantity').value;
+      let rowName = document.getElementById('row-name').value;
+      let steps = document.getElementById('steps-quantity').value;
+      let initialValue = document.getElementById('initial-value').value;
 
-      var markersExample = [];
+      let markersExample = [];
+      let seatNumber;
 
       initialValue == '' ? (initialValue = parseInt(0)) : (initialValue = parseInt(initialValue));
       steps == '' ? (steps = parseInt(1)) : (steps = parseInt(steps));
@@ -513,6 +529,8 @@ export default {
     },
     prepareClicks() {
 
+      const ctxMapClicks = this;
+
       // Funções relacionadas com add de assento
 
       // insertSeats(pointsForJson);
@@ -523,8 +541,8 @@ export default {
 
         value == '' ? (value = parseInt(1)) : (value = parseInt(value));
 
-        if (this.markersToEdit.length > 0) {
-          this.markersToEdit.map(x =>
+        if (ctxMapClicks.markersToEdit.length > 0) {
+          ctxMapClicks.markersToEdit.map(x =>
             x.sourceTarget.slideTo([x.sourceTarget._latlng.lat, x.sourceTarget._latlng.lng - value], {
               duration: 1,
               keepAtCenter: false
@@ -538,8 +556,8 @@ export default {
 
         value == '' ? (value = parseInt(1)) : (value = parseInt(value));
 
-        if (this.markersToEdit.length > 0) {
-          this.markersToEdit.map(x =>
+        if (ctxMapClicks.markersToEdit.length > 0) {
+          ctxMapClicks.markersToEdit.map(x =>
             x.sourceTarget.slideTo([x.sourceTarget._latlng.lat, x.sourceTarget._latlng.lng + value], {
               duration: 1,
               keepAtCenter: false
@@ -553,8 +571,8 @@ export default {
 
         value == '' ? (value = parseInt(1)) : (value = parseInt(value));
 
-        if (this.markersToEdit.length > 0) {
-          this.markersToEdit.map(x =>
+        if (ctxMapClicks.markersToEdit.length > 0) {
+          ctxMapClicks.markersToEdit.map(x =>
             x.sourceTarget.slideTo([x.sourceTarget._latlng.lat + value, x.sourceTarget._latlng.lng], {
               duration: 1,
               keepAtCenter: false
@@ -568,8 +586,8 @@ export default {
 
         value == '' ? (value = parseInt(1)) : (value = parseInt(value));
 
-        if (this.markersToEdit.length > 0) {
-          this.markersToEdit.map(x =>
+        if (ctxMapClicks.markersToEdit.length > 0) {
+          ctxMapClicks.markersToEdit.map(x =>
             x.sourceTarget.slideTo([x.sourceTarget._latlng.lat - value, x.sourceTarget._latlng.lng], {
               duration: 1,
               keepAtCenter: false
@@ -578,8 +596,8 @@ export default {
       };
       document.getElementById('reset_markers').onclick = function () {
 
-        if (this.markersToEdit.length > 0) {
-          this.markersToEdit.map(x =>
+        if (ctxMapClicks.markersToEdit.length > 0) {
+          ctxMapClicks.markersToEdit.map(x =>
             x.sourceTarget.slideTo([x.latlng.lat, x.latlng.lng], {
               duration: 1,
               keepAtCenter: false
@@ -588,19 +606,18 @@ export default {
       };
       document.getElementById('delete_markers').onclick = function () {
 
-        if (this.markersToEdit.length > 0) {
-          this.markersToEdit.map(
-            x => this.map.removeLayer(x.sourceTarget)
+        if (ctxMapClicks.markersToEdit.length > 0) {
+          ctxMapClicks.markersToEdit.map(
+            x => ctxMapClicks.map.removeLayer(x.sourceTarget)
           )
 
-          this.markersToEdit = [];
-          document.getElementById('markers_quantity').innerText = this.markersToEdit.length;
+          ctxMapClicks.markersToEdit = [];
+          document.getElementById('markers_quantity').innerText = ctxMapClicks.markersToEdit.length;
         }
       };
       document.getElementById('accessible_markers').onclick = function () {
-
-        if (this.markersToEdit.length > 0) {
-          this.markersToEdit.map(
+          console.log(ctxMapClicks.markersToEdit);
+          ctxMapClicks.markersToEdit.map(
             x => {
               if (x.sourceTarget._icon.classList.contains('seat__accessibility')) {
                 x.sourceTarget._icon.classList.remove('seat__accessibility')
@@ -611,17 +628,16 @@ export default {
               }
             }
           )
-        }
       };
       document.getElementById('delete_markers').onclick = function () {
-
-        if (this.markersToEdit.length > 0) {
-          this.markersToEdit.map(
-            x => this.map.removeLayer(x.sourceTarget)
+        
+        if (ctxMapClicks.markersToEdit.length > 0) {
+          ctxMapClicks.markersToEdit.map(
+            x => ctxMapClicks.map.removeLayer(x.sourceTarget)
           )
 
-          this.markersToEdit = [];
-          document.getElementById('markers_quantity').innerText = this.markersToEdit.length;
+          ctxMapClicks.markersToEdit = [];
+          document.getElementById('markers_quantity').innerText = ctxMapClicks.markersToEdit.length;
         }
       };
       /**
@@ -640,7 +656,7 @@ export default {
 
       // 	document.getElementById('seats_to_edit').innerHTML = ''; 
 
-      // 	this.markersToEdit.map(x => {
+      // 	ctxMapClicks.markersToEdit.map(x => {
       // 		document.getElementById('seats_to_edit').innerHTML += 
       // 		'<div class="form-inline mt-2">' +
       // 		'<label class="mb-2" for="">Nome do assento: ' + x.sourceTarget.options.title +'</label>' +
@@ -650,14 +666,14 @@ export default {
       // }
 
       document.getElementById('update_first_seat').onclick = function () {
-        this.markersToEdit[0].sourceTarget.options.title = document.getElementById('new_seat_name').value;
+        ctxMapClicks.markersToEdit[0].sourceTarget.options.title = document.getElementById('new_seat_name').value;
 
-        updateFirstName();
+        ctxMapClicks.updateFirstName();
       };
 
       document.getElementById('enable-seats').onchange = function () {
-        document.getElementById('initial-value').disabled = !this.checked;
-        document.getElementById('steps-quantity').disabled = !this.checked;
+        document.getElementById('initial-value').disabled = !ctxMapClicks.checked;
+        document.getElementById('steps-quantity').disabled = !ctxMapClicks.checked;
       };
     },
     prepareSelected() {
@@ -669,8 +685,7 @@ export default {
         this.markersToEdit.map(x => {
           x.sourceTarget.options.clicked = false;
           x.sourceTarget._icon.classList.remove('seat__clicked');
-        })
-        this.markersToEdit = [];
+        });
         ret = e.bounds; // lon, lat, lon, lat
 
         // console.log(ret);
@@ -712,7 +727,6 @@ export default {
       sidebarCreate: '',
       markersToEdit: [],
       timers: {
-
         getSeats: null
       },
       isMap: true,
