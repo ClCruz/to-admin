@@ -491,21 +491,22 @@ export default {
         },        
       ];
 
-      for (let x = (menuHelper.length - 1); x > 0; x--) {
+      for (let x = 0; x < (menuHelper.length); x++) {
         const element = menuHelper[x];
         if (!this.removeOrNot(x, element, menuHelper)) {
+          // console.log("removed");
           continue;
         }
 
         if (menuHelper[x].hasOwnProperty('child')) {
-          for (let x2 = (menuHelper[x].child.length - 1); x2 > 0; x2--) {
+          for (let x2 = 0; x2 < (menuHelper[x].child.length); x2++) {
             const element = menuHelper[x].child[x2];
             if (!this.removeOrNot(x2, element, menuHelper[x].child)) {
               continue;
             }
 
             if (menuHelper[x].child[x2].hasOwnProperty('child')) {
-              for (let x3 = (menuHelper[x].child[x2].child.length - 1); x3 > 0; x3--) {
+              for (let x3 = 0; x3 < (menuHelper[x].child[x2].child.length); x3++) {
                 const element = menuHelper[x].child[x2].child[x3];
                 if (!this.removeOrNot(x3, element, menuHelper[x].child[x2].child)) {
                   continue;
