@@ -126,7 +126,7 @@ export default {
     this.tryLogin(null);
     this.setMenu();
 
-    console.log(this.menu)
+    // console.log(this.menu)
   },
   computed: {},
   head: {
@@ -224,6 +224,12 @@ export default {
               title: 'Venda para promoção BIN Resumido',
               icon: 'fas fa-file-contract',
               code: 'report-binpromotion-reduced'
+            },
+            {
+              href: '/report/client',
+              title: 'Clientes',
+              icon: 'fas fa-users',
+              code: 'report-client'
             },
           ]
         },

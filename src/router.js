@@ -246,6 +246,11 @@ const adminReportQuotaSale = resolve => {
     resolve(require('./views/report/quotasale.vue'));
   }, 'admin-report-quotasale');
 };
+const adminReportClient = resolve => {
+  require.ensure(['./views/report/client.vue'], () => {
+    resolve(require('./views/report/client.vue'));
+  }, 'admin-report-client');
+};
 
 
 // producer
@@ -589,6 +594,11 @@ const obj = new Router({
       path: '/report/binpromotionresume',
       name: 'report-binpromotionresume',
       component: adminReportBinPromotionResume
+    },
+    {
+      path: '/report/client',
+      name: 'report-client',
+      component: adminReportClient
     },
     //------
     //GENRE
