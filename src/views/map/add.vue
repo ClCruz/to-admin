@@ -11,9 +11,9 @@
               <div class="">
                 <div class="form-inline mt-2">
                   <label class="mb-2" for="">Quantidade de assentos</label>
-                  <input class="input-small form-control" id="row-name" type="text" placeholder="Nome do fileira (Ex: A)">
-                  <input type="number" class=" form-control input-small" id="seats-quantity" placeholder="Quantidade assentos">
-                  <input type="number" class=" form-control input-small" id="space-between" placeholder="Espaço entre assentos">
+                  <input class="input-small form-control" id="row-name" type="text" placeholder="Nome do fileira (Ex: A)" value="a">
+                  <input type="number" class=" form-control input-small" id="seats-quantity" placeholder="Quantidade assentos" value="5">
+                  <input type="number" class=" form-control input-small" id="space-between" placeholder="Espaço entre assentos" value="20">
                 </div>
                 <div class="form-group mt-3">
                   <div class="form-check mb-2">
@@ -272,9 +272,9 @@ export default {
         ctxMapSidebar.sidebarEdit.toggle();
       }).addTo(this.map);
 
-      L.easyButton('fa fa-save', function () {
-        ctxMapSidebar.sidebarCreate.toggle();
-      }).addTo(this.map);
+      // L.easyButton('fa fa-save', function () {
+      //   ctxMapSidebar.sidebarCreate.toggle();
+      // }).addTo(this.map);
 
 
       this.map.addControl(this.sidebarEdit);
@@ -389,10 +389,17 @@ export default {
           iconUrl: "https://cdn2.iconfinder.com/data/icons/interface-elements-i/512/Circle-512.png"
         });
 
-        var cordsForMap = this.xy([
-          value.xy[0],
-          this.map._lastCenter.lat * 2 - value.xy[1]
-        ]);
+         let cordsForMap;
+
+        if (value.xy[1]) {
+          cordsForMap = this.xy([
+            value.xy[0],
+            this.map._lastCenter.lat * 2 - value.xy[1]
+          ]);
+        } else {
+          cordsForMap = value.xy;
+        }
+
 
         let marker = L.marker(cordsForMap, {
           icon: markerIcon,
@@ -428,7 +435,7 @@ export default {
     },
     getMarkers() {
       let markersList = this.map._layers;
-
+      console.log(markersList);
       return markersList;
     },
     getMarkersSorted() {
@@ -473,21 +480,25 @@ export default {
       span = markersExample;
     },
     prepareDraw() {
+      const ctxDraw = this;
 
       /**
        * Ativa quando qualquer elemento for inserido no mapa. 
        * Se for marker ele confere se existem opções de número ou nome de linha
        */
       this.map.on(L.Draw.Event.CREATED, function (e) {
-        var type = e.layerType,
-          layer = e.layer;
+        // debugger; 
+        var type = e.layerType;
+        var layer = e.layer;
 
         if (type == 'marker') {
-          console.log(layer._latlng);
+          // console.log(layer._latlng.lng);
+          // debugger;
           layer.options.draggable = true;
 
           var lat = layer._latlng.lat;
           var lng = layer._latlng.lng;
+
 
           var quantityOfColumns = document.getElementById('seats-quantity').value;
           var rowName = document.getElementById('row-name').value;
@@ -502,19 +513,21 @@ export default {
           spaceBetween == '' ? (spaceBetween = parseInt(20)) : (spaceBetween = parseInt(spaceBetween));
 
           // debugger
+        
           for (var i = 0; i < quantityOfColumns; i++) {
-            seatNumber = initialValue + (i == 0 ? i : i * steps);
+            let seatNumber = initialValue + (i == 0 ? i : i * steps);
+            let cords = ctxDraw.xy([lng + i * spaceBetween, lat]);
             var y = {
-              xy: this.xy([lng + i * spaceBetween, lat]),
+              xy: ctxDraw.xy([lng + i * spaceBetween, lat]),
               class: 'available',
               title: rowName + ' - ' + seatNumber,
               count: i,
               rowname: 'teste'
             };
-            this.markers.push(y);
+            markers.push(y);
           }
 
-          this.insertSeats(markers);
+          ctxDraw.insertSeats(markers);
 
           try {
             layer.parentNode.removeChild();
@@ -523,7 +536,7 @@ export default {
           }
         }
 
-        this.drawnItems.addLayer(this.map._layers)
+        ctxDraw.drawnItems.addLayer(this.map._layers)
       });
 
     },
@@ -645,8 +658,9 @@ export default {
        * @param  {} '#map>div.leaflet-control-container>div.leaflet-top.leaflet-left>div.leaflet-draw.leaflet-control>div>div>a'
        * @param  {} .onclick=function(
        */
+      
       document.querySelector('#map > div.leaflet-control-container > div.leaflet-top.leaflet-left > div.leaflet-draw.leaflet-control > div > div > a').onclick = function () {
-        sidebarCreate.show();
+        ctxMapClicks.sidebarCreate.show();
       };
       /**
        * TODO: Editar multiplas fileiras
@@ -718,6 +732,10 @@ export default {
       this.generateMap(this.imageUrl);
       this.generateSidebar();
       this.prepareClicks();
+      this.prepareDraw();
+
+      this.getMarkers();
+      this.getMarkersSorted();
     });
   },
   validations: {},
