@@ -586,12 +586,19 @@ export default {
       this.get(false);
     },
     addPresentation(force) {
+      // debugger;
 
       if (!force && this.processing) return;
+
+      // console.log("id");
+      // console.log(this.id);
+      // console.log("base");
+      // console.log(this.base);
       
       this.$modal.show(dateadd, { //dateadd, {
         id: this.id,
         id_base: this.base,
+        id_local_evento: this.form.id_local_evento,
       }, {
         draggable: false,
         resizable: true,

@@ -288,7 +288,7 @@ import 'vue-datetime/dist/vue-datetime.css';
 
 export default {
   mixins: [func],
-  props: ['id', 'id_base', 'teste'],
+  props: ['id', 'id_base', 'id_local_evento'],
   directives: {money: VMoney},
   components: { VueTimepicker, HotelDatePicker, Datetime },
   name: 'pres-add',
@@ -660,7 +660,7 @@ export default {
     },
     populateRoom() {
       this.showWaitAboveAll();
-      roomService.select(this.id_base).then(
+      roomService.select(this.getLoggedId(), this.id_base, this.id_local_evento).then(
         response => {
           this.hideWaitAboveAll();
 
