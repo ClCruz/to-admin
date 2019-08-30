@@ -426,7 +426,7 @@ export default {
             do_sat = false;
           }
           if (do_sun && weekday == 0) {
-            weekday = 0;
+            weekday = 7;
             weekdayName = "Domingo";
             do_sun = false;
           }
@@ -627,7 +627,7 @@ export default {
           }
         }
       }
-      this.form.weekday.sunEnabled = weeks.includes(0);
+      this.form.weekday.sunEnabled = weeks.includes(7) || weeks.includes(0);
       this.form.weekday.monEnabled = weeks.includes(1);
       this.form.weekday.tueEnabled = weeks.includes(2);
       this.form.weekday.wedEnabled = weeks.includes(3);
