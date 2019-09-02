@@ -3,7 +3,7 @@
       <b-container>
         <b-row>
           <b-col>
-              <b-row>
+              <b-row class="mb-3">
                   <b-input-group size="sm">
                       <b-input-group-prepend is-text class="firstLabel">
                           Nome:
@@ -17,7 +17,7 @@
                       </b-form-input>
                   </b-input-group>
               </b-row>
-              <b-row>
+              <b-row class="mb-3">
                   <b-input-group size="sm">
                       <b-input-group-prepend is-text class="firstLabel">
                           Login:
@@ -32,7 +32,7 @@
                       </b-form-input>
                   </b-input-group>
               </b-row>
-              <b-row>
+              <b-row class="mb-3">
                   <b-input-group size="sm">
                       <b-input-group-prepend is-text class="firstLabel">
                           Email:
@@ -46,7 +46,7 @@
                       </b-form-input>
                   </b-input-group>
               </b-row>
-              <b-row>
+              <b-row class="mb-3">
                   <b-input-group size="sm">
                       <b-form-select v-model="form.documentType" size="sm">
                         <option value="###.###.###-##">CPF</option>
@@ -63,7 +63,11 @@
                       </b-form-input>
                   </b-input-group>
               </b-row>
-              <b-row>
+              <b-row class="mb-3">
+                <div v-if="!isAdd" style="margin-right: 15px;" class="alert alert-primary">Deseja alterar a senha desse usuário? Digite a senha nova no campo e salve.</div>
+                <password labelHide="Esconder senha" labelShow="Mostrar senha" v-model="form.pass" placeholder="Digite a senha" :secureLength="7" :toggle="true" />
+              </b-row>
+              <b-row class="mb-3">
                   <b-input-group size="sm">
                       <b-form-checkbox id="active"
                                       v-model="form.active"
@@ -74,7 +78,7 @@
                       </b-form-checkbox>
                   </b-input-group>
               </b-row>
-              <b-row>
+              <b-row class="mb-3">
                 <b-button type="button" variant="success" size="sm" @click="save">
                   <v-wait for="inprocess">
                       <template slot="waiting">
@@ -100,6 +104,7 @@ import Vue from "vue";
 import VueHead from 'vue-head';
 import VueMask from 'v-mask';
 import config from "@/config";
+import Password from 'vue-password-strength-meter';
 import { func } from "@/functions";
 import { userService } from '../../components/common/services/user';
 
@@ -109,6 +114,7 @@ Vue.use(VueMask);
 export default {
   mixins: [func],
   props: ['id'],
+  components: { Password },
   name: 'user-add',
   head: {
     title: function () {
@@ -136,14 +142,25 @@ export default {
     }
   },
   methods: {
+    validate() {
+      if (this.form.pass != '' && this.form.pass.length<7) {
+        this.toastError("Preencha a senha corretamente.");
+        return false;
+      }
+      return true;
+    },
     save() {
       if (this.processing) return;
+
+      if (!this.validate()) return;
+
+      this.form.changedpass = this.form.pass != '' && this.form.pass >= 7;
 
       this.processing = true;
 
       this.$wait.start("inprocessSave");
       this.showWaitAboveAll();
-      userService.save(this.isAdd ? '' : this.id, this.form.name, this.form.login, this.form.email, this.form.document, this.form.active).then(
+      userService.save(this.getLoggedId(), this.isAdd ? '' : this.id, this.form.name, this.form.login, this.form.email, this.form.document, this.form.active, this.form.pass, this.form.changedpass).then(
         response => {
           this.processing = false;
           this.hideWaitAboveAll();
@@ -207,6 +224,8 @@ export default {
         form: {
           documentType:"###.###.###-##",
           loaded: false,
+          pass: '',
+          changedpass: false,
           id: '',
           name: '',
           document: '',
@@ -220,5 +239,8 @@ export default {
 </script>
 
 <style>
-
+.Password {
+    max-width: 400px;
+    margin: 0 0 !important;
+}
 </style>

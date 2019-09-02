@@ -496,7 +496,7 @@ export default {
         },        
       ];
 
-      console.log(menuHelper);
+      // console.log(menuHelper);
       for (let x = (menuHelper.length - 1); x >= 0; x--) {
         const element = menuHelper[x];
         if (!this.removeOrNot(x, element, menuHelper)) {
@@ -522,7 +522,7 @@ export default {
           }
         }
       }
-console.log(menuHelper);
+// console.log(menuHelper);
       this.menu = menuHelper;
       this.menuMobile = menuHelper;
       //console.log(this.menu);

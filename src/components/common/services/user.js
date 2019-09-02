@@ -257,16 +257,19 @@ function get(id) {
   );
   return ret;
 }
-function save(id, name, login, email, document, active) {
+function save(loggedId, id, name, login, email, document, active, pass, changedpass) {
     let url = config.api + `/v1/admin/user/save`;
 
     let obj = {
+        loggedId,
         id: id != undefined && id != null ? id : '',
         name,
         login,
         email,
         document,
-        active
+        active,
+        pass,
+        changedpass: changedpass ? 1 : 0
     };
 
     var ret = new Promise(
