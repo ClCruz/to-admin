@@ -318,34 +318,34 @@
                 </b-input-group>
               </b-row>
             </b-col>
-
+          </b-row>
+          <b-row class="mb-3">
+            <toggle-button :sync="true" v-model="form.mmAmountIsPer" :width="150" :color="{checked: '#b3ffb3', unchecked: '#ffb3b3', disabled: '#a6a6a6'}" :labels="{ checked: 'Valor em porcentagem', unchecked: 'Valor em dinheiro' }"/>
           </b-row>
           <b-row class="mb-3">
             <b-col>
               <b-row>
-
                 <b-input-group size="sm">
                   <b-input-group-prepend is-text>
-                    Valor minimo:
+                    <span v-if="!form.mmAmountIsPer">Valor minimo:</span>
+                    <span v-else>Porcentagem minima:</span>
                   </b-input-group-prepend>
                   <b-form-input ref="minAmount" id="minAmount" type="text" name="minAmount" maxlength="8" v-money="components.money" v-model.lazy="form.minAmount">
                   </b-form-input>
                 </b-input-group>
               </b-row>
             </b-col>
-            <b-col>
+            <b-col v-if="!form.mmAmountIsPer">
               <b-row>
-
                 <b-input-group size="sm">
                   <b-input-group-prepend is-text>
-                    Valor máximo:
+                    <span>Valor máximo:</span>
                   </b-input-group-prepend>
                   <b-form-input ref="maxAmount" id="maxAmount" type="text" name="maxAmount" maxlength="8" v-money="components.money" v-model.lazy="form.maxAmount">
                   </b-form-input>
                 </b-input-group>
               </b-row>
             </b-col>
-
           </b-row>
       </b-col>
     </b-row>
@@ -417,10 +417,9 @@ import VueQuillEditor from 'vue-quill-editor';
 import VueUploadMultipleImage from 'vue-upload-multiple-image';
 import VueMask from 'v-mask';
 import Vuelidate from 'vuelidate';
+import ToggleButton from 'vue-js-toggle-button';
 import VModal from 'vue-js-modal';
 import moment from 'moment';
-
-
 
 import dateadd from '../presentation/add';
 import tickettypeadd from '../tickettype/event';
@@ -451,8 +450,10 @@ Vue.use(VModal, {
   dynamic: true,
   injectModalsContainer: true
 });
+
 Vue.use(VueHead);
 Vue.use(moment);
+Vue.use(ToggleButton);
 Vue.use(VueQuillEditor);
 Vue.use(VueMask);
 Vue.use(Vuelidate);
@@ -719,8 +720,11 @@ export default {
 
               this.form.minAmount = response.minAmount;
               this.form.maxAmount = response.maxAmount;
+              this.form.mmAmountIsPer = response.mmAmountIsPer == 1;
+
               this.$refs.minAmount.$el.value = response.minAmount;
-              this.$refs.maxAmount.$el.value = response.maxAmount;
+              if (this.$refs.maxAmount!=null && this.$refs.maxAmount.$el!=null)
+                this.$refs.maxAmount.$el.value = response.maxAmount;
 
               this.form.imageURICard = response.imageURICard;
               this.form.imageURIBanner = response.imageURIBanner;
@@ -802,7 +806,8 @@ export default {
           interest_rate = "",
           minAmount = "",
           maxAmount = "",
-          in_entrega_ingresso = "";
+          in_entrega_ingresso = "",
+          mmAmountIsPer = false;
 
         id_base = this.form.id_base;
         showonline = this.form.showonline;
@@ -832,6 +837,8 @@ export default {
         maxAmount = this.form.maxAmount;
         in_entrega_ingresso = this.form.in_entrega_ingresso == true ? 1 : 0;
 
+        mmAmountIsPer = this.form.mmAmountIsPer == true ? 1 : 0;
+
         imagechanged = this.form.saveimage;
         imagebase64 = this.form.image;
 
@@ -843,7 +850,7 @@ export default {
         this.$wait.start("inprocessSave");
 
         this.showWaitAboveAll();
-        eventService.save(this.getLoggedId(), id_base, id_produtor, CodPeca, NomPeca, CodTipPeca, TemDurPeca, CenPeca, id_local_evento, ValIngresso, description, meta_description, meta_keyword, opening_time, insurance_policy, showInBanner, bannerDescription, QtIngrPorPedido, in_obriga_cpf, qt_ingressos_por_cpf, ticketoffice_askemail, imagechanged, imagebase64, free_installments, max_installments, interest_rate, ticketoffice_ticketmodel, showonline, minAmount, maxAmount, in_entrega_ingresso, external_uri).then(
+        eventService.save(this.getLoggedId(), id_base, id_produtor, CodPeca, NomPeca, CodTipPeca, TemDurPeca, CenPeca, id_local_evento, ValIngresso, description, meta_description, meta_keyword, opening_time, insurance_policy, showInBanner, bannerDescription, QtIngrPorPedido, in_obriga_cpf, qt_ingressos_por_cpf, ticketoffice_askemail, imagechanged, imagebase64, free_installments, max_installments, interest_rate, ticketoffice_ticketmodel, showonline, minAmount, maxAmount, in_entrega_ingresso, external_uri, mmAmountIsPer).then(
 
           response => {
             this.processing = false;
@@ -1332,6 +1339,7 @@ export default {
         maxAmount: 0,
         in_entrega_ingresso: 0,
         hasPresentantion: '',
+        mmAmountIsPer: false,
 
         free_installments: null,
         max_installments: null,
