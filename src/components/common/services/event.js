@@ -17,7 +17,28 @@ export const eventService = {
   borderokey,
   borderourl,
   borderohtml,
-  searchPage
+  searchPage,
+  borderolinksend
+}
+
+function borderolinksend(loggedId, id_evento, date, hour, email, pass) {
+    let url = config.api + `/v1/print/report/accounting_link`;
+
+    let obj = { loggedId, id_evento, date, hour, email, pass };
+
+    var ret = new Promise(
+        function (resolve, reject) {
+            Vue.http.post(url, obj, { emulateJSON: true }).then(res => {
+                resolve(res.body);
+            }, err => {
+                reject({
+                    error: true,
+                    msg: err
+                });
+            });    
+        }
+    );
+    return ret;
 }
 
 function borderourl(key, id_base, print) {

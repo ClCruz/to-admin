@@ -86,6 +86,12 @@
                     <a class="dropdown-item" href="javascript:void(0)" @click="exportExcel" v-if="this.bordero!=''">
                       Exportar - Excel
                     </a>
+                    <a class="dropdown-item" href="javascript:void(0)" @click="generatelink()">
+                      Gerar link
+                    </a>
+                    <a class="dropdown-item" href="javascript:void(0)" @click="generatelinkandsend(true)">
+                      Gerar link e enviar por e-mail
+                    </a>
                   </div>
                 </div>
               </div>
@@ -102,6 +108,7 @@ import Vue from "vue";
 import VueHead from 'vue-head';
 import Vuelidate from 'vuelidate';
 import VueFriendlyIframe from 'vue-friendly-iframe';
+import VueClipboard from 'vue-clipboard2';
 import html2canvas from 'html2canvas';
 import config from "@/config";
 import { func } from "@/functions";
@@ -112,6 +119,7 @@ import jsPDF from 'jspdf';
 
 Vue.use(VueHead);
 Vue.use(Vuelidate);
+Vue.use(VueClipboard);
 Vue.component('vue-friendly-iframe', VueFriendlyIframe);
 
 import {
@@ -143,6 +151,99 @@ export default {
     this.populateBases();
   },
   methods: {
+    askpass(sendornot) {
+      this.$swal({
+        allowEscapeKey: false,
+        allowOutsideClick: false,
+        allowEnterKey: false,
+        confirmButtonText: 'Continuar',
+        currentProgressStep: 1,
+        title: 'Digite a senha de acesso ao link',
+        input: 'password',
+        inputPlaceholder: 'Digite a senha de acesso ao bordero',
+        inputAttributes: {
+          maxlength: 10,
+          autocapitalize: 'off',
+          autocorrect: 'off'
+        }
+      }).then((result) => {
+          this.form.password = result.value;
+
+          if (sendornot == true) {
+            this.askemail();
+          }
+          else {
+            this.showlink();
+          }
+      });
+    },
+    askemail() {
+      this.$swal({
+        allowEscapeKey: false,
+        allowOutsideClick: false,
+        allowEnterKey: false,
+        confirmButtonText: 'Continuar',
+        currentProgressStep: 1,
+        title: 'Digite qual o e-mail que deseja enviar',
+        input: 'email',
+        inputPlaceholder: 'Digite o e-mail',
+        inputAttributes: {
+          autocapitalize: 'off',
+          autocorrect: 'off'
+        }
+      }).then((result) => {
+          this.form.email = result.value;
+          this.showlink();
+      });
+    },
+    showlink() {
+      this.executed = false;
+      this.processing = true;
+      this.$wait.start("inprocess");
+
+      this.showWaitAboveAll();
+      eventService.borderolinksend(this.getLoggedId(), this.form.id_evento, this.form.date, this.form.hour, this.form.email, this.form.password).then(
+        response => {
+          this.processing = false;
+          this.hideWaitAboveAll();
+          this.$wait.end("inprocess");
+          this.link = response.link;
+          this.form.email = "";
+          this.form.password = "";
+
+          if (this.link == '')
+            return;
+
+          this.$swal({
+            title: 'Borderô',
+            type: 'success',
+            allowEscapeKey: false,
+            allowOutsideClick: false,
+            allowEnterKey: false,
+            showCancelButton: false,
+            showConfirmButton: true,
+            confirmButtonText: 'OK',
+            html: "Link gerado com sucesso.<br />link: " + this.link,
+          }).then((result) => {
+              this.$copyText(this.link).then(function (e) { }, function (e) { });
+          });
+        },
+        error => {
+          this.form.email = "";
+          this.form.password = "";
+          this.processing = false;
+          this.hideWaitAboveAll();
+          this.$wait.end("inprocess");
+          this.toastError("Falha na execução.");
+        }
+      );      
+    },
+    generatelink() {
+      this.generatelinkandsend(false);
+    },
+    generatelinkandsend(sendornot) {
+      this.askpass(sendornot);
+    },
     validate() {
       let ret = !this.$v.form.$invalid;
       return ret;
@@ -346,12 +447,16 @@ export default {
       executedAtLeastOne: false,
       loading: false,
       bordero: '',
+      link: '',
       executed: false,
       form: {
         id_base: '',
         id_evento: '',
         date: '',
         hour: '',
+
+        password: '',
+        email: '',
       },
       selects: {
         base: [],
