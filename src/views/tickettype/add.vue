@@ -276,7 +276,7 @@
               <b-row v-if="form.isPlus">
                 <div class="directlink"><a :href="form.imageURI" target="_blank">Imagem</a>/<a :href="form.imageURIOriginal" target="_blank">Imagem original</a></div>
               </b-row>
-              <b-row class="mb-3">
+              <b-row class="mb-3" v-if="!isAdd">
                   <toggle-button :sync="true" v-model="form.allpartner" :width="150" :color="{checked: '#b3ffb3', unchecked: '#ffb3b3', disabled: '#a6a6a6'}" :labels="{ checked: 'Todos parceiros', unchecked: 'Escolher parceiro' }"/>
               </b-row>
               <b-row class="mb-3" v-if="form.allpartner == 0">
