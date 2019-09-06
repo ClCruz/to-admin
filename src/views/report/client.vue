@@ -109,6 +109,7 @@
                         <th class="text-center">CPF</th>
                         <th class="w-1">Cliente</th>
                         <th class="text-center">E-mail</th>
+                        <th class="text-center">Telefone</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -120,6 +121,7 @@
                           </div>
                         </td>
                         <td><div>{{item.email}}</div></td>
+                        <td><div>{{item.phone}}</div></td>
                       </tr>
                     </tbody>
                   </table>
@@ -147,6 +149,7 @@
                         <th class="text-center">CPF</th>
                         <th class="w-1">Cliente</th>
                         <th class="text-center">E-mail</th>
+                        <th class="text-center">Telefone</th>
                         <th class="text-center">Assento</th>
                       </tr>
                     </thead>
@@ -159,6 +162,7 @@
                           </div>
                         </td>
                         <td><div>{{item.email}}</div></td>
+                        <td><div>{{item.phone}}</div></td>
                         <td>
                           <div>
                             {{item.seat}}
