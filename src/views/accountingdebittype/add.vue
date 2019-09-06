@@ -38,6 +38,15 @@
                 <div class="errorFormValidate" v-if="executedAtLeastOne && !$v.form.TipValor.required">Campo é obrigatório</div>
               </b-row>
               <b-row class="mb-3">
+                <b-input-group size="sm">
+                  <b-input-group-prepend is-text v-bind:class="{ errorFormValidateLabel: (executedAtLeastOne && $v.form.sell_channel.$invalid) }">
+                    Canal de venda:
+                  </b-input-group-prepend>
+                  <b-form-select v-model="form.sell_channel" :options="selects.sell_channel" size="sm" v-bind:class="{ errorFormValidateInput: (executedAtLeastOne && $v.form.sell_channel.$invalid) }" />
+                </b-input-group>
+                <div class="errorFormValidate" v-if="executedAtLeastOne && !$v.form.sell_channel.required">Campo é obrigatório</div>
+              </b-row>
+              <b-row class="mb-3">
                   <b-input-group size="sm">
                       <b-input-group-prepend is-text class="firstLabel">
                           Valor:
@@ -184,6 +193,7 @@ export default {
       let StaDebBordero = this.form.StaDebBordero == true ? 1 : 0;
       let StaDebBorderoLiq = this.form.StaDebBorderoLiq == true ? 1 : 0;
       let TipValor = this.form.TipValor;
+      let sell_channel = this.form.sell_channel;
       let ValIngressoExcedente = this.form.ValIngressoExcedente;
       let VlMinimo = this.form.VlMinimo;
 
@@ -197,7 +207,8 @@ export default {
                             ,StaDebBorderoLiq
                             ,TipValor
                             ,ValIngressoExcedente
-                            ,VlMinimo).then(
+                            ,VlMinimo
+                            ,sell_channel).then(
         response => {
           this.processing = false;
           this.hideWaitAboveAll();
@@ -248,6 +259,7 @@ export default {
                 this.form.StaDebBordero = response.StaDebBordero == 'A' ? 1 : 0;
                 this.form.StaDebBorderoLiq = response.StaDebBorderoLiq == 'A' ? 1 : 0;
                 this.form.TipValor = response.TipValor;
+                this.form.sell_channel = response.sell_channel;
                 this.form.ValIngressoExcedente = response.ValIngressoExcedente;
                 this.form.VlMinimo = response.VlMinimo;
 
@@ -274,6 +286,9 @@ export default {
       },
       TipValor: {
         required,
+      },
+      sell_channel: {
+        required,
       }
     }
   },
@@ -291,6 +306,7 @@ export default {
       selects: {
         base: [],
         types: [ { 'value': 'V', 'text': 'Por valor' }, { 'value': 'P', 'text': 'Por porcentagem' }, { 'value': 'F', 'text': 'Por valor fixo' }],
+        sell_channel: [ { 'value': 'all', 'text': 'Todos' }, { 'value': 'web', 'text': 'Internet' }, { 'value': 'ticketoffice', 'text': 'Bilheteria' }],
       },
       components: { 
         money: {
@@ -311,6 +327,7 @@ export default {
         StaDebBordero: 1,
         StaDebBorderoLiq: true,
         TipValor: 'V',
+        sell_channel: 'all',
         ValIngressoExcedente: '',
         VlMinimo: 0,
       }

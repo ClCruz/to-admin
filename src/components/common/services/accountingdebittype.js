@@ -169,6 +169,7 @@ function eventremove(loggedId
         ,TipValor
         ,ValIngressoExcedente
         ,VlMinimo
+        ,sell_channel
         ) {
     let url = config.api + `/v1/admin/accountingdebittype/save`;
 
@@ -185,6 +186,7 @@ function eventremove(loggedId
       ,TipValor
       ,ValIngressoExcedente
       ,VlMinimo
+      ,sell_channel
     };
 
     var ret = new Promise(
