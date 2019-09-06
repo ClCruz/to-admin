@@ -46,6 +46,12 @@
         <td style="text-align:left">
             <span class="status-icon bg-warning"></span><span class="text-muted" style="text-align:" v-if="grids.default.items.length>0">Total de venda :: {{total}}</span>
         </td>
+        <td style="text-align:left">
+            <span class="status-icon bg-warning"></span><span class="text-muted" style="text-align:" v-if="grids.default.items.length>0">Transações (Quantidade) :: {{totalcount}}</span>
+        </td>
+        <td style="text-align:left">
+            <span class="status-icon bg-warning"></span><span class="text-muted" style="text-align:" v-if="grids.default.items.length>0">TKT médio :: {{totalavg}}</span>
+        </td>
     </tr>
   </table>
                 </div>
@@ -62,7 +68,7 @@
                       </tr>
                     </thead>
                     <tbody>
-                      <tr v-for="(item) in grids.default.items" v-bind:key="'all_'+item.sellid">
+                      <tr v-for="(item) in grids.default.items" v-bind:key="'all_'+item.sellid+item.buyer_document">
                         <td><span class="text-muted">{{item.created_at}}</span></td>
                         <td>
                           <div class="clearfix">
@@ -129,6 +135,16 @@ export default {
       if (this.grids.default.items.length == 0)
         return "";
       return `R$ `+this.grids.default.items[0].selltotal;
+    },
+    totalcount() {
+      if (this.grids.default.items.length == 0)
+        return "";
+      return ``+this.grids.default.items[0].sellcount;
+    },
+    totalavg() {
+      if (this.grids.default.items.length == 0)
+        return "";
+      return `R$ `+this.grids.default.items[0].sellavg;
     },
     url() {
       return this.report == '' ? "" : this.report;
