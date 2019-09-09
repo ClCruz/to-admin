@@ -464,7 +464,7 @@ export default {
       let NomSala = this.form.NomSala;
       let NomRedSala = this.form.NomRedSala;
       let nameonsite = this.form.nameonsite;
-      let IngressoNumerado = this.form.IngressoNumerado;
+      let IngressoNumerado = this.form.IngressoNumerado == true ? 1 : 0;
       let id_local_evento = this.form.id_local_evento;
       let StaSala = this.form.StaSala == true ? 1 : 0;
 
@@ -532,7 +532,7 @@ export default {
                 this.form.id_estado = response.id_estado;
                 this.form.id_municipio = response.id_municipio;
                 this.form.id_local_evento = response.id_local_evento;
-                this.form.IngressoNumerado = response.IngressoNumerado == "1";
+                this.form.IngressoNumerado = response.IngressoNumerado == 1 || response.IngressoNumerado == "1";
                 this.form.nameonsite = response.nameonsite;
                 this.form.NomRedSala = response.NomRedSala;
                 this.form.NomSala = response.NomSala;
