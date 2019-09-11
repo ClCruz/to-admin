@@ -38,9 +38,6 @@
                   Base:
                 </b-input-group-prepend>
                 <b-form-select v-on:change="selBase" v-model="form.id_base" :options="selects.bases" size="sm" />
-                    <template slot="first">
-                        <option :value="''" disabled>-- Selecione --</option>
-                    </template>
                 </b-form-select>
               </b-input-group>
             </b-row>
@@ -50,9 +47,6 @@
                     Evento:
                 </b-input-group-prepend>
                 <b-form-select id="event" v-on:change="selEvent" v-model="form.id_evento" :options="selects.events" />
-                  <template v-slot="first">
-                    <option :value="''">-- Selecione --</option>
-                  </template>
                 </b-form-select>
               </b-input-group>
             </b-row>
@@ -62,9 +56,6 @@
                     Apresentação:
                 </b-input-group-prepend>
                 <b-form-select id="presentation" v-on:change="selPresentantion" v-model="form.id_apresentacao" :options="selects.presentations" />
-                    <template slot="first">
-                        <option :value="null">-- Selecione --</option>
-                    </template>
                 </b-form-select>
               </b-input-group>
             </b-row>
