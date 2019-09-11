@@ -191,6 +191,18 @@ export default {
           ]
         },
         {
+          title: 'Buscas',
+          icon: 'fab fa-searchengin',
+          code: 'search-viewer',
+          child: [{
+              href: '/search/shoppingfail',
+              title: 'Compras com falha',
+              icon: 'fas fa-file-prescription',
+              code: 'shoppingfail-viewer'
+            },
+          ]
+        },
+        {
           title: 'Relatórios',
           icon: 'fas fa-chart-bar',
           code: 'all',

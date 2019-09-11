@@ -95,6 +95,14 @@ const adminPresentationAdd = resolve => {
   }, 'admin-presentation');
 };
 
+// search
+const adminSearchShoppingFail = resolve => {
+  require.ensure(['./views/searchs/shoppingfail.vue'], () => {
+    resolve(require('./views/searchs/shoppingfail.vue'));
+  }, 'admin-searchshoppingfail');
+};
+//
+
 // event
 const adminEventList = resolve => {
   require.ensure(['./views/event/list.vue'], () => {
@@ -412,6 +420,14 @@ const obj = new Router({
       name: 'email-generate',
       props: true,
       component: adminEmailAdd
+    },
+    //------
+    //Search
+    {
+      path: '/search/shoppingfail/',
+      name: 'search-shopppingfail',
+      props: true,
+      component: adminSearchShoppingFail
     },
     //------
     //Type of payment type

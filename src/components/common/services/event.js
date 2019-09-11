@@ -14,6 +14,7 @@ export const eventService = {
   select,
   selectDays,
   selectDayHours,
+  selectPresentation,
   borderokey,
   borderourl,
   borderohtml,
@@ -144,6 +145,24 @@ function searchPage(type, input, startAt, howMany, city, state) {
 function list(loggedId, search, currentPage, perPage) {
     let url = config.api + `/v1/admin/event/list?loggedId=${loggedId}&search=${search}`;
     url = config.system.applyPagination(url, currentPage, perPage);
+
+    var ret = new Promise(
+    function (resolve, reject) {
+        Vue.http.get(url).then(res => {
+        resolve(res.body);
+        }, err => {
+        reject({
+            error: true,
+            msg: err
+        });
+        });
+    }
+  );
+  return ret;
+}
+
+function selectPresentation(loggedId,id_evento) {
+    let url = config.api + `/v1/admin/event/selectpresentation?loggedId=${loggedId}&id_evento=${id_evento}`;
 
     var ret = new Promise(
     function (resolve, reject) {
