@@ -200,6 +200,12 @@ export default {
               icon: 'fas fa-file-prescription',
               code: 'shoppingfail-viewer'
             },
+            {
+              href: '/search/webpurchase',
+              title: 'Compras web',
+              icon: 'fas fa-cart-arrow-down',
+              code: 'webpurchase-viewer'
+            },
           ]
         },
         {

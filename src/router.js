@@ -101,6 +101,12 @@ const adminSearchShoppingFail = resolve => {
     resolve(require('./views/searchs/shoppingfail.vue'));
   }, 'admin-searchshoppingfail');
 };
+const adminSearchWebPurchase = resolve => {
+  require.ensure(['./views/searchs/webpurchase.vue'], () => {
+    resolve(require('./views/searchs/webpurchase.vue'));
+  }, 'admin-searchwebpurchase');
+};
+
 //
 
 // event
@@ -428,6 +434,12 @@ const obj = new Router({
       name: 'search-shopppingfail',
       props: true,
       component: adminSearchShoppingFail
+    },
+    {
+      path: '/search/webpurchase/',
+      name: 'search-webpurchase',
+      props: true,
+      component: adminSearchWebPurchase
     },
     //------
     //Type of payment type

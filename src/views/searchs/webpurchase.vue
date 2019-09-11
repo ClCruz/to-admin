@@ -6,6 +6,21 @@
             <b-row class="mb-3">
                 <b-input-group size="sm">
                     <b-input-group-prepend is-text class="firstLabel">
+                        Pedido:
+                    </b-input-group-prepend>
+                    <b-form-input id="id_pedido_venda"
+                                type="text"
+                                name="id_pedido_venda"
+                                v-mask="['###########']"
+                                maxlength="10"
+                                v-model="form.id_pedido_venda"
+                                placeholder="Digite o id do pedido">
+                    </b-form-input>
+                </b-input-group>
+            </b-row>
+            <b-row class="mb-3">
+                <b-input-group size="sm">
+                    <b-input-group-prepend is-text class="firstLabel">
                         CPF:
                     </b-input-group-prepend>
                     <b-form-input id="client_document"
@@ -32,7 +47,7 @@
                     </b-form-input>
                 </b-input-group>
             </b-row>
-            <b-row class="mb-3" title="Atenção: Os erros de compras que aparecem aqui são apenas referente ao dominio que você está do admin, e não a outros dominios.">
+            <b-row class="mb-3" title="Atenção: As compras que aparecem aqui são apenas referente ao dominio que você está do admin, e não a outros dominios.">
               <b-input-group size="sm">
                 <b-input-group-prepend is-text>
                   Base:
@@ -79,16 +94,19 @@
                   <table class="table table-hover table-outline table-vcenter text-nowrap card-table">
                     <thead>
                       <tr>
+                        <th class="text-center">Pedido</th>
                         <th class="text-center">Data</th>
                         <th class="w-1">Cliente</th>
                         <th class="text-center">Evento</th>
-                        <th class="text-center">Cartão</th>
+                        <th class="text-center">Situação</th>
+                        <th class="text-center">Transação</th>
+                        <th class="text-center">Quantidade de Tickets</th>
                         <th class="text-center">Valor total</th>
-                        <th class="text-center">Motivo</th>
                       </tr>
                     </thead>
                     <tbody>
-                      <tr v-for="(item) in grids.default.items" v-bind:key="'all_'+item.id">
+                      <tr v-for="(item) in grids.default.items" v-bind:key="'all_'+item.id_pedido_venda">
+                        <td><div style="font-size:12px">{{item.id_pedido_venda}}</div></td>
                         <td><div style="font-size:12px">{{item.created_at}}</div></td>
                         <td>
                           <div class="clearfix" style="font-size:12px">
@@ -105,19 +123,28 @@
                         </td>
                         <td>
                           <span class="text-muted" style="font-size:12px">
-                            {{getJson(item.json_gateway_response).card_first_digits}}******{{getJson(item.json_gateway_response).card_last_digits}} <br />
-                            {{getJson(item.json_gateway_response).card_brand}}
+                            <span class="status-icon bg-success" v-if="item.in_situacao == 'F'"></span>
+                            <span class="status-icon bg-warning" v-if="item.in_situacao == 'P'"></span>
+                            <span class="status-icon bg-secondary" v-if="item.in_situacao == 'E'"></span>
+                            <span class="status-icon bg-dark" v-if="item.in_situacao == 'C'"></span>
+                            {{item.in_situacao | situacao }}
                           </span>
                         </td>
                         <td>
-                          <div>
-                            {{getJson(item.json_values)[0].totalwithservice | money}}
-                          </div>
+                          <span v-if="!mayIseeGateway" class="text-muted" style="font-size:12px">
+                            {{item.cd_numero_transacao}}
+                          </span>
+                          <span v-if="mayIseeGateway" @click="gateway(item.cd_numero_transacao)" class="text-muted" style="font-size:12px;cursor:pointer;" title="Clique para abrir a transação no gateway">
+                            {{item.cd_numero_transacao}}
+                          </span>
                         </td>
                         <td style="font-size:12px">
-                          <div v-if="item.refuse_reason == 'acquirer'">Recusado</div>
-                          <div v-if="item.refuse_reason == 'antifraud'">Anti-fraude</div>
-                          <span class="text-muted" style="font-size:12px">{{getJson(item.json_gateway_response).authorization_desc}}</span>
+                          {{item.tickets_count}}
+                        </td>
+                        <td style="font-size:12px">
+                          <div>
+                            {{item.vl_total_pedido_venda | money}}
+                          </div>
                         </td>
                       </tr>
                     </tbody>
@@ -149,20 +176,37 @@ Vue.use(VueHead);
 export default {
   mixins: [func],
   directives: { mask },
-  name: 'shoppingfail-list',
+  name: 'webpurchase-list',
   head: {
     title: function () {
       return { 
         inner: `TicketOffice | Admin`,
         separator: " | ",
-        complement: "Compras com falha",
+        complement: "Compras na web",
       }
     },
   },
   filters: {
+      situacao: function (value) {
+        switch (value) {
+          case "F":
+            value = "Finalizado";
+            break;
+          case "P":
+            value = "Processando";
+            break;
+          case "E":
+            value = "Estornado/Expirado";
+            break;
+          case "C":
+            value = "Cancelado";
+            break;
+        }
+        return value;
+      },
       capme: function (value) {
         if (value == null) return "";
-        if (value.length > 16)  {
+        if (value.length > 30)  {
           return value.substring(0,15)+"...";
         }
         else {
@@ -170,18 +214,22 @@ export default {
         }
       },
       money: function (value) {
-          let v = parseFloat(value)/100;
-          return `R$ ${parseFloat(v).toFixed(2)}`;
+        let v = value;
+          //let v = parseFloat(value)/100;
+        return `R$ ${parseFloat(v).toFixed(2)}`;
       }
   },
   computed: {
     mayIsee() {
-      return this.mayI('shoppingfail-viewer');
+      return this.mayI('webpurchase-viewer');
+    },
+    mayIseeGateway() {
+      return this.mayI('webpurchase-gateway');
     }
   },
   methods: {
-    getJson(text) {
-      return JSON.parse(text);
+    gateway(number) {
+      window.open(`https://dashboard.pagar.me/#/transactions/${number}`);
     },
     selBase() {
       Vue.nextTick().then(response => {
@@ -204,7 +252,7 @@ export default {
 
       this.showWaitAboveAll();
 
-      searchService.shoppingfail(this.getLoggedId(), this.form.client_name, this.form.client_document, this.form.id_evento, this.form.id_apresentacao).then(
+      searchService.webPurchase(this.getLoggedId(), this.form.id_pedido_venda, this.form.client_name, this.form.client_document, this.form.id_evento, this.form.id_apresentacao).then(
         response => {
           this.processing = false;
           this.hideWaitAboveAll();
@@ -306,6 +354,7 @@ export default {
           presentations: []
         },
         form: {
+          id_pedido_venda: '',
           client_name: '',
           client_document: '',
           id_evento: null,
