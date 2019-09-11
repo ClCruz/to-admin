@@ -50,7 +50,7 @@
                     Evento:
                 </b-input-group-prepend>
                 <b-form-select id="event" v-on:change="selEvent" v-model="form.id_evento" :options="selects.events" />
-                  <template v-slot:first>
+                  <template v-slot="first">
                     <option :value="''">-- Selecione --</option>
                   </template>
                 </b-form-select>
