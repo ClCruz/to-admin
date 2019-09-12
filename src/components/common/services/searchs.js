@@ -10,6 +10,9 @@ export const searchService = {
     shoppingfail,
     webPurchase,
     webPurchaseDetail,
+    ticketSee,
+    sendEmail,
+    loglist,
 }
 
 function shoppingfail(loggedId, client_name, client_document, id_evento, id_apresentacao, currentPage, perPage) {
@@ -56,6 +59,66 @@ function webPurchase(loggedId, id_pedido_venda, client_name, client_document, id
     return ret;
 }
 
+function loglist(loggedId, id_pedido_venda) {
+    let url = config.api + `/v1/admin/searchs/web_purchase_detail_get_see _list`;
+
+    let obj = { loggedId, id_pedido_venda };
+
+    var ret = new Promise(
+        function (resolve, reject) {
+            Vue.http.post(url, obj, { emulateJSON: true }).then(res => {
+                resolve(res.body);
+            }, err => {
+                reject({
+                    error: true,
+                    msg: err
+                });
+            });    
+        }
+    );
+    return ret;
+}
+
+function sendEmail(loggedId, id_pedido_venda) {
+    let url = config.api + `/v1/admin/searchs/web_purchase_detail_get_send`;
+
+    let obj = { loggedId, id_pedido_venda };
+
+    var ret = new Promise(
+        function (resolve, reject) {
+            Vue.http.post(url, obj, { emulateJSON: true }).then(res => {
+                resolve(res.body);
+            }, err => {
+                reject({
+                    error: true,
+                    msg: err
+                });
+            });    
+        }
+    );
+    return ret;
+}
+
+function ticketSee(loggedId, id_pedido_venda) {
+    let url = config.api + `/v1/admin/searchs/web_purchase_detail_get_see`;
+
+    let obj = { loggedId, id_pedido_venda };
+
+    var ret = new Promise(
+        function (resolve, reject) {
+            Vue.http.post(url, obj, { emulateJSON: true }).then(res => {
+                resolve(res.body);
+            }, err => {
+                reject({
+                    error: true,
+                    msg: err
+                });
+            });    
+        }
+    );
+    return ret;
+}
+    
 function webPurchaseDetail(loggedId, id_pedido_venda) {
     let url = config.api + `/v1/admin/searchs/web_purchase_detail`;
 

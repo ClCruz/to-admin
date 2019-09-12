@@ -14,7 +14,27 @@
               <div class="card-status bg-secondary" v-if="first.in_situacao == 'E'"></div>
               <div class="card-status bg-dark" v-if="first.in_situacao == 'C'"></div>
               <div class="card-header">
-                <h3 class="card-title">Compra {{id}} - {{first.CodVenda}}</h3>
+                <b-col>
+                  <h3 class="card-title">Compra {{id}} - {{first.CodVenda}}</h3>
+                </b-col>
+                <b-col>
+                  <div class="input-group-append" style="float:right;">
+                    <button type="button" class="btn btn-primary">Ações</button>
+                    <button data-toggle="dropdown" type="button" class="btn btn-primary dropdown-toggle"></button>
+                    <div class="dropdown-menu dropdown-menu-right">
+                      <a v-if="mayIseePrint" class="dropdown-item" @click="see()" style="cursor:pointer">
+                        <i class="far fa-eye"></i> Visualizar Ingresso
+                      </a>
+                      <a class="dropdown-item" @click="sendemail" style="cursor:pointer">
+                        <i class="fas fa-share"></i> Enviar Ingresso por e-mail
+                      </a>
+                      <div class="dropdown-divider"></div>
+                      <a class="dropdown-item" @click="refund" style="cursor:pointer">
+                        <i class="fas fa-hand-holding-usd"></i> Reembolso
+                      </a>
+                    </div>
+                  </div>
+                </b-col>
               </div>
               <div class="card-body">
                 <div class="row">
@@ -134,6 +154,33 @@
               </div>
             </div>
         </b-row>
+        <b-row v-if="mayIseeGateway">
+            <div class="card">
+              <div class="card-header">
+                <h4 class="card-title">Split</h4>
+              </div>
+              <table class="table card-table" style="font-size: 12px !important">
+                <tbody>
+                  <tr v-for="(item) in gatewayinfo.split_rules" v-bind:key="'all_'+item.id">
+                    <td width="1"><i class="fas fa-dollar-sign"></i></td>
+                    <td>
+                      <span class="status-icon bg-success" v-if="item.playable_status == 'paid'" title="Recebimento pago ou antecipado"></span>
+                      <span class="status-icon bg-danger" v-if="item.playable_status == 'waiting_funds'" title="Aguardando recebimento"></span>
+                      {{item.recipient_name}}
+                    </td>
+                    <td v-if="item.playable_status == 'paid'" class="text-right"><span class="text-muted">{{item.amount | amount}}</span></td>
+                    <td v-if="item.playable_status == 'waiting_funds'" :title="'Data pagamento ' + $options.filters.gatewaydate(item.playable_payment_date)" class="text-right"><span class="text-muted">{{item.amount | amount}}</span></td>
+                    <td v-if="item.playable_status == 'paid'">
+                      <i class="fas fa-history" v-if="item.playable_isanticipation" :title="'Data antecipação ' + $options.filters.gatewaydate(item.playable_payment_date)"></i>
+                      <i class="fas fa-long-arrow-alt-right" v-if="!item.playable_isanticipation"></i>
+                    </td>
+                    <td v-if="item.playable_status == 'paid' && item.playable_isanticipation" :title="'Data original ' + $options.filters.gatewaydate(item.playable_original_payment_date)">{{amount_final(item) | amount}}</td>
+                    <td v-if="item.playable_status == 'paid' && !item.playable_isanticipation" :title="'Data pagamento ' + $options.filters.gatewaydate(item.playable_payment_date)">{{amount_final(item) | amount}}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+        </b-row>
         <b-row>
           <b-col>
             <div class="card">
@@ -151,28 +198,29 @@
               </table>
             </div>
           </b-col>
-          <b-col v-if="mayIseeGateway">
+          <b-col>
             <div class="card">
               <div class="card-header">
-                <h4 class="card-title">Split</h4>
+                <h4 class="card-title">Log</h4>
               </div>
               <table class="table card-table" style="font-size: 12px !important">
                 <tbody>
-                  <tr v-for="(item) in gatewayinfo.split_rules" v-bind:key="'all_'+item.id">
-                    <td width="1"><i class="fas fa-dollar-sign"></i></td>
-                    <td>{{item.recipient_name}}</td>
+                  <tr v-if="grids.logs.items.length == 0">
+                    <td>Nenhum log</td>
+                  </tr>
+                  <tr v-for="(item) in grids.logs.items" v-bind:key="'all_'+item.id">
+                    <td width="1">
+                      <i class="fas fa-eye" v-if="item.type == 'see'"></i>
+                      <i class="far fa-paper-plane" v-else></i>
+                    </td>
+                    <td>{{item.login}}</td>
                     <td>
-                      <span class="status-icon bg-success" v-if="item.playable_status == 'paid'" title="Recebimento pago ou antecipado"></span>
-                      <span class="status-icon bg-danger" v-if="item.playable_status == 'waiting_funds'" title="Aguardando recebimento"></span>
+                      <span v-if="item.type == 'see'">Visualizou o bilhete</span>
+                      <span v-else>Enviou por e-mail</span>
                     </td>
-                    <td v-if="item.playable_status == 'paid'" class="text-right"><span class="text-muted">{{item.amount | amount}}</span></td>
-                    <td v-if="item.playable_status == 'waiting_funds'" :title="'Data pagamento ' + $options.filters.gatewaydate(item.playable_payment_date)" class="text-right"><span class="text-muted">{{item.amount | amount}}</span></td>
-                    <td v-if="item.playable_status == 'paid'">
-                      <i class="fas fa-history" v-if="item.playable_isanticipation" :title="'Data antecipação ' + $options.filters.gatewaydate(item.playable_payment_date)"></i>
-                      <i class="fas fa-long-arrow-alt-right" v-if="!item.playable_isanticipation"></i>
+                    <td>
+                      {{item.created}}
                     </td>
-                    <td v-if="item.playable_status == 'paid' && item.playable_isanticipation" :title="'Data original ' + $options.filters.gatewaydate(item.playable_original_payment_date)">{{amount_final(item) | amount}}</td>
-                    <td v-if="item.playable_status == 'paid' && !item.playable_isanticipation" :title="'Data pagamento ' + $options.filters.gatewaydate(item.playable_payment_date)">{{amount_final(item) | amount}}</td>
                   </tr>
                 </tbody>
               </table>
@@ -287,6 +335,67 @@ export default {
     },
   },
   methods: {
+    see() {
+      if (this.processing) return;
+      this.processing = true;
+
+      this.showWaitAboveAll();
+
+      searchService.ticketSee(this.getLoggedId(), this.id).then(
+        response => {
+          this.processing = false;
+          this.hideWaitAboveAll();
+          this.populateLog();
+          this.gotonew(response.see);
+        },
+        error => {
+          this.processing = false;
+          this.hideWaitAboveAll();
+          this.toastError("Falha na execução.");
+        }
+      );
+    },
+    sendemailinternal() {
+      if (this.processing) return;
+      this.processing = true;
+
+      this.showWaitAboveAll();
+
+      searchService.sendEmail(this.getLoggedId(), this.id).then(
+        response => {
+          this.processing = false;
+          this.hideWaitAboveAll();
+          this.toastSuccess("E-mail enviado.");
+          this.populateLog();
+        },
+        error => {
+          this.processing = false;
+          this.hideWaitAboveAll();
+          this.toastError("Falha na execução.");
+        }
+      );
+
+    },
+    sendemail() {
+      this.$swal({
+          type: 'question',
+          text: `Deseja reenviar para o e-mail cadastrado do cliente?`,
+          showCancelButton: true,
+          showConfirmButton: true,
+          confirmButtonText: 'Sim',
+          cancelButtonText: 'Não',
+          allowEscapeKey: false,
+          allowOutsideClick: false,
+          allowEnterKey: false,
+          preConfirm: () => {
+            this.sendemailinternal();  
+          },
+      });
+
+    },
+    refund() {
+
+    },
     amount_final(item) {
       let amount = item.playable_amount-item.playable_anticipation_fee-item.playable_fee;
       return amount;
@@ -299,6 +408,25 @@ export default {
     },
     gateway(number) {
       window.open(`https://dashboard.pagar.me/#/transactions/${number}`);
+    },
+    populateLog() {
+      this.showWaitAboveAll();
+
+      searchService.loglist(this.getLoggedId(), this.id).then(
+        response => {
+          this.hideWaitAboveAll();
+
+          if (this.validateJSON(response))
+          {
+              this.grids.logs.loaded = true;
+              this.grids.logs.items = response;
+          }
+        },
+        error => {
+          this.hideWaitAboveAll();
+          this.toastError("Falha na execução.");
+        }
+      );   
     },
     get() {
       if (this.processing) return;
@@ -333,6 +461,7 @@ export default {
   },
   created() {
     this.get();
+    this.populateLog();
   },
   data () {
     return {
@@ -342,6 +471,11 @@ export default {
             default: {
                 processing: false,
                 nothing: false,
+                loaded: false,
+                items: [],
+            },
+            logs: {
+                processing: false,
                 loaded: false,
                 items: [],
             }
