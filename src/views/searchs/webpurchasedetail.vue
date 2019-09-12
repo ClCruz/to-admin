@@ -22,11 +22,14 @@
                     <span class="avatar avatar-xl" v-bind:style="{ 'background-image': 'url(' + image + ')' }"></span>
                   </div>
                   <div class="col">
-                    <div class="form-group card-title" @click="goto_event(first.uri)" style="cursor:pointer;" title="Ir para o evento">
+                    <div class="form-group card-title" @click="goto_event(first.uri)" style="cursor:pointer;margin-bottom: 5px !important;" title="Ir para o evento">
                       {{first.ds_evento}}
                     </div>
                     <div>
                       Data do evento: {{first.dt_apresentacao}} - {{first.hr_apresentacao}}
+                    </div>
+                    <div>
+                      Base: {{first.ds_nome_base_sql}}
                     </div>
                   </div>
                 </div>
