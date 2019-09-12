@@ -156,12 +156,23 @@
               <div class="card-header">
                 <h4 class="card-title">Split</h4>
               </div>
-              <table class="table card-table">
+              <table class="table card-table" style="font-size: 12px !important">
                 <tbody>
                   <tr v-for="(item) in gatewayinfo.split_rules" v-bind:key="'all_'+item.id">
                     <td width="1"><i class="fas fa-dollar-sign"></i></td>
                     <td>{{item.recipient_name}}</td>
-                    <td class="text-right"><span class="text-muted">{{item.amount | amount}}</span></td>
+                    <td>
+                      <span class="status-icon bg-success" v-if="item.playable_status == 'paid'" title="Recebimento pago ou antecipado"></span>
+                      <span class="status-icon bg-danger" v-if="item.playable_status == 'waiting_funds'" title="Aguardando recebimento"></span>
+                    </td>
+                    <td v-if="item.playable_status == 'paid'" class="text-right"><span class="text-muted">{{item.amount | amount}}</span></td>
+                    <td v-if="item.playable_status == 'waiting_funds'" :title="'Data pagamento ' + $options.filters.gatewaydate(item.playable_payment_date)" class="text-right"><span class="text-muted">{{item.amount | amount}}</span></td>
+                    <td v-if="item.playable_status == 'paid'">
+                      <i class="fas fa-history" v-if="item.playable_isanticipation" :title="'Data antecipação ' + $options.filters.gatewaydate(item.playable_payment_date)"></i>
+                      <i class="fas fa-long-arrow-alt-right" v-if="!item.playable_isanticipation"></i>
+                    </td>
+                    <td v-if="item.playable_status == 'paid' && item.playable_isanticipation" :title="'Data original ' + $options.filters.gatewaydate(item.playable_original_payment_date)">{{amount_final(item) | amount}}</td>
+                    <td v-if="item.playable_status == 'paid' && !item.playable_isanticipation" :title="'Data pagamento ' + $options.filters.gatewaydate(item.playable_payment_date)">{{amount_final(item) | amount}}</td>
                   </tr>
                 </tbody>
               </table>
@@ -223,6 +234,14 @@ export default {
         let split = aux.split("-");
         return split[2]+"/"+split[1]+"/"+split[0];
       },
+      gatewaydate: function (value) {
+        if (value == null || value == '') return "";
+        let aux = value.substring(0,10);
+        let split = aux.split("-");
+        let ret = split[2]+"/"+split[1]+"/"+split[0];
+        // console.log(value);
+        return ret;
+      },
       capme: function (value) {
         if (value == null) return "";
         if (value.length > 30)  {
@@ -244,7 +263,7 @@ export default {
   },
   computed: {
     gatewayinfo() {
-      console.log(this.first.gateway_info);
+      //console.log(this.first.gateway_info);
       return JSON.parse(this.first.gateway_info);
     },
     first() {
@@ -268,6 +287,10 @@ export default {
     },
   },
   methods: {
+    amount_final(item) {
+      let amount = item.playable_amount-item.playable_anticipation_fee-item.playable_fee;
+      return amount;
+    },
     gotonew(uri) {
       window.open(uri);
     },
