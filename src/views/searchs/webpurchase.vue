@@ -106,7 +106,14 @@
                     </thead>
                     <tbody>
                       <tr v-for="(item) in grids.default.items" v-bind:key="'all_'+item.id_pedido_venda">
-                        <td><div style="font-size:12px">{{item.id_pedido_venda}}</div></td>
+                        <td>
+                          <span v-if="!mayIseeDetail" style="font-size:12px">
+                            {{item.id_pedido_venda}}
+                          </span>
+                          <span v-if="mayIseeDetail" @click="detail(item.id_pedido_venda)" style="font-size:12px;cursor:pointer;" title="Clique para abrir o detalhe">
+                            {{item.id_pedido_venda}}
+                          </span>
+                        </td>
                         <td><div style="font-size:12px">{{item.created_at}}</div></td>
                         <td>
                           <div class="clearfix" style="font-size:12px">
@@ -122,7 +129,7 @@
                             <span class="text-muted" style="font-size:12px">{{item.hr_apresentacao}}</span>
                         </td>
                         <td>
-                          <span class="text-muted" style="font-size:12px">
+                          <span style="font-size:12px">
                             <span class="status-icon bg-success" v-if="item.in_situacao == 'F'"></span>
                             <span class="status-icon bg-warning" v-if="item.in_situacao == 'P'"></span>
                             <span class="status-icon bg-secondary" v-if="item.in_situacao == 'E'"></span>
@@ -131,10 +138,10 @@
                           </span>
                         </td>
                         <td>
-                          <span v-if="!mayIseeGateway" class="text-muted" style="font-size:12px">
+                          <span v-if="!mayIseeGateway" style="font-size:12px">
                             {{item.cd_numero_transacao}}
                           </span>
-                          <span v-if="mayIseeGateway" @click="gateway(item.cd_numero_transacao)" class="text-muted" style="font-size:12px;cursor:pointer;" title="Clique para abrir a transação no gateway">
+                          <span v-if="mayIseeGateway" @click="gateway(item.cd_numero_transacao)" style="font-size:12px;cursor:pointer;" title="Clique para abrir a transação no gateway">
                             {{item.cd_numero_transacao}}
                           </span>
                         </td>
@@ -225,9 +232,15 @@ export default {
     },
     mayIseeGateway() {
       return this.mayI('webpurchase-gateway');
-    }
+    },
+    mayIseeDetail() {
+      return this.mayI("webpurchase-detail");
+    },
   },
   methods: {
+    detail(id) {
+      this.$router.push(`/webpurchase/detail/${id}`);
+    },
     gateway(number) {
       window.open(`https://dashboard.pagar.me/#/transactions/${number}`);
     },
