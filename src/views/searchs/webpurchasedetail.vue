@@ -28,10 +28,10 @@
                       <a class="dropdown-item" @click="sendemail" style="cursor:pointer">
                         <i class="fas fa-share"></i> Enviar Ingresso por e-mail
                       </a>
-                      <div class="dropdown-divider"></div>
-                      <a class="dropdown-item" @click="refund" style="cursor:pointer">
+                      <!--div class="dropdown-divider"></!--div>
+                      <a-- class="dropdown-item" @click="refund" style="cursor:pointer">
                         <i class="fas fa-hand-holding-usd"></i> Reembolso
-                      </a>
+                      </a-->
                     </div>
                   </div>
                 </b-col>
