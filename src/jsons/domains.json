@@ -284,10 +284,6 @@
     "api.associacaodosartistas.conectateatro.com.br": "associacaodosartistas",
     "compra.associacaodosartistas.conectateatro.com.br": "associacaodosartistas",
     "admin.associacaodosartistas.conectateatro.com.br": "associacaodosartistas",
-    "ingreshow.ticketoffice.me": "ingreshow",
-    "api.ingreshow.ticketoffice.me": "ingreshow",
-    "compra.ingreshow.ticketoffice.me": "ingreshow",
-    "admin.ingreshow.ticketoffice.me": "ingreshow",
     "www.reservagrupos.com.br": "reservagruposprod",
     "api.reservagrupos.com.br": "reservagruposprod",
     "compra.reservagrupos.com.br": "reservagruposprod",
@@ -307,5 +303,9 @@
     "unafisconacional.ticketoffice.me": "unafisconacional",
     "api.unafisconacional.ticketoffice.me": "unafisconacional",
     "compra.unafisconacional.ticketoffice.me": "unafisconacional",
-    "admin.unafisconacional.ticketoffice.me": "unafisconacional"
+    "admin.unafisconacional.ticketoffice.me": "unafisconacional",
+    "www.ingreshow.com.br": "ingreshow",
+    "api.ingreshow.com.br": "ingreshow",
+    "compra.ingreshow.com.br": "ingreshow",
+    "admin.ingreshow.com.br": "ingreshow"
 }
