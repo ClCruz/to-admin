@@ -391,7 +391,7 @@ export default {
             id: 1,
             format: 'DD/MM/YYYY',
             minNights: 0,
-            maxNights: 80,
+            maxNights: 0,
             hoveringTooltip: true,
             displayClearButton: true,
             ptBr: {

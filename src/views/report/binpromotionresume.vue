@@ -203,7 +203,7 @@ export default {
           id: 1,
           format: 'DD/MM/YYYY',
           minNights: 0,
-          maxNights: 300,
+          maxNights: 0,
           hoveringTooltip: true,
           displayClearButton: true,
           startDate: new Date('2018-01-01'),
