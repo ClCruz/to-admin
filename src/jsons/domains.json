@@ -181,12 +181,10 @@
     "api.hipocritas.ticketoffice.wl": "hipocritas",
     "compra.hipocritas.ticketoffice.wl": "hipocritas",
     "admin.hipocritas.ticketoffice.wl": "hipocritas",
-
     "ingressos.teatroalphaville.com.br": "alphaville",
     "api.ingressos.teatroalphaville.com.br": "alphaville",
     "compra.ingressos.teatroalphaville.com.br": "alphaville",
     "admin.ingressos.teatroalphaville.com.br": "alphaville",
-
     "educa.ticketoffice.me": "spacemooneduca",
     "api.educa.ticketoffice.me": "spacemooneduca",
     "compra.educa.ticketoffice.me": "spacemooneduca",
@@ -199,7 +197,6 @@
     "api.eventoaju.com.br": "eventoaju",
     "compra.eventoaju.com.br": "eventoaju",
     "admin.eventoaju.com.br": "eventoaju",
-
     "www.compreingressos.com": "compreingressos",
     "api.compreingressos.com": "compreingressos",
     "compra.compreingressos.com": "compreingressos",
@@ -220,18 +217,14 @@
     "api.viveringressos.com.br": "viveringressos",
     "compra.viveringressos.com.br": "viveringressos",
     "admin.viveringressos.com.br": "viveringressos",
-
     "willianleite.tixs.me": "willianleite",
     "api.willianleite.tixs.me": "willianleite",
     "compra.willianleite.tixs.me": "willianleite",
     "admin.willianleite.tixs.me": "willianleite",
-
-    "bilheteriacom.ticketoffice.me": "bilheteriacom",
-    "api.bilheteriacom.ticketoffice.me": "bilheteriacom",
-    "compra.bilheteriacom.ticketoffice.me": "bilheteriacom",
-    "admin.bilheteriacom.ticketoffice.me": "bilheteriacom",
-
-
+    "www.bilheteria.com.br": "bilheteriacom",
+    "api.bilheteria.com.br": "bilheteriacom",
+    "compra.bilheteria.com.br": "bilheteriacom",
+    "admin.bilheteria.com.br": "bilheteriacom",
     "afrac.ticketoffice.me": "afrac",
     "api.afrac.ticketoffice.me": "afrac",
     "compra.afrac.ticketoffice.me": "afrac",
