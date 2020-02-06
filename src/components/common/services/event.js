@@ -109,6 +109,7 @@ function base64(id, type) {
 }
 
 function get(loggedId, id_evento, id_base) {
+    console.log(`/v1/admin/event/get?id_user=${loggedId}&id_evento=${id_evento}&id_base=${id_base}`);
     let url = config.api + `/v1/admin/event/get?id_user=${loggedId}&id_evento=${id_evento}&id_base=${id_base}`;
 
     var ret = new Promise(
@@ -241,7 +242,9 @@ function save(id_to_admin_user, id_base,id_produtor
     ,imagechanged,imagebase64,free_installments
     ,max_installments,interest_rate,ticketoffice_ticketmodel
     ,showonline,minAmount,maxAmount
-    ,in_entrega_ingresso, external_uri,mmAmountIsPer) {
+    ,in_entrega_ingresso, external_uri,mmAmountIsPer, qt_hr_anteced, descriptionVoucher) {
+
+
 
     let url = config.api + `/v1/admin/event/save`;
 
@@ -256,7 +259,7 @@ function save(id_to_admin_user, id_base,id_produtor
         ,imagechanged,imagebase64,free_installments
         ,max_installments,interest_rate,ticketoffice_ticketmodel
         ,showonline,minAmount,maxAmount
-        ,in_entrega_ingresso,external_uri,mmAmountIsPer
+        ,in_entrega_ingresso,external_uri,mmAmountIsPer,qt_hr_anteced, descriptionVoucher
     };
 
 

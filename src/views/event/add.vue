@@ -98,6 +98,21 @@
             </b-col>
           </b-row>
           <b-row class="mb-3">
+            <div class="col-12">
+              <b-input-group size="sm">
+                <b-input-group-prepend is-text v-bind:class="{ errorFormValidateLabel: (executedAtLeastOne && $v.form.descriptionVoucher.$invalid) }">
+                  Descrição Voucher:
+                </b-input-group-prepend>
+                <div class="col-12 m-0 p-0" style="height:200px; margin-bottom:50px;margin-left: 0px;">
+                  <quill-editor v-model="form.descriptionVoucher" ref="editor" v-bind:class="{ errorFormValidateInput: (executedAtLeastOne && $v.form.descriptionVoucher.$invalid) }" :options="components.quillOptions">
+                  </quill-editor>
+                </div>
+              </b-input-group>
+              <div class="errorFormValidate errorFormValidateHack" v-if="executedAtLeastOne && !$v.form.descriptionVoucher.required">Campo é obrigatório</div>
+              <div class="errorFormValidate errorFormValidateHack" v-if="executedAtLeastOne && !$v.form.descriptionVoucher.minLength">Deve ter pelo menos {{$v.form.descriptionVoucher.$params.minLength.min}} caracteres.</div>
+            </div>
+          </b-row>
+          <b-row class="mb-3">
             <b-col>
               <b-row>
                 <b-input-group size="sm">
@@ -200,6 +215,16 @@
               <b-form-select v-model="form.ticketoffice_ticketmodel" :options="selects.ticketmodels" size="sm" v-bind:class="{ errorFormValidateInput: (executedAtLeastOne && $v.form.ticketoffice_ticketmodel.$invalid) }" />
             </b-input-group>
             <div class="errorFormValidate" v-if="executedAtLeastOne && !$v.form.ticketoffice_ticketmodel.required">Campo é obrigatório</div>
+          </b-row>
+
+          <b-row class="mb-3">
+            <b-input-group size="sm">
+              <b-input-group-prepend is-text>
+                Qt hrs. Limite de Venda pelo Site antes do espetáculo: Não se aplica para POS:
+              </b-input-group-prepend>
+              <b-form-input id="qt_hr_anteced" type="text" name="qt_hr_anteced" maxlength="50" v-model="form.qt_hr_anteced" placeholder="">
+              </b-form-input>
+            </b-input-group>
           </b-row>
           <b-row class="mb-3">
             <b-col>
@@ -475,6 +500,7 @@ export default {
     },
   },
   mounted() {
+    this.form.descriptionVoucher = '<p style="font-family:Arial,Verdana;font-size:8px;font-weight:normal;color:#000000;line-height:14px;margin:0;padding:0;">- O evento começa rigorosamente no horário marcado. Não haverá troca de voucher ou devoluções em caso de atraso de qualquer natureza. Seja pontual, poderá não ser permitida a entrada após o início do espetáculo.<br />- A taxa de serviço e os vouchers que forem adquiridos e pagos através desse canal não poderão ser devolvidos,trocado ou cancelados depois que a compra for efetuada pelo cliente e o pagamento confirmado pelainstituição financeira.<br />- É obrigatório <b>apresentar um documento de identificação pessoal e o cartão de crédito utilizado na compra</b> na entrada do evento. De acordo com a política de segurança das operadoras de crédito, essa conferência se faz necessária visto que as transações via internet não são autenticadas com sua senha de usuário.<br />- No caso de <b>meia-entrada</b> ou <b>promoção</b> é obrigatório a apresentação de documento que comprove obenefício no momento da retirada dos vouchers e na entrada do local.<br />- Caso você tenha alguma dúvida sobre o seu pedido, entre em contato conosco através do site:<a href="https://demo.ticketoffice.me" style="color:#000000;text-decoration:none;font-weight:bold;">https://demo.ticketoffice.me</a><br /><br /></p><p style="font-family:Arial,Verdana;font-size:8px;font-weight:bold;color:#000000;line-height:14px;margin:0;padding:0;text-transform:uppercase;">ESTE É UM E-MAIL AUTOMÁTICO. NÃO É NECESSÁRIO RESPONDÊ-LO.</p>';
     EventBus.$on('reloadinfo', p => {
       this.get(false);
     });
@@ -697,11 +723,12 @@ export default {
               this.form.amountMax = response.amountMax;
               this.form.amountMin = response.amountMin;
               this.form.CenPeca = response.CenPeca;
-              this.form.id_local_evento = response.id_local_evento;
+              //this.form.id_local_evento = response.id_local_evento;
               this.form.id_municipio = response.id_municipio;
               this.form.id_estado = response.id_estado;
               this.form.ValIngresso = response.ValIngresso;
               this.form.description = response.description;
+              this.form.descriptionVoucher = response.descriptionVoucher;
               this.form.meta_description = response.meta_description;
               this.form.meta_keyword = response.meta_keyword;
               this.form.showonline = response.showonline;
@@ -729,6 +756,8 @@ export default {
               this.form.imageURICard = response.imageURICard;
               this.form.imageURIBanner = response.imageURIBanner;
               this.form.imageURIOriginal = response.imageURIOriginal;
+
+              this.form.qt_hr_anteced = response.qt_hr_anteced;
 
               this.form.max_installments = response.max_installments;
               this.form.free_installments = response.free_installments;
@@ -773,6 +802,7 @@ export default {
       return !this.$v.form.$invalid;
     },
     save() {
+
       if (this.processing) return;
 
       if (this.validate()) {
@@ -807,7 +837,9 @@ export default {
           minAmount = "",
           maxAmount = "",
           in_entrega_ingresso = "",
-          mmAmountIsPer = false;
+          mmAmountIsPer = false,
+          qt_hr_anteced = "",
+          descriptionVoucher = "";
 
         id_base = this.form.id_base;
         showonline = this.form.showonline;
@@ -821,6 +853,7 @@ export default {
         id_local_evento = this.form.id_local_evento;
         ValIngresso = this.form.ValIngresso;
         description = this.form.description;
+        descriptionVoucher = this.form.descriptionVoucher;
         meta_description = this.form.meta_description;
         meta_keyword = this.form.meta_keyword;
         opening_time = this.form.opening_time;
@@ -833,7 +866,7 @@ export default {
         ticketoffice_ticketmodel = this.form.ticketoffice_ticketmodel;
         qt_ingressos_por_cpf = this.form.qt_ingressos_por_cpf;
         minAmount = this.form.minAmount;
-        
+
         maxAmount = this.form.maxAmount;
         in_entrega_ingresso = this.form.in_entrega_ingresso == true ? 1 : 0;
 
@@ -846,11 +879,14 @@ export default {
         max_installments = this.form.max_installments;
         interest_rate = this.formatInterestRate(this.form.interest_rate);
 
+        qt_hr_anteced = this.form.qt_hr_anteced;
+
+
         this.processing = true;
         this.$wait.start("inprocessSave");
 
         this.showWaitAboveAll();
-        eventService.save(this.getLoggedId(), id_base, id_produtor, CodPeca, NomPeca, CodTipPeca, TemDurPeca, CenPeca, id_local_evento, ValIngresso, description, meta_description, meta_keyword, opening_time, insurance_policy, showInBanner, bannerDescription, QtIngrPorPedido, in_obriga_cpf, qt_ingressos_por_cpf, ticketoffice_askemail, imagechanged, imagebase64, free_installments, max_installments, interest_rate, ticketoffice_ticketmodel, showonline, minAmount, maxAmount, in_entrega_ingresso, external_uri, mmAmountIsPer).then(
+        eventService.save(this.getLoggedId(), id_base, id_produtor, CodPeca, NomPeca, CodTipPeca, TemDurPeca, CenPeca, id_local_evento, ValIngresso, description, meta_description, meta_keyword, opening_time, insurance_policy, showInBanner, bannerDescription, QtIngrPorPedido, in_obriga_cpf, qt_ingressos_por_cpf, ticketoffice_askemail, imagechanged, imagebase64, free_installments, max_installments, interest_rate, ticketoffice_ticketmodel, showonline, minAmount, maxAmount, in_entrega_ingresso, external_uri, mmAmountIsPer, qt_hr_anteced, descriptionVoucher).then(
 
           response => {
             this.processing = false;
