@@ -724,7 +724,7 @@ export default {
               this.form.amountMax = response.amountMax;
               this.form.amountMin = response.amountMin;
               this.form.CenPeca = response.CenPeca;
-              //this.form.id_local_evento = response.id_local_evento;
+              this.form.id_local_evento = response.id_local_evento;
               this.form.id_municipio = response.id_municipio;
               this.form.id_estado = response.id_estado;
               this.form.ValIngresso = response.ValIngresso;
