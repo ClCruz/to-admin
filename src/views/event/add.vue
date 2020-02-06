@@ -695,6 +695,7 @@ export default {
       }
     },
     get(type) {
+      console.log("AQUI");
       if (this.processing) return;
 
       this.processing = true;
