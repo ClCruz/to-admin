@@ -72,7 +72,7 @@
                       Descrição:
                     </b-input-group-prepend>
                     <div class="col-12 m-0 p-0" style="height:200px; margin-bottom:50px;margin-left: 0px;">
-                      <quill-editor v-model="form.description" ref="editor" v-bind:class="{ errorFormValidateInput: (executedAtLeastOne && $v.form.description.$invalid) }" :options="components.quillOptions">
+                      <quill-editor v-on:content-changed="textChanged" v-model="form.description" ref="editor" v-bind:class="{ errorFormValidateInput: (executedAtLeastOne && $v.form.description.$invalid) }" :options="components.quillOptions">
                       </quill-editor>
                     </div>
                   </b-input-group>
@@ -104,7 +104,7 @@
                   Descrição Voucher:
                 </b-input-group-prepend>
                 <div class="col-12 m-0 p-0" style="height:200px; margin-bottom:50px;margin-left: 0px;">
-                  <quill-editor v-model="form.descriptionVoucher" ref="editor" v-bind:class="{ errorFormValidateInput: (executedAtLeastOne && $v.form.descriptionVoucher.$invalid) }" :options="components.quillOptions">
+                  <quill-editor v-model="form.descriptionVoucher" maxlength="1000" ref="editor" v-bind:class="{ errorFormValidateInput: (executedAtLeastOne && $v.form.descriptionVoucher.$invalid) }" :options="components.quillOptions">
                   </quill-editor>
                 </div>
               </b-input-group>
@@ -465,7 +465,7 @@ import { VMoney } from 'v-money';
 import 'quill/dist/quill.core.css';
 import 'quill/dist/quill.snow.css';
 import 'quill/dist/quill.bubble.css';
-
+ 
 import {
   required,
   minLength
@@ -801,6 +801,11 @@ export default {
     validate() {
       this.executedAtLeastOne = true;
       return !this.$v.form.$invalid;
+    },
+    textChanged($event) {
+      if ($event.editor.getLength() > 1000) {
+        $event.editor.deleteText(1000, $event.editor.getLength());
+      }
     },
     save() {
 
