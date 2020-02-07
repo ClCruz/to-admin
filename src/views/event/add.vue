@@ -842,6 +842,7 @@ export default {
           qt_hr_anteced = "",
           descriptionVoucher = "";
 
+
         id_base = this.form.id_base;
         showonline = this.form.showonline;
         id_produtor = this.form.id_produtor;
@@ -881,8 +882,8 @@ export default {
         interest_rate = this.formatInterestRate(this.form.interest_rate);
 
         qt_hr_anteced = this.form.qt_hr_anteced;
-
-
+        descriptionVoucher = this.form.descriptionVoucher;
+        
         this.processing = true;
         this.$wait.start("inprocessSave");
 
