@@ -903,6 +903,11 @@ export default {
             return e;
           })
           .indexOf("in_entrega_ingresso");
+        let index_showPin = newValue
+          .map(function(e) {
+            return e;
+          })
+          .indexOf("showPin");
 
         this.form.showInBanner = index_showInBanner == -1 ? "" : "1";
         this.form.in_obriga_cpf = index_in_obriga_cpf == -1 ? "" : "1";
@@ -910,6 +915,7 @@ export default {
           index_ticketoffice_askemail == -1 ? "" : "1";
         this.form.in_entrega_ingresso =
           index_in_entrega_ingresso == -1 ? "" : "1";
+        this.form.showPin = index_showPin == -1 ? "" : "1";
       }
     },
     mayIsee() {
