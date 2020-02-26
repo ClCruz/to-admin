@@ -710,10 +710,6 @@
           />
           <label for="in_entrega_ingresso">Ingresso entregue via correios?</label>
         </div>
-        <div class="checkboxGroup">
-          <input id="showPin" name="showPin" v-model="form.showPin" type="checkbox" />
-          <label for="showPin">Mostrar Pin ao Voucher?</label>
-        </div>
       </div>
       <b-row class="mb-3">
         <div class="input-group">
@@ -877,9 +873,7 @@ export default {
         ) {
           ret.push("in_entrega_ingresso");
         }
-        if (this.form.showPin == "1" || this.form.showPin == 1) {
-          ret.push("showPin");
-        }
+
         return ret;
       },
       set: function(newValue) {
@@ -903,18 +897,13 @@ export default {
             return e;
           })
           .indexOf("in_entrega_ingresso");
-        let index_showPin = newValue
-          .map(function(e) {
-            return e;
-          })
-          .indexOf("showPin");
+
         this.form.showInBanner = index_showInBanner == -1 ? "" : "1";
         this.form.in_obriga_cpf = index_in_obriga_cpf == -1 ? "" : "1";
         this.form.ticketoffice_askemail =
           index_ticketoffice_askemail == -1 ? "" : "1";
         this.form.in_entrega_ingresso =
           index_in_entrega_ingresso == -1 ? "" : "1";
-        this.form.showPin = index_showPin == -1 ? "" : "1";
       }
     },
     mayIsee() {
@@ -1127,7 +1116,7 @@ export default {
               this.form.meta_keyword = response.meta_keyword;
               this.form.showonline = response.showonline;
               this.form.showInBanner = response.showInBanner;
-              this.form.showPin = response.showPin;
+
               this.form.bannerDescription = response.bannerDescription;
               this.form.opening_time = response.opening_time;
               this.form.insurance_policy = response.insurance_policy;
@@ -1224,7 +1213,6 @@ export default {
           opening_time = "",
           insurance_policy = "",
           showInBanner = "",
-          showPin = "",
           bannerDescription = "",
           QtIngrPorPedido = "",
           in_obriga_cpf = "",
@@ -1265,7 +1253,7 @@ export default {
         opening_time = this.form.opening_time;
         insurance_policy = this.form.insurance_policy;
         showInBanner = this.form.showInBanner;
-        showPin = this.form.showPin;
+
         bannerDescription = this.form.bannerDescription;
         QtIngrPorPedido = this.form.QtIngrPorPedido;
         in_obriga_cpf = this.form.in_obriga_cpf;
@@ -1312,7 +1300,7 @@ export default {
             opening_time,
             insurance_policy,
             showInBanner,
-            showPin,
+
             bannerDescription,
             QtIngrPorPedido,
             in_obriga_cpf,
@@ -1667,10 +1655,6 @@ export default {
           {
             text: "Ingresso entregue via correios?",
             value: "in_entrega_ingresso"
-          },
-          {
-            text: "Mostrar Pin ao Voucher?",
-            value: "showPin"
           }
         ]
       },
@@ -1827,7 +1811,7 @@ export default {
         meta_description: "",
         meta_keyword: "",
         showInBanner: "",
-        showPin: "",
+
         showonline: "",
         bannerDescription: "",
         opening_time: "",
