@@ -208,7 +208,7 @@
             </div>
           </b-row>
 
-          <!-- <b-row class="mb-3">
+          <b-row class="mb-3">
             <div class="col-12">
               <b-input-group size="sm">
                 <b-input-group-prepend
@@ -237,7 +237,7 @@
                 v-if="executedAtLeastOne && !$v.form.descriptionVoucher2.minLength"
               >Deve ter pelo menos {{$v.form.descriptionVoucher2.$params.minLength.min}} caracteres.</div>
             </div>
-          </b-row>-->
+          </b-row>
 
           <b-row class="mb-3">
             <b-col>
@@ -832,7 +832,7 @@ export default {
     this.form.descriptionVoucher =
       '<p style="font-family:Arial,Verdana;font-size:8px;font-weight:normal;color:#000000;line-height:14px;margin:0;padding:0;">- O evento começa rigorosamente no horário marcado. Não haverá troca de voucher ou devoluções em caso de atraso de qualquer natureza. Seja pontual, poderá não ser permitida a entrada após o início do espetáculo.<br />- A taxa de serviço e os vouchers que forem adquiridos e pagos através desse canal não poderão ser devolvidos,trocado ou cancelados depois que a compra for efetuada pelo cliente e o pagamento confirmado pelainstituição financeira.<br />- É obrigatório <b>apresentar um documento de identificação pessoal e o cartão de crédito utilizado na compra</b> na entrada do evento. De acordo com a política de segurança das operadoras de crédito, essa conferência se faz necessária visto que as transações via internet não são autenticadas com sua senha de usuário.<br />- No caso de <b>meia-entrada</b> ou <b>promoção</b> é obrigatório a apresentação de documento que comprove obenefício no momento da retirada dos vouchers e na entrada do local.<br />- Caso você tenha alguma dúvida sobre o seu pedido, entre em contato conosco através do site:<a href="https://demo.ticketoffice.me" style="color:#000000;text-decoration:none;font-weight:bold;">https://demo.ticketoffice.me</a><br /><br /></p><p style="font-family:Arial,Verdana;font-size:8px;font-weight:bold;color:#000000;line-height:14px;margin:0;padding:0;text-transform:uppercase;">ESTE É UM E-MAIL AUTOMÁTICO. NÃO É NECESSÁRIO RESPONDÊ-LO.</p>';
 
-    // this.form.descriptionVoucher2 = "";
+    this.form.descriptionVoucher2 = "";
 
     EventBus.$on("reloadinfo", p => {
       this.get(false);
@@ -1123,7 +1123,7 @@ export default {
               this.form.ValIngresso = response.ValIngresso;
               this.form.description = response.description;
               this.form.descriptionVoucher = response.descriptionVoucher;
-              // this.form.descriptionVoucher2 = response.descriptionVoucher2;
+              this.form.descriptionVoucher2 = response.descriptionVoucher2;
               this.form.meta_description = response.meta_description;
               this.form.meta_keyword = response.meta_keyword;
               this.form.showonline = response.showonline;
@@ -1245,9 +1245,9 @@ export default {
           mmAmountIsPer = false,
           qt_hr_anteced = "",
           descriptionVoucher = "",
-          // descriptionVoucher2 = "";
+          descriptionVoucher2 = "";
 
-          id_base = this.form.id_base;
+        id_base = this.form.id_base;
         showonline = this.form.showonline;
 
         id_produtor = this.form.id_produtor;
@@ -1261,7 +1261,7 @@ export default {
         ValIngresso = this.form.ValIngresso;
         description = this.form.description;
         descriptionVoucher = this.form.descriptionVoucher;
-        // descriptionVoucher2 = this.form.descriptionVoucher2;
+        descriptionVoucher2 = this.form.descriptionVoucher2;
         meta_description = this.form.meta_description;
         meta_keyword = this.form.meta_keyword;
         opening_time = this.form.opening_time;
@@ -1291,7 +1291,7 @@ export default {
 
         qt_hr_anteced = this.form.qt_hr_anteced;
         descriptionVoucher = this.form.descriptionVoucher;
-        // descriptionVoucher2 = this.form.descriptionVoucher2;
+        descriptionVoucher2 = this.form.descriptionVoucher2;
 
         this.processing = true;
         this.$wait.start("inprocessSave");
@@ -1336,8 +1336,8 @@ export default {
             external_uri,
             mmAmountIsPer,
             qt_hr_anteced,
-            descriptionVoucher
-            // descriptionVoucher2
+            descriptionVoucher,
+            descriptionVoucher2
           )
           .then(
             response => {
