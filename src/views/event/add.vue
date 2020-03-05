@@ -710,10 +710,10 @@
           />
           <label for="in_entrega_ingresso">Ingresso entregue via correios?</label>
         </div>
-        <!-- <div class="checkboxGroup">
+        <div class="checkboxGroup">
           <input id="showPin" name="showPin" v-model="form.showPin" type="checkbox" />
           <label for="showPin">Mostrar Pin ao Voucher?</label>
-        </div> -->
+        </div>
       </div>
       <b-row class="mb-3">
         <div class="input-group">
@@ -1244,8 +1244,9 @@ export default {
           mmAmountIsPer = false,
           qt_hr_anteced = "",
           descriptionVoucher = "",
-          descriptionVoucher2 = "";
-        id_base = this.form.id_base;
+          descriptionVoucher2 = "",
+          showPin = "",
+          id_base = this.form.id_base;
         showonline = this.form.showonline;
 
         id_produtor = this.form.id_produtor;
@@ -1290,7 +1291,7 @@ export default {
         descriptionVoucher = this.form.descriptionVoucher;
         descriptionVoucher2 = this.form.descriptionVoucher2;
 
-        // showPin = this.form.showPin;
+        showPin = this.form.showPin;
 
         this.processing = true;
         this.$wait.start("inprocessSave");
@@ -1336,7 +1337,7 @@ export default {
             qt_hr_anteced,
             descriptionVoucher,
             descriptionVoucher2,
-            // showPin
+            showPin
           )
           .then(
             response => {
@@ -1672,10 +1673,10 @@ export default {
             text: "Ingresso entregue via correios?",
             value: "in_entrega_ingresso"
           },
-          // {
-          //   text: "Mostrar Pin ao Voucher?",
-          //   value: "showPin"
-          // }
+          {
+            text: "Mostrar Pin ao Voucher?",
+            value: "showPin"
+          }
         ]
       },
       selects: {
@@ -1852,6 +1853,7 @@ export default {
         free_installments: null,
         max_installments: null,
         interest_rate: 0,
+        showPin: ""
       }
     };
   }
