@@ -710,10 +710,10 @@
           />
           <label for="in_entrega_ingresso">Ingresso entregue via correios?</label>
         </div>
-        <div class="checkboxGroup">
+        <!-- <div class="checkboxGroup">
           <input id="showPin" name="showPin" v-model="form.showPin" type="checkbox" />
           <label for="showPin">Mostrar Pin ao Voucher?</label>
-        </div>
+        </div> -->
       </div>
       <b-row class="mb-3">
         <div class="input-group">
@@ -877,10 +877,10 @@ export default {
         ) {
           ret.push("in_entrega_ingresso");
         }
-        if (this.form.showPin == "1" || this.form.showPin == 1) {
-          ret.push("showPin");
-        }
-        return ret;
+        // if (this.form.showPin == "1" || this.form.showPin == 1) {
+        //   ret.push("showPin");
+        // }
+        // return ret;
       },
       set: function(newValue) {
         let index_showInBanner = newValue
@@ -903,11 +903,11 @@ export default {
             return e;
           })
           .indexOf("in_entrega_ingresso");
-        let index_showPin = newValue
-          .map(function(e) {
-            return e;
-          })
-          .indexOf("showPin");
+        // let index_showPin = newValue
+        //   .map(function(e) {
+        //     return e;
+        //   })
+        //   .indexOf("showPin");
 
         this.form.showInBanner = index_showInBanner == -1 ? "" : "1";
         this.form.in_obriga_cpf = index_in_obriga_cpf == -1 ? "" : "1";
@@ -915,7 +915,7 @@ export default {
           index_ticketoffice_askemail == -1 ? "" : "1";
         this.form.in_entrega_ingresso =
           index_in_entrega_ingresso == -1 ? "" : "1";
-        this.form.showPin = index_showPin == -1 ? "" : "1";
+        // this.form.showPin = index_showPin == -1 ? "" : "1";
       }
     },
     mayIsee() {
@@ -1140,7 +1140,6 @@ export default {
               this.form.DatFinPeca = response.DatFinPeca;
               this.form.hasPresentantion = response.hasPresentantion;
               this.form.in_entrega_ingresso = response.in_entrega_ingresso;
-              this.form.showPin = response.showPin;
               this.form.minAmount = response.minAmount;
               this.form.maxAmount = response.maxAmount;
               this.form.mmAmountIsPer = response.mmAmountIsPer == 1;
@@ -1164,6 +1163,7 @@ export default {
               this.form.ticketoffice_ticketmodel =
                 response.ticketoffice_ticketmodel;
               this.$refs.interest_rate.$el.value = response.interest_rate;
+              // this.form.showPin = response.showPin;
 
               this.checkproducer();
               this.populateCity();
@@ -1241,12 +1241,10 @@ export default {
           minAmount = "",
           maxAmount = "",
           in_entrega_ingresso = "",
-          showPin = "",
           mmAmountIsPer = false,
           qt_hr_anteced = "",
           descriptionVoucher = "",
           descriptionVoucher2 = "";
-
         id_base = this.form.id_base;
         showonline = this.form.showonline;
 
@@ -1278,7 +1276,6 @@ export default {
 
         maxAmount = this.form.maxAmount;
         in_entrega_ingresso = this.form.in_entrega_ingresso == true ? 1 : 0;
-        showPin = this.form.showPin;
 
         mmAmountIsPer = this.form.mmAmountIsPer == true ? 1 : 0;
 
@@ -1292,6 +1289,8 @@ export default {
         qt_hr_anteced = this.form.qt_hr_anteced;
         descriptionVoucher = this.form.descriptionVoucher;
         descriptionVoucher2 = this.form.descriptionVoucher2;
+
+        // showPin = this.form.showPin;
 
         this.processing = true;
         this.$wait.start("inprocessSave");
@@ -1332,12 +1331,12 @@ export default {
             minAmount,
             maxAmount,
             in_entrega_ingresso,
-            showPin,
             external_uri,
             mmAmountIsPer,
             qt_hr_anteced,
             descriptionVoucher,
-            descriptionVoucher2
+            descriptionVoucher2,
+            // showPin
           )
           .then(
             response => {
@@ -1673,10 +1672,10 @@ export default {
             text: "Ingresso entregue via correios?",
             value: "in_entrega_ingresso"
           },
-          {
-            text: "Mostrar Pin ao Voucher?",
-            value: "showPin"
-          }
+          // {
+          //   text: "Mostrar Pin ao Voucher?",
+          //   value: "showPin"
+          // }
         ]
       },
       selects: {
@@ -1847,13 +1846,12 @@ export default {
         minAmount: 0,
         maxAmount: 0,
         in_entrega_ingresso: 0,
-        showPin: "",
         hasPresentantion: "",
         mmAmountIsPer: false,
 
         free_installments: null,
         max_installments: null,
-        interest_rate: 0
+        interest_rate: 0,
       }
     };
   }
