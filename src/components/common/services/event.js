@@ -242,7 +242,7 @@ function save(id_to_admin_user, id_base, id_produtor
     , imagechanged, imagebase64, free_installments
     , max_installments, interest_rate, ticketoffice_ticketmodel
     , showonline, minAmount, maxAmount
-    , in_entrega_ingresso, showPin, external_uri, mmAmountIsPer, qt_hr_anteced, descriptionVoucher, descriptionVoucher2) {
+    , in_entrega_ingresso, external_uri, mmAmountIsPer, qt_hr_anteced, descriptionVoucher, descriptionVoucher2, showPin) {
 
 
 
@@ -259,8 +259,8 @@ function save(id_to_admin_user, id_base, id_produtor
         , imagechanged, imagebase64, free_installments
         , max_installments, interest_rate, ticketoffice_ticketmodel
         , showonline, minAmount, maxAmount
-        , in_entrega_ingresso, showPin, external_uri, mmAmountIsPer
-        , qt_hr_anteced, descriptionVoucher, descriptionVoucher2
+        , in_entrega_ingresso, external_uri, mmAmountIsPer
+        , qt_hr_anteced, descriptionVoucher, descriptionVoucher2, showPin
     };
 
 
