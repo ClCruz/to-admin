@@ -1140,10 +1140,10 @@ export default {
               this.form.DatFinPeca = response.DatFinPeca;
               this.form.hasPresentantion = response.hasPresentantion;
               this.form.in_entrega_ingresso = response.in_entrega_ingresso;
-              this.form.showPin = response.showPin;
               this.form.minAmount = response.minAmount;
               this.form.maxAmount = response.maxAmount;
               this.form.mmAmountIsPer = response.mmAmountIsPer == 1;
+              this.form.showPin = response.showPin;
 
               this.$refs.minAmount.$el.value = response.minAmount;
               if (
@@ -1241,13 +1241,12 @@ export default {
           minAmount = "",
           maxAmount = "",
           in_entrega_ingresso = "",
-          showPin = "",
           mmAmountIsPer = false,
           qt_hr_anteced = "",
           descriptionVoucher = "",
-          descriptionVoucher2 = "";
-
-        id_base = this.form.id_base;
+          descriptionVoucher2 = "",
+          showPin = "",
+          id_base = this.form.id_base;
         showonline = this.form.showonline;
 
         id_produtor = this.form.id_produtor;
@@ -1260,8 +1259,8 @@ export default {
         id_local_evento = this.form.id_local_evento;
         ValIngresso = this.form.ValIngresso;
         description = this.form.description;
-        descriptionVoucher = this.form.descriptionVoucher;
-        descriptionVoucher2 = this.form.descriptionVoucher2;
+        // descriptionVoucher = this.form.descriptionVoucher;
+        // descriptionVoucher2 = this.form.descriptionVoucher2;
         meta_description = this.form.meta_description;
         meta_keyword = this.form.meta_keyword;
         opening_time = this.form.opening_time;
@@ -1278,7 +1277,6 @@ export default {
 
         maxAmount = this.form.maxAmount;
         in_entrega_ingresso = this.form.in_entrega_ingresso == true ? 1 : 0;
-        showPin = this.form.showPin;
 
         mmAmountIsPer = this.form.mmAmountIsPer == true ? 1 : 0;
 
@@ -1292,6 +1290,7 @@ export default {
         qt_hr_anteced = this.form.qt_hr_anteced;
         descriptionVoucher = this.form.descriptionVoucher;
         descriptionVoucher2 = this.form.descriptionVoucher2;
+        showPin = this.form.showPin;
 
         this.processing = true;
         this.$wait.start("inprocessSave");
@@ -1332,12 +1331,12 @@ export default {
             minAmount,
             maxAmount,
             in_entrega_ingresso,
-            showPin,
             external_uri,
             mmAmountIsPer,
             qt_hr_anteced,
             descriptionVoucher,
-            descriptionVoucher2
+            descriptionVoucher2,
+            showPin
           )
           .then(
             response => {
@@ -1847,9 +1846,11 @@ export default {
         minAmount: 0,
         maxAmount: 0,
         in_entrega_ingresso: 0,
-        showPin: "",
         hasPresentantion: "",
         mmAmountIsPer: false,
+        descriptionVoucher: "",
+        descriptionVoucher2: "",
+        showPin: "",
 
         free_installments: null,
         max_installments: null,
