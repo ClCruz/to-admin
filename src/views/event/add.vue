@@ -1241,11 +1241,11 @@ export default {
           minAmount = "",
           maxAmount = "",
           in_entrega_ingresso = "",
-          showPin = "",
           mmAmountIsPer = false,
           qt_hr_anteced = "",
           descriptionVoucher = "",
           descriptionVoucher2 = "";
+        // showPin = "",;
 
         id_base = this.form.id_base;
         showonline = this.form.showonline;
@@ -1278,7 +1278,7 @@ export default {
 
         maxAmount = this.form.maxAmount;
         in_entrega_ingresso = this.form.in_entrega_ingresso == true ? 1 : 0;
-        showPin = this.form.showPin;
+        // showPin = this.form.showPin;
 
         mmAmountIsPer = this.form.mmAmountIsPer == true ? 1 : 0;
 
@@ -1332,12 +1332,12 @@ export default {
             minAmount,
             maxAmount,
             in_entrega_ingresso,
-            showPin,
             external_uri,
             mmAmountIsPer,
             qt_hr_anteced,
             descriptionVoucher,
             descriptionVoucher2
+            // showPin,
           )
           .then(
             response => {
@@ -1847,7 +1847,7 @@ export default {
         minAmount: 0,
         maxAmount: 0,
         in_entrega_ingresso: 0,
-        showPin: "",
+        // showPin: "",
         hasPresentantion: "",
         mmAmountIsPer: false,
 
